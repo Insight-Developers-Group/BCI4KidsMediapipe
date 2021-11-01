@@ -1,8 +1,7 @@
 # Insight
+Insight uses lightweight iris and facial tracking to translate movements into yes/no communications
 
 ## First Time Setup
-
-Insight uses lightweight iris and facial tracking to translate movements into yes/no communications
 
 1. Follow instructions on the MediaPipe website to get set up for the use of MediaPipe** https://google.github.io/mediapipe/getting_started/install.html#installing-on-windows
 
