@@ -26,9 +26,15 @@
 #include "mediapipe/framework/port/opencv_video_inc.h"
 #include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
-
+//---------------------
+//Take stream from /mediapipe/graphs/hand_tracking/hand_detection_desktop_live.pbtxt
+// RendererSubgraph - LANDMARKS:hand_landmarks
+#include "mediapipe/calculators/util/landmarks_to_render_data_calculator.pb.h"
+#include "mediapipe/framework/formats/landmark.pb.h"
+//-------------------------
 constexpr char kInputStream[] = "input_video";
 constexpr char kOutputStream[] = "output_video";
+constexpr char kLandmarksStream[] = "multi_face_landmarks";
 constexpr char kWindowName[] = "MediaPipe";
 
 ABSL_FLAG(std::string, calculator_graph_config_file, "",
@@ -41,6 +47,7 @@ ABSL_FLAG(std::string, output_video_path, "",
           "If not provided, show result in a window.");
 
 absl::Status RunMPPGraph() {
+
   std::string calculator_graph_config_contents;
   MP_RETURN_IF_ERROR(mediapipe::file::GetContents(
       absl::GetFlag(FLAGS_calculator_graph_config_file),
@@ -79,6 +86,11 @@ absl::Status RunMPPGraph() {
   LOG(INFO) << "Start running the calculator graph.";
   ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller,
                    graph.AddOutputStreamPoller(kOutputStream));
+
+  // face landmarks stream
+  ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller_landmark,
+      graph.AddOutputStreamPoller(kLandmarksStream));
+
   MP_RETURN_IF_ERROR(graph.StartRun({}));
 
   LOG(INFO) << "Start grabbing and processing frames.";
@@ -101,6 +113,8 @@ absl::Status RunMPPGraph() {
       cv::flip(camera_frame, camera_frame, /*flipcode=HORIZONTAL*/ 1);
     }
 
+    LOG(INFO) << "Hello World!";
+
     // Wrap Mat into an ImageFrame.
     auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
         mediapipe::ImageFormat::SRGB, camera_frame.cols, camera_frame.rows,
@@ -117,8 +131,16 @@ absl::Status RunMPPGraph() {
 
     // Get the graph result packet, or stop if that fails.
     mediapipe::Packet packet;
+    mediapipe::Packet landmark_packet;
+
+    // Polling the poller to get landmark packet
     if (!poller.Next(&packet)) break;
+    if (!poller_landmark.Next(&landmark_packet)) break;
+
+    // Use packet.Get to recover values from packet
     auto& output_frame = packet.Get<mediapipe::ImageFrame>();
+    auto& output_landmarks = landmark_packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
+ 
 
     // Convert back to opencv for display or saving.
     cv::Mat output_frame_mat = mediapipe::formats::MatView(&output_frame);
@@ -138,6 +160,12 @@ absl::Status RunMPPGraph() {
       const int pressed_key = cv::waitKey(5);
       if (pressed_key >= 0 && pressed_key != 255) grab_frames = false;
     }
+
+    // printout landmark values
+    for (const ::mediapipe::NormalizedLandmarkList& landmark : output_landmarks) {
+        std::cout << landmark.DebugString();
+    }
+    std::cout << "One_Estimation";
   }
 
   LOG(INFO) << "Shutting down.";
