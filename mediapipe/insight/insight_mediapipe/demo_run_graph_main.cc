@@ -14,6 +14,11 @@
 //
 // An example of sending OpenCV webcam frames into a MediaPipe graph.
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <ctime>    
+#include <time.h>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
@@ -48,50 +53,71 @@ ABSL_FLAG(std::string, output_video_path, "",
 
 absl::Status RunMPPGraph() {
 
-  std::string calculator_graph_config_contents;
-  MP_RETURN_IF_ERROR(mediapipe::file::GetContents(
-      absl::GetFlag(FLAGS_calculator_graph_config_file),
-      &calculator_graph_config_contents));
-  LOG(INFO) << "Get calculator graph config contents: "
-            << calculator_graph_config_contents;
-  mediapipe::CalculatorGraphConfig config =
-      mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(
-          calculator_graph_config_contents);
+    std::string calculator_graph_config_contents;
+    MP_RETURN_IF_ERROR(mediapipe::file::GetContents(
+        absl::GetFlag(FLAGS_calculator_graph_config_file),
+        &calculator_graph_config_contents));
+    LOG(INFO) << "Get calculator graph config contents: "
+        << calculator_graph_config_contents;
+    mediapipe::CalculatorGraphConfig config =
+        mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(
+            calculator_graph_config_contents);
 
-  LOG(INFO) << "Initialize the calculator graph.";
-  mediapipe::CalculatorGraph graph;
-  MP_RETURN_IF_ERROR(graph.Initialize(config));
+    LOG(INFO) << "Initialize the calculator graph.";
+    mediapipe::CalculatorGraph graph;
+    MP_RETURN_IF_ERROR(graph.Initialize(config));
 
-  LOG(INFO) << "Initialize the camera or load the video.";
-  cv::VideoCapture capture;
-  const bool load_video = !absl::GetFlag(FLAGS_input_video_path).empty();
-  if (load_video) {
-    capture.open(absl::GetFlag(FLAGS_input_video_path));
-  } else {
-    capture.open(0);
-  }
-  RET_CHECK(capture.isOpened());
+    LOG(INFO) << "Initialize the camera or load the video.";
+    cv::VideoCapture capture;
+    const bool load_video = !absl::GetFlag(FLAGS_input_video_path).empty();
+    if (load_video) {
+        capture.open(absl::GetFlag(FLAGS_input_video_path));
+    }
+    else {
+        capture.open(0);
+    }
+    RET_CHECK(capture.isOpened());
 
-  cv::VideoWriter writer;
-  const bool save_video = !absl::GetFlag(FLAGS_output_video_path).empty();
-  if (!save_video) {
-    cv::namedWindow(kWindowName, /*flags=WINDOW_AUTOSIZE*/ 1);
+    cv::VideoWriter writer;
+    const bool save_video = !absl::GetFlag(FLAGS_output_video_path).empty();
+    if (!save_video) {
+        cv::namedWindow(kWindowName, /*flags=WINDOW_AUTOSIZE*/ 1);
 #if (CV_MAJOR_VERSION >= 3) && (CV_MINOR_VERSION >= 2)
-    capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-    capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
-    capture.set(cv::CAP_PROP_FPS, 30);
+        capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+        capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+        capture.set(cv::CAP_PROP_FPS, 30);
 #endif
-  }
+    }
 
-  LOG(INFO) << "Start running the calculator graph.";
-  ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller,
-                   graph.AddOutputStreamPoller(kOutputStream));
+    LOG(INFO) << "Start running the calculator graph.";
+    ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller,
+        graph.AddOutputStreamPoller(kOutputStream));
 
-  // face landmarks stream
-  ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller_landmark,
-      graph.AddOutputStreamPoller(kLandmarksStream));
+    // face landmarks stream
+    ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller_landmark,
+        graph.AddOutputStreamPoller(kLandmarksStream));
 
-  MP_RETURN_IF_ERROR(graph.StartRun({}));
+    MP_RETURN_IF_ERROR(graph.StartRun({}));
+
+
+    // Create csv file.
+    std::time_t rawtime;
+    struct tm* ptm;
+
+    time(&rawtime);
+
+    ptm = gmtime(&rawtime);
+
+    std::string hour_s = std::to_string((ptm->tm_hour) % 24);
+    std::string minute_s = std::to_string(ptm->tm_min);
+    std::string month_s = std::to_string(ptm->tm_mon);
+    std::string day_s = std::to_string(ptm->tm_mday);
+    std::string log_file_name = ".\\logs\\" + month_s + "-" + day_s + "-" + hour_s + minute_s + ".csv";
+
+  std::ofstream landmark_log_file;
+  landmark_log_file.open(log_file_name);
+ // landmark_log_file.open("example.csv");
+  
 
   LOG(INFO) << "Start grabbing and processing frames.";
   bool grab_frames = true;
@@ -112,8 +138,6 @@ absl::Status RunMPPGraph() {
     if (!load_video) {
       cv::flip(camera_frame, camera_frame, /*flipcode=HORIZONTAL*/ 1);
     }
-
-    LOG(INFO) << "Hello World!";
 
     // Wrap Mat into an ImageFrame.
     auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
@@ -161,14 +185,19 @@ absl::Status RunMPPGraph() {
       if (pressed_key >= 0 && pressed_key != 255) grab_frames = false;
     }
 
-    // printout landmark values
+    // Log landmark values in csv
     for (const ::mediapipe::NormalizedLandmarkList& landmark : output_landmarks) {
-        std::cout << landmark.DebugString();
+        std::string landmark_str = landmark.DebugString();
+        landmark_log_file << landmark_str;
+        landmark_log_file << ",";
     }
+    landmark_log_file << "end \n";
     std::cout << "One_Estimation";
   }
 
   LOG(INFO) << "Shutting down.";
+  
+  landmark_log_file.close();
   if (writer.isOpened()) writer.release();
   MP_RETURN_IF_ERROR(graph.CloseInputStream(kInputStream));
   return graph.WaitUntilDone();
