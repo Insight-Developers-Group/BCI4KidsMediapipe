@@ -42,6 +42,8 @@ constexpr char kOutputStream[] = "output_video";
 constexpr char kLandmarksStream[] = "multi_face_landmarks";
 constexpr char kWindowName[] = "MediaPipe";
 
+const int kNumberOfFacialLandmarks = 468;
+
 ABSL_FLAG(std::string, calculator_graph_config_file, "",
           "Name of file containing text format CalculatorGraphConfig proto.");
 ABSL_FLAG(std::string, input_video_path, "",
@@ -93,14 +95,14 @@ absl::Status RunMPPGraph() {
     ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller,
         graph.AddOutputStreamPoller(kOutputStream));
 
-    // face landmarks stream
+    // Face landmarks stream
     ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller_landmark,
         graph.AddOutputStreamPoller(kLandmarksStream));
 
     MP_RETURN_IF_ERROR(graph.StartRun({}));
 
 
-    // Create csv file.
+    // Create csv file for logging face landmarks
     std::time_t rawtime;
     struct tm* ptm;
 
@@ -116,8 +118,17 @@ absl::Status RunMPPGraph() {
 
   std::ofstream landmark_log_file;
   landmark_log_file.open(log_file_name);
- // landmark_log_file.open("example.csv");
-  
+
+  std::string init_log_file = "";
+
+  for (int i = 1; i <= kNumberOfFacialLandmarks; i++)
+  {
+      std::string index = std::to_string(i);
+      init_log_file += "x" + index + ",y" + index + ",z" + index + ",";
+  }
+
+  init_log_file += "\n";
+  landmark_log_file << init_log_file;
 
   LOG(INFO) << "Start grabbing and processing frames.";
   bool grab_frames = true;
@@ -186,13 +197,23 @@ absl::Status RunMPPGraph() {
     }
 
     // Log landmark values in csv
-    for (const ::mediapipe::NormalizedLandmarkList& landmark : output_landmarks) {
-        std::string landmark_str = landmark.DebugString();
-        landmark_log_file << landmark_str;
-        landmark_log_file << ",";
+    std::string landmark_log_frame = "";
+
+    LOG(INFO) << "Shutting down.";
+
+    for (const ::mediapipe::NormalizedLandmarkList& landmark_list : output_landmarks) {
+        landmark_log_file << landmark_list.DebugString();
+        for (int i = 0; i < kNumberOfFacialLandmarks; i++)
+        {
+            landmark_log_frame += 
+                std::to_string(landmark_list.landmark(i).x()) + "," +
+                std::to_string(landmark_list.landmark(i).y()) + "," +
+                std::to_string(landmark_list.landmark(i).z()) + ",";
+        }
     }
-    landmark_log_file << "end \n";
-    std::cout << "One_Estimation";
+    landmark_log_frame += "\n";
+ 
+    landmark_log_file << landmark_log_frame;
   }
 
   LOG(INFO) << "Shutting down.";
