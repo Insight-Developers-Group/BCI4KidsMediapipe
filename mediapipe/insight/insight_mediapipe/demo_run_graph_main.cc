@@ -196,23 +196,30 @@ absl::Status RunMPPGraph() {
       if (pressed_key >= 0 && pressed_key != 255) grab_frames = false;
     }
 
-    // Log landmark values in csv
+    // Log landmark values in csv *landmark_list.DebugString()
     std::string landmark_log_frame = "";
 
-    LOG(INFO) << "Shutting down.";
-
-    for (const ::mediapipe::NormalizedLandmarkList& landmark_list : output_landmarks) {
-        landmark_log_file << landmark_list.DebugString();
+    if (output_landmarks.size() < 1)
+    {
+        landmark_log_frame = "ERROR_NO_FACE_DETECTED";
+    }
+    else if (output_landmarks.size() > 1)
+    {
+        landmark_log_frame = "ERROR_MULTIPLE_FACES_DETECTED";
+    }
+    else
+    {
+        const ::mediapipe::NormalizedLandmarkList& landmark_list = output_landmarks[0];
         for (int i = 0; i < kNumberOfFacialLandmarks; i++)
         {
-            landmark_log_frame += 
+            landmark_log_frame +=
                 std::to_string(landmark_list.landmark(i).x()) + "," +
                 std::to_string(landmark_list.landmark(i).y()) + "," +
                 std::to_string(landmark_list.landmark(i).z()) + ",";
         }
     }
-    landmark_log_frame += "\n";
- 
+
+    landmark_log_frame += "\n"; 
     landmark_log_file << landmark_log_frame;
   }
 
