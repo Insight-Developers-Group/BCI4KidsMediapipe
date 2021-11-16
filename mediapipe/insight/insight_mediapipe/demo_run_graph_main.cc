@@ -40,6 +40,7 @@
 constexpr char kInputStream[] = "input_video";
 constexpr char kOutputStream[] = "output_video";
 constexpr char kLandmarksStream[] = "multi_face_landmarks";
+constexpr char kOutputFaceCountStream[] = "face_count";
 constexpr char kWindowName[] = "MediaPipe";
 
 const int kNumberOfFacialLandmarks = 468;
@@ -95,6 +96,10 @@ absl::Status RunMPPGraph() {
     ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller,
         graph.AddOutputStreamPoller(kOutputStream));
 
+    // Check for landmarks stream
+    ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller face_count_poller,
+        graph.AddOutputStreamPoller(kOutputFaceCountStream));
+
     // Face landmarks stream
     ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller_landmark,
         graph.AddOutputStreamPoller(kLandmarksStream));
@@ -133,6 +138,7 @@ absl::Status RunMPPGraph() {
   LOG(INFO) << "Start grabbing and processing frames.";
   bool grab_frames = true;
   while (grab_frames) {
+
     // Capture opencv camera or video frame.
     cv::Mat camera_frame_raw;
     capture >> camera_frame_raw;
@@ -166,16 +172,48 @@ absl::Status RunMPPGraph() {
 
     // Get the graph result packet, or stop if that fails.
     mediapipe::Packet packet;
+    mediapipe::Packet face_count_packet;
     mediapipe::Packet landmark_packet;
 
     // Polling the poller to get landmark packet
     if (!poller.Next(&packet)) break;
-    if (!poller_landmark.Next(&landmark_packet)) break;
+    if (!face_count_poller.Next(&face_count_packet)) break;
+
+    auto& face_count = face_count_packet.Get<int>();
+
+    if (face_count >= 1 && poller_landmark.Next(&landmark_packet))
+    {
+        // Use packet.Get to recover values from packet
+        auto & output_landmarks = landmark_packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
+
+        // Log landmark values in csv *landmark_list.DebugString()
+        if (output_landmarks.size() > 1)
+        {
+            LOG(INFO) << "ERROR_MULTIPLE_FACES_DETECTED";
+        }
+        else if (output_landmarks.size() == 1)
+        {
+            std::string landmark_log_frame = "";
+
+            const ::mediapipe::NormalizedLandmarkList& landmark_list = output_landmarks[0];
+            for (int i = 0; i < kNumberOfFacialLandmarks; i++)
+            {
+                landmark_log_frame +=
+                    std::to_string(landmark_list.landmark(i).x()) + "," +
+                    std::to_string(landmark_list.landmark(i).y()) + "," +
+                    std::to_string(landmark_list.landmark(i).z()) + ",";
+            }
+            landmark_log_frame += "\n";
+            landmark_log_file << landmark_log_frame;
+        }
+    }
+    else
+    {
+        LOG(INFO) << "ERROR_NO_FACE_DETECTED";
+    }
 
     // Use packet.Get to recover values from packet
     auto& output_frame = packet.Get<mediapipe::ImageFrame>();
-    auto& output_landmarks = landmark_packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
- 
 
     // Convert back to opencv for display or saving.
     cv::Mat output_frame_mat = mediapipe::formats::MatView(&output_frame);
@@ -194,31 +232,6 @@ absl::Status RunMPPGraph() {
       // Press any key to exit.
       const int pressed_key = cv::waitKey(5);
       if (pressed_key >= 0 && pressed_key != 255) grab_frames = false;
-    }
-
-    // Log landmark values in csv *landmark_list.DebugString()
-    std::string landmark_log_frame = "";
-
-    if (output_landmarks.size() < 1)
-    {
-        LOG(INFO) << "ERROR_NO_FACE_DETECTED";
-    }
-    else if (output_landmarks.size() > 1)
-    {
-        LOG(INFO) << "ERROR_MULTIPLE_FACES_DETECTED";
-    }
-    else
-    {
-        const ::mediapipe::NormalizedLandmarkList& landmark_list = output_landmarks[0];
-        for (int i = 0; i < kNumberOfFacialLandmarks; i++)
-        {
-            landmark_log_frame +=
-                std::to_string(landmark_list.landmark(i).x()) + "," +
-                std::to_string(landmark_list.landmark(i).y()) + "," +
-                std::to_string(landmark_list.landmark(i).z()) + ",";
-        }
-        landmark_log_frame += "\n";
-        landmark_log_file << landmark_log_frame;
     }
   }
 
