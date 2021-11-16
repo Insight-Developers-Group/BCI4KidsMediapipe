@@ -201,11 +201,11 @@ absl::Status RunMPPGraph() {
 
     if (output_landmarks.size() < 1)
     {
-        landmark_log_frame = "ERROR_NO_FACE_DETECTED";
+        LOG(INFO) << "ERROR_NO_FACE_DETECTED";
     }
     else if (output_landmarks.size() > 1)
     {
-        landmark_log_frame = "ERROR_MULTIPLE_FACES_DETECTED";
+        LOG(INFO) << "ERROR_MULTIPLE_FACES_DETECTED";
     }
     else
     {
@@ -217,10 +217,9 @@ absl::Status RunMPPGraph() {
                 std::to_string(landmark_list.landmark(i).y()) + "," +
                 std::to_string(landmark_list.landmark(i).z()) + ",";
         }
+        landmark_log_frame += "\n";
+        landmark_log_file << landmark_log_frame;
     }
-
-    landmark_log_frame += "\n"; 
-    landmark_log_file << landmark_log_frame;
   }
 
   LOG(INFO) << "Shutting down.";
