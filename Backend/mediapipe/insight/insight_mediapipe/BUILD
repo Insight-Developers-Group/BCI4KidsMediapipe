@@ -39,9 +39,11 @@ cc_library(
     name = "demo_run_graph_main",
     srcs = ["demo_run_graph_main.cc"],
     deps = [
+	"//mediapipe/calculators/util:landmarks_to_render_data_calculator",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
         "//mediapipe/framework/formats:image_frame_opencv",
+	"//mediapipe/framework/formats:landmark_cc_proto",
         "//mediapipe/framework/port:file_helpers",
         "//mediapipe/framework/port:opencv_highgui",
         "//mediapipe/framework/port:opencv_imgproc",
