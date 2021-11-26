@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 function VideoDisplay(props) {
     return (
-        <video autoplay="true" id="videoElement"/>
+        <video autoplay="true" ref={props.ref} src={props.function}  />
     )
 }
 
