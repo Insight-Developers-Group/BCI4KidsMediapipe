@@ -14,14 +14,9 @@ import Card from './components/Card';
 function App() {
   return (
     <div className="App">
-      <p>~~~~ Test Default Text ~~~~</p>
-      <MenuButton />
-      <HelpButton />
-      <ReloadButton />
+      <Button />
       <VideoDisplay />
-      <ModeSwitcher />
       <CardStack />
-      
     </div>
   );
 }

@@ -5,9 +5,169 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background:black;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.menu-btn, .menu-btn-open{
+  position: relative;
+  width: 68px;
+  height: 68px;
+  left: 24px;
+  top: 23px;
+  justify-content: center;
+  align-items: center;
+  transition: all .5s ease-in-out;
+  display: flex;
+  border: 3px solid white;
+  background: white;
+  border-radius: 42px;
+}
+
+
+.menu-btn__burger{
+  width: 30px;
+  height: 6px;
+  background:black;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(255, 101,47, .2);
+  transition: all .5s ease-in-out;
+}
+
+.menu-btn__burger::before,
+.menu-btn__burger::after{
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 6px;
+  background: black;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(255, 101,47, .2);
+  transition: all .5s ease-in-out;  
+}
+
+.menu-btn__burger::before{
+  transform: translateY(-16px);
+}
+
+.menu-btn__burger::after{
+  transform: translateY(16px);
+}
+
+/* ANIMATION */
+.menu-btn-open .menu-btn__burger {
+  transform: translateX(-50px);
+  background: transparent;
+  box-shadow: none;
+}
+.menu-btn-open .menu-btn__burger::before {
+  transform: rotate(45deg) translate(35px, -35px);
+}
+.menu-btn-open .menu-btn__burger::after {
+  transform: rotate(-45deg) translate(35px, 35px);
+}
+
+.helpIconBgrnd{
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  left: 1792.4px;
+  top: 28.41px;
+  background: white;
+  border-radius: 100%;
+}
+
+.help-icon{
+  position: absolute;
+  width: 37.18px;
+  height: 37.18px;
+  top: 5.5px;
+  left: 5.5px;
+  background: white;
+  border-radius: 100%;
+}
+
+.reloadIconBgrnd{
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  left: 1852px;
+  top: 26px;
+  filter: drop-shadow(4px 4px 10px rgba(0, 0, 0, 0.25));
+  background: white;
+  border-radius: 100%;
+  transition: all 0.5s ease-in-out;
+}
+
+
+.reload-icon{
+  position: absolute;
+  width: 28.57px;
+  height: 28.57px;
+  left: 10px;
+  top: 10px;
+  border-radius: 100%;
+  background: white;
+  transition: all 0.5s ease-in-out;
+}
+
+
+.girlBgrnd{
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  left: 175px;
+  top: 903px;
+  box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.25);
+  background-color: white;
+  border-radius: 100%;
+}
+
+.girllogo{
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  left: 8px;
+  top: 8px;  
+}
+
+.eyeBgrnd{
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  left: 233px;
+  top: 903px;
+  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));
+  background-color: white;
+  border-radius: 100%;  
+}
+
+.eyelogo{
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  left: 7px;
+  top: 8px;  
+}
+
+.trackingLabel{
+  position: absolute;
+  width: 366px;
+  height: 46px;
+  left: 290px;
+  top: 907px;
+  font-family: Ropa Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 39px;
+}
+
+.labelContent{
+  display: inline;
+  color: white;
 }
