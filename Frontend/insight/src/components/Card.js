@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+// Component function for the individual cards in the card stack component (at "./CardStack.js")
 function Card(props) {
 
-    var cardLabel = ""
+    let cardLabel
     switch (props.cardClass) {
         case "card_yes":
             cardLabel = "YES"
