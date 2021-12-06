@@ -33,4 +33,3 @@ CardStack.propTypes = {
 }
 
 export default CardStack
-

@@ -49,4 +49,3 @@ VideoDisplay.propTypes = {
 }
 
 export default VideoDisplay
-
