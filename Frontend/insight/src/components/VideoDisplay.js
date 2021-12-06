@@ -1,6 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types'
 
+// const videoDisplay = document.getElementById("video-display");
+// if (window.visualViewport.height - videoDisplay.style.height - 80 >
+//     window.visualViewport.width - videoDisplay.style.width - 32) {
+//   videoDisplay.style.height = '100%';
+//   videoDisplay.style.width = '0';
+// } else {
+//   videoDisplay.style.height = '0';
+//   videoDisplay.style.width = '100%';
+// }
+
+// Component to display webcam view to the screen along with placeholder when camera is not accessible
 function VideoDisplay(props) {
 
   // Following code sourced from:
@@ -26,7 +37,10 @@ function VideoDisplay(props) {
   // -----------------------------------------------
 
     return (
-        <video className="video-display" autoplay="true" ref={videoRef} src={getVideo}  />
+        <video id="video-display" autoPlay={true} ref={videoRef}>
+          <source src={getVideo}/>
+          Please turn on your webcam
+        </video>
     )
 }
 

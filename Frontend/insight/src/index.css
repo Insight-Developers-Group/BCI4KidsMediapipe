@@ -18,22 +18,20 @@ code {
   position: absolute;
   top: 16px;
   left: 16px;
-  background-color: gray;
+  height: calc(100% - 80px);
+  width: calc(100% - 32px);
+  text-align: center;
+}
+
+#video-display {
   height: calc(100vh - 80px);
-  width: calc(100vw - 32px);
-}
-
-.video-display {
-  top: 0;
-  left: 0;
-  width: 100%;
+  width: min-content;
   border-radius: 16px;
-  background-color: red;
+  background-color: #111111;
 }
 
-.mode-switcher {
+#mode-switcher {
+  top: 20px;
   display: inline-block;
-  border: 0px;
   margin: 0px;
-  background-color: green;
 }

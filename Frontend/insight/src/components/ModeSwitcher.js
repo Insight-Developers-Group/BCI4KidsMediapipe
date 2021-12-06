@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 
 function ModeSwitcher(props) {
     return (
-        <div className="modeSwitcher">
-            <p>Example Placeholder Text</p>
+        <div id="mode-switcher">
         </div>
     )
 }
