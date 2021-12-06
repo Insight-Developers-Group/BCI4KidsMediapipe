@@ -38,8 +38,8 @@ function VideoDisplay(props) {
 
     return (
         <video id="video-display" autoPlay={true} ref={videoRef}>
-          <source src={getVideo}/>
-          Please turn on your webcam
+          <source src={getVideo()}/>
+          Please enable your webcam to continue
         </video>
     )
 }
