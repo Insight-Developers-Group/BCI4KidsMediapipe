@@ -35,4 +35,3 @@ ModeSwitcher.propTypes = {
 }
 
 export default ModeSwitcher
-
