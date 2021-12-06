@@ -30,6 +30,3 @@ C:\Users\Username\BCI4KidsMediapipe_repo> set GLOG_logtostderr=1
 C:\Users\Username\BCI4KidsMediapipe_repo> bazel-bin\mediapipe\insight\insight_mediapipe\face_mesh\face_mesh_cpu --calculator_graph_config_file=mediapipe\graphs\face_mesh\face_mesh_desktop_live.pbtxt
 ```
 
-## Repo Pushing Rules 
-All PR's require 1 reviewer before being merged into main
-
