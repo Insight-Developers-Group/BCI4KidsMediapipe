@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 // Component function for the individual cards in the card stack component (at "./CardStack.js")
 function Card(props) {
@@ -24,10 +23,6 @@ function Card(props) {
             <h3 className="card_label">{cardLabel}</h3>
         </div>
     )
-}
-
-Card.propTypes = {
-
 }
 
 export default Card

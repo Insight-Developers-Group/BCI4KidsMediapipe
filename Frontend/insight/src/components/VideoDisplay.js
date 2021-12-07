@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types'
 
 // const videoDisplay = document.getElementById("video-display");
 // if (window.visualViewport.height - videoDisplay.style.height - 80 >
@@ -31,7 +30,7 @@ function VideoDisplay(props) {
         video.play();
       })
       .catch(err => {
-        console.error("error:", err);
+        console.log("error:", err);
       });
   };
   // -----------------------------------------------
@@ -42,10 +41,6 @@ function VideoDisplay(props) {
           Please enable your webcam to continue
         </video>
     )
-}
-
-VideoDisplay.propTypes = {
-
 }
 
 export default VideoDisplay

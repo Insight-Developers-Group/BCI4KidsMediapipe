@@ -1,7 +1,6 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 function MenuButton(props) {
-    const [isOpen, setIsOpen] = React.useState(false)
+    const [isOpen, setIsOpen] = React.useState(true)
     const [menu_btn_class, setMenuBtnClass] = React.useState("menu-btn")
 
     function toggle() {                         /*toggle function flips the isOpen state from open to close and vice versa, then calls animate()*/
@@ -22,10 +21,6 @@ function MenuButton(props) {
             <div className="menu-btn__burger"></div>
         </div>
     )
-}
-
-MenuButton.propTypes = {
-
 }
 
 export default MenuButton

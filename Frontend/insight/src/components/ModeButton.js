@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 function ModeButton(props) {
     return (
@@ -7,10 +6,6 @@ function ModeButton(props) {
             
         </div>
     )
-}
-
-ModeButton.propTypes = {
-
 }
 
 export default ModeButton

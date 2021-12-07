@@ -1,6 +1,5 @@
 import React from 'react'
 import helpLogo from '../Resources/helplogo.svg';
-import PropTypes from 'prop-types'
 
 function HelpButton(props) {
 
@@ -19,10 +18,6 @@ function HelpButton(props) {
             <img className="help-icon" src={helpLogo} alt='Help' />
         </div>
     )
-}
-
-HelpButton.propTypes = {
-
 }
 
 export default HelpButton

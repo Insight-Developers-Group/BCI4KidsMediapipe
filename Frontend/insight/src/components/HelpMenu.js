@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 function HelpMenu(props) {
     return (
@@ -7,10 +6,6 @@ function HelpMenu(props) {
             
         </div>
     )
-}
-
-HelpMenu.propTypes = {
-
 }
 
 export default HelpMenu
