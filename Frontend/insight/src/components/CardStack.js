@@ -21,7 +21,7 @@ function CardStack(props) {
     }
 
     return (
-        <div id="card_stack">
+        <div className="card_stack">
             <Card order="card_first" cardClass={firstCard}/>
             <Card order="card_second" cardClass={secondCard}/>
         </div>

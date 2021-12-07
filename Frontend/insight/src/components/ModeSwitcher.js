@@ -16,7 +16,7 @@ function ModeSwitcher(props) {
     }
 
     return (
-        <div>
+        <div className="mode-switcher">
             <div className='girlBgrnd' onClick={changeLabelToFaceTracking}>
                 <img className='girllogo' src={girllogo} />
             </div>

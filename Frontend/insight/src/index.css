@@ -16,28 +16,22 @@ code {
 
 .webcam-block {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  height: calc(100% - 80px);
-  width: calc(100% - 32px);
+  top: 32px;
+  left: 32px;
+  height: calc(100% - 96px);
+  width: calc(100% - 64px);
   text-align: center;
 }
 
 #video-display {
-  height: calc(100vh - 80px);
+  height: calc(100vh - 96px);
   width: min-content;
   border-radius: 16px;
   background-color: #111111;
   box-shadow: 4px 4px 10px #00000040;
 }
 
-#mode-switcher {
-  top: 20px;
-  display: inline-block;
-  margin: 0px;
-}
-
-#card_stack {
+.card_stack {
   position: relative;
   font-size: 5rem;
   left: calc(100vw - 7em);
@@ -91,26 +85,27 @@ code {
 }
 
 .menu-btn, .menu-btn-open{
-  position: relative;
-  width: 68px;
-  height: 68px;
-  left: 24px;
-  top: 23px;
+  position: absolute;
+  width: 4.5em;
+  height: 4.5em;
+  left: 1.5em;
+  top: 1.5em;
   justify-content: center;
   align-items: center;
   transition: all .5s ease-in-out;
   display: flex;
-  border: 3px solid white;
+  border: none;
   background: white;
-  border-radius: 42px;
+  border-radius: 4.25em;
+  z-index: 1;
+  box-shadow: 6px 6px 10px #00000040;
 }
 
 .menu-btn__burger{
-  width: 30px;
-  height: 6px;
+  width: 1.9em;
+  height: 0.4em;
   background:black;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(255, 101,47, .2);
+  border-radius: 1em;
   transition: all .5s ease-in-out;
 }
 
@@ -118,89 +113,90 @@ code {
 .menu-btn__burger::after{
   content: '';
   position: absolute;
-  width: 30px;
-  height: 6px;
+  width: 1.9em;
+  height: 0.4em;
   background: black;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(255, 101,47, .2);
+  border-radius: 1em;
   transition: all .5s ease-in-out;  
 }
 
 .menu-btn__burger::before{
-  transform: translateY(-16px);
+  transform: translateY(-0.75em);
 }
 
 .menu-btn__burger::after{
-  transform: translateY(16px);
+  transform: translateY(0.75em);
 }
 
 /* ANIMATION */
 .menu-btn-open .menu-btn__burger {
-  transform: translateX(-50px);
+  transform: translateX(-3.1em);
   background: transparent;
   box-shadow: none;
 }
 .menu-btn-open .menu-btn__burger::before {
-  transform: rotate(45deg) translate(35px, -35px);
+  transform: rotate(45deg) translate(2.2em, -2.2em);
 }
 .menu-btn-open .menu-btn__burger::after {
-  transform: rotate(-45deg) translate(35px, 35px);
+  transform: rotate(-45deg) translate(2.2em, 2.2em);
 }
 
 .helpIconBgrnd{
   position: absolute;
-  width: 50px;
-  height: 50px;
-  left: 1792.4px;
-  top: 28.41px;
+  width: 3em;
+  height: 3em;
+  left: calc(100vw - 9em);
+  top: 1.5em;
   background: white;
   border-radius: 100%;
+  z-index: 1;
+  box-shadow: 6px 6px 10px #00000040;
+  transition: all 0.5s ease-in-out;
 }
 
 .help-icon{
   position: absolute;
-  width: 37.18px;
-  height: 37.18px;
-  top: 5.5px;
-  left: 5.5px;
+  width: 2.3em;
+  height: 2.3em;
+  top: 0.35em;
+  left: 0.35em;
   background: white;
   border-radius: 100%;
 }
 
 .reloadIconBgrnd{
   position: absolute;
-  width: 50px;
-  height: 50px;
-  left: 1852px;
-  top: 26px;
-  filter: drop-shadow(4px 4px 10px rgba(0, 0, 0, 0.25));
+  width: 3em;
+  height: 3em;
+  left: calc(100vw - 5em);
+  top: 1.5em;
+  box-shadow: 6px 6px 10px #00000040;
   background: white;
   border-radius: 100%;
   transition: all 0.5s ease-in-out;
+  z-index: 1;
 }
 
 
 .reload-icon{
   position: absolute;
-  width: 28.57px;
-  height: 28.57px;
-  left: 10px;
-  top: 10px;
+  width: 2em;
+  height: 2em;
+  top: 0.5em;
+  left: 0.5em;
   border-radius: 100%;
   background: white;
   transition: all 0.5s ease-in-out;
 }
 
-
 .girlBgrnd{
   position: absolute;
   width: 42px;
   height: 42px;
-  left: 175px;
-  top: 903px;
   box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.25);
   background-color: white;
   border-radius: 100%;
+  z-index: 1;
 }
 
 .girllogo{
@@ -215,11 +211,11 @@ code {
   position: absolute;
   width: 42px;
   height: 42px;
-  left: 233px;
-  top: 903px;
-  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));
+  left: 3.5em;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
   background-color: white;
-  border-radius: 100%;  
+  border-radius: 100%;
+  z-index: 1;
 }
 
 .eyelogo{
@@ -234,13 +230,13 @@ code {
   position: absolute;
   width: 366px;
   height: 46px;
-  left: 290px;
-  top: 907px;
+  left: 0.8em;
   font-family: Ropa Sans;
   font-style: normal;
   font-weight: normal;
-  font-size: 36px;
+  font-size: 2rem;
   line-height: 39px;
+  z-index: 1;
 }
 
 .labelContent{
