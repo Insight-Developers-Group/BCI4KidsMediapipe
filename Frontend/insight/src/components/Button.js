@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import HelpButton from './HelpButton.js'
 import MenuButton from './MenuButton.js'
 import ModeSwitcher from './ModeSwitcher.js'
@@ -13,10 +12,6 @@ function Button(props) {
             <ModeSwitcher />
         </div>
     )
-}
-
-Button.propTypes = {
-
 }
 
 export default Button

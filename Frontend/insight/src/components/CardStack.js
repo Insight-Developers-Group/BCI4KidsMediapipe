@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Card from './Card'
 
 // Component function for the bottom-right card stack item
@@ -26,10 +25,6 @@ function CardStack(props) {
             <Card order="card_second" cardClass={secondCard}/>
         </div>
     )
-}
-
-CardStack.propTypes = {
-
 }
 
 export default CardStack

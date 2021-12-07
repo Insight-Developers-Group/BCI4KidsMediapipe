@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 function Menu(props) {
     return (
@@ -7,10 +6,6 @@ function Menu(props) {
             
         </div>
     )
-}
-
-Menu.propTypes = {
-
 }
 
 export default Menu

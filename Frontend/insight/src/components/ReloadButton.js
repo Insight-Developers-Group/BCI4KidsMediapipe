@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import reloadIcon from '../Resources/reloadlogo.svg'
 
 function ReloadButton(props) {
@@ -16,10 +15,6 @@ function ReloadButton(props) {
             <img className="reload-icon" src={reloadIcon} alt='Reload' />
         </div>
     )
-}
-
-ReloadButton.propTypes = {
-
 }
 
 export default ReloadButton
