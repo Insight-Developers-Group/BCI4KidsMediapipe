@@ -68,3 +68,30 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+# Running in a dev Dockerfile
+## Build the image
+```
+cd Frontend/insight
+```
+Build Image:
+```
+docker build -t sample:dev .
+```
+
+
+## Running the Container
+Linux or Powershell
+```
+docker run -it --rm -v ${PWD}:/app -v  /app/node_modules -p 3001:3000 -e CHOKIDAR_USEPOLLING=true insightfrontend:dev
+```
+
+Alternative Command for windows command prompt
+```
+docker run -it --rm -v %cd%:/app -v  /app/node_modules -p 3001:3000 -e CHOKIDAR_USEPOLLING=true insightfrontend:dev
+```
+More info: https://stackoverflow.com/questions/41485217/mount-current-directory-as-a-volume-in-docker-on-windows-10
+
+## In Browser
+http://localhost:3001/
