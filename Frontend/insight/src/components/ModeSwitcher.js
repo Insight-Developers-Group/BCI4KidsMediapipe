@@ -7,26 +7,24 @@ function ModeSwitcher(props) {
     const [trackingLabel, setTrackingLabel] = React.useState('| Face Tracking')
 
     function changeLabelToFaceTracking() {                  /*flips the trackingLabel state from face tracking to eye tracking and vice versa */
-        setTrackingLabel(prevLabel => '| Face Tracking')
+        setTrackingLabel('| Face Tracking')
         console.log("Changed to face tracking")
     }
 
     function changeLabelToEyeTracking() {
-        setTrackingLabel(prevLabel => '| Eye Tracking')
+        setTrackingLabel('| Eye Tracking')
         console.log("Changed to eye tracking")
     }
 
     return (
-        <div>
+        <div className='footerElements'>
             <div className='girlBgrnd' onClick={changeLabelToFaceTracking}>
                 <img className='girllogo' src={girllogo} />
             </div>
             <div className='eyeBgrnd' onClick={changeLabelToEyeTracking}>
                 <img className='eyelogo' src={eyelogo} />
             </div>
-            <div className='trackingLabel'>
-                <p className='labelContent'>{trackingLabel}</p>
-            </div>
+            <p className='labelContent'>{trackingLabel}</p>
         </div>
     )
 }

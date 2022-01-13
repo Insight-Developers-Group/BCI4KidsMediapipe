@@ -225,7 +225,7 @@ code {
   top: 8px;  
 }
 
-.trackingLabel{
+.labelContent{
   position: absolute;
   width: 366px;
   height: 46px;
@@ -235,11 +235,11 @@ code {
   font-weight: normal;
   font-size: 2rem;
   line-height: 39px;
-  z-index: 1;
-  transform: translateY(0.5rem);
+  color: white;
+  margin-top: 8px;
+  margin-bottom: 0px;
 }
 
-.labelContent{
-  display: inline;
-  color: white;
+.footerElements{
+  display: flex;
 }
