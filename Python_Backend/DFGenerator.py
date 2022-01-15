@@ -1,12 +1,8 @@
-class DFGeneratorInterface(metaclass=abc.ABCMeta):
-    @classmethod
-    def __subclasshook__(cls, subclass):
-        return (hasattr(subclass, 'load_data_source') and 
-                callable(subclass.load_data_source) and 
-                hasattr(subclass, 'extract_text') and 
-                callable(subclass.extract_text) or 
-                NotImplemented)
+import abc
 
+class DFGeneratorInterface(metaclass=abc.ABCMeta):
+    
+    @staticmethod
     @abc.abstractmethod
     def generateDF(self, image):
         """Return a pandas dataframe """
@@ -15,24 +11,30 @@ class DFGeneratorInterface(metaclass=abc.ABCMeta):
 
 class IrisDFGenerator(DFGeneratorInterface):
     """Facial Landmark Dataframe Generator"""
-    def generateDF(self, image):
+
+    @staticmethod
+    def generateDF(image):
         """Overrides DFGeneratorInterface.generateDF()"""
-		get_iris_Landmarks(image)
+        IrisDFGenerator.get_iris_Landmarks(image)
         pass
 
-	def get_iris_Landmarks(image):
-		"""get landmarks for iris and format dataframe appropriately"""
+    @staticmethod
+    def get_iris_Landmarks(image):
+        """get landmarks for iris and format dataframe appropriately"""
         pass
 
 
 class FacialDFGenerator(DFGeneratorInterface):
     """Facial Landmark Dataframe Generator"""
-    def generateDF(self, image):
-        """Overrides DFGeneratorInterface.generateDF()"""
-		get_face_Landmarks(image)
-        pass
 
-	def get_face_Landmarks(image):
-		"""get landmarks for face and format dataframe appropriately"""
+    @staticmethod
+    def generateDF(image):
+        """Overrides DFGeneratorInterface.generateDF()"""
+        FacialDFGenerator.get_face_Landmarks(image)
+        pass
+    
+    @staticmethod
+    def get_face_Landmarks(image):
+        """get landmarks for face and format dataframe appropriately"""
         pass
 
