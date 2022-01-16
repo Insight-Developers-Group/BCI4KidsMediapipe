@@ -34,6 +34,31 @@ def __addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values
     point_values.append(landmark[1])
     point_values.append(landmark[2])
 
+def __displayDebugImage(face_landmarks, eye_landmarks, iris_landmarks, image, image_size):
+        """Overrides DFGeneratorInterface.__displayDebugImage()"""
+        
+        if face_landmarks is not None:
+
+            # draw subset of facemesh
+            for ii in points_idx:
+                pos = (np.array(image_size) * face_landmarks[:2, ii]).astype(np.int32)
+                image = cv2.circle(image, tuple(pos), LARGE_CIRCLE_SIZE, GREEN, -1)
+
+            # draw eye contours
+            for landmark in eye_landmarks:
+                pos = (np.array(image_size) * landmark[:2]).astype(np.int32)
+                image = cv2.circle(image, tuple(pos), SMALL_CIRCLE_SIZE, RED, -1)
+
+            # draw iris landmarks
+            for landmark in iris_landmarks:
+                pos = (np.array(image_size) * landmark[:2]).astype(np.int32)
+                image = cv2.circle(image, tuple(pos), SMALL_CIRCLE_SIZE, YELLOW, -1)
+
+        cv2.imshow('Debug Image', image)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
 def main(inp):
 
     landmarks = None
@@ -156,58 +181,12 @@ def main(inp):
                 # create dataframe
                 df = pd.DataFrame([point_values], columns = point_headers)
                 print(df)
+            
+            __displayDebugImage(landmarks, eye_landmarks, iris_landmarks, frame, image_size)
 
                 
 
-        if landmarks is not None:
-
-            # draw subset of facemesh
-            for ii in points_idx:
-                pos = (np.array(image_size) * landmarks[:2, ii]).astype(np.int32)
-                frame = cv2.circle(frame, tuple(pos), LARGE_CIRCLE_SIZE, GREEN, -1)
-
-            # draw eye contours
-            eye_landmarks = np.concatenate(
-                [
-                    right_eye_contours,
-                    left_eye_contours,
-                ]
-            )
-            for landmark in eye_landmarks:
-                pos = (np.array(image_size) * landmark[:2]).astype(np.int32)
-                frame = cv2.circle(frame, tuple(pos), SMALL_CIRCLE_SIZE, RED, -1)
-
-            # draw iris landmarks
-            iris_landmarks = np.concatenate(
-                [
-                    right_iris_landmarks,
-                    left_iris_landmarks,
-                ]
-            )
-            for landmark in iris_landmarks:
-                pos = (np.array(image_size) * landmark[:2]).astype(np.int32)
-                frame = cv2.circle(frame, tuple(pos), SMALL_CIRCLE_SIZE, YELLOW, -1)
-
-            # write depth values into frame
-            depth_string = "{:.2f}cm, {:.2f}cm".format(
-                smooth_left_depth / 10, smooth_right_depth / 10
-            )
-            frame = cv2.putText(
-                frame,
-                depth_string,
-                (50, 50),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                GREEN,
-                2,
-                cv2.LINE_AA,
-            )
-
-        cv2.imshow('Test image', frame)
-
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
+     
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -219,4 +198,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args.i)
-
