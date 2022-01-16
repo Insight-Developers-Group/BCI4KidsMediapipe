@@ -4,60 +4,48 @@
 import socket
 import hashlib
 import base64
+from bitstring import BitArray
 
 
-def dohandshake(self, header, key=None):
-    logging.debug("Begin handshake: %s" % header)
-    digitRe = re.compile(r'[^0-9]')
-    spacesRe = re.compile(r'\s')
-    part = part_1 = part_2 = origin = None
-    for line in header.split('\\r\\n')[1:]:
-        name, value = line.split(': ', 1)
-        if name.lower() == "sec-websocket-key1":
-            key_number_1 = int(digitRe.sub('', value))
-            spaces_1 = len(spacesRe.findall(value))
-            if spaces_1 == 0:
-                return False
-            if key_number_1 % spaces_1 != 0:
-                return False
-            part_1 = key_number_1 / spaces_1
-        elif name.lower() == "sec-websocket-key2":
-            key_number_2 = int(digitRe.sub('', value))
-            spaces_2 = len(spacesRe.findall(value))
-            if spaces_2 == 0:
-                return False
-            if key_number_2 % spaces_2 != 0:
-                return False
-            part_2 = key_number_2 / spaces_2
-        elif name.lower() == "sec-websocket-key":
-            part = bytes(value, 'UTF-8')
-        elif name.lower() == "origin":
-            origin = value
-    if part:
-        logging.debug("Using challenge + response")
-        #challenge = struct.pack('!I', part_1) + struct.pack('!I', part_2) + key
-        #response = hashlib.md5(challenge).digest()
-        sha1 = hashlib.sha1()
-        sha1.update(part)
-        sha1.update("258EAFA5-E914-47DA-95CA-C5AB0DC85B11".encode('utf-8'))
-        accept = (b64encode(sha1.digest())).decode("utf-8", "ignore")
-        handshake = WebSocket.handshake % {
-            'accept': accept,
-            'origin': origin,
-            'port': self.server.port,
-            'bind': self.server.bind
-        }
-        #handshake += response
-    else:
-        logging.warning("Not using challenge + response")
-        handshake = WebSocket.handshake % {
-            'origin': origin,
-            'port': self.server.port,
-            'bind': self.server.bind
-        }
-    logging.debug("Sending handshake %s" % handshake)
-    self.client.send(bytes(handshake, 'UTF-8'))
-    return True
+
+def decodeWebsocketFrame(data):
+    msg = []
+    offset = 0
+    while (offset + 6 < len(data)):
+        length = data[offset + 1] - 0x80
+        if (length <=125):
+            print("Length of Message: {}, Offset: {}".format(length,offset))
+            key = []
+            key.append(data[offset+2])
+            key.append(data[offset+3])
+            key.append(data[offset+4])
+            key.append(data[offset+5])
+            decoded = []
+            for i in range(length):
+                position = offset+6+i
+                decoded.append(data[position] ^ key[i % 4])
+            offset = offset + 6+ length
+            msg.append(decoded)
+        else:
+            a = data[offset+2]
+            b = data[offset+3]
+            length = (a<<8) + b
+            key = []
+            key.append(data[offset+4])
+            key.append(data[offset+5])
+            key.append(data[offset+6])
+            key.append(data[offset+7])
+            decoded = []
+            for i in range(length):
+                realPos = offset + 8 + i
+                decoded[i] = (data[realPos] ^ key[i % 4])
+            offset = offset + 8+ length
+            msg.append(decoded)
+    return msg
+
+
+
+
 
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
@@ -96,16 +84,34 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(type(b))
 
         handshakeheader = "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept:{}\r\n\r\n".format(b.decode('utf-8'))
-       
+    #    b'\x81\x8f\x04\xb8K$I\xc1kJe\xd5.\x04m\xcbknk\xd0%'
         print('Sending: ')
         print(handshakeheader)
         conn.sendall(handshakeheader.encode('utf-8'))
         print('-------------------')
 
         while True:
+            print("Wait for new data")
             data = conn.recv(1024)
+            print("Data Recieved: ")
+            print(data)
+            
+            #Integrity Check: Data recieved:
+            if ( data[0] != 129):
+                print("Invalid Data")
+                pass
+            messages = decodeWebsocketFrame(data)
+            print(messages)
+            for msg in messages:
+                text= ""
+                for letter in msg:
+                    text = text + bytes.fromhex(hex(letter)[2:]).decode('utf-8')
+                print(text)
+            print("------------------------------")
+
+
             if not data:
                 break
-            conn.sendall(data)
+            # conn.sendall(data)
 
-        
+# https://stackoverflow.com/questions/9182350/decode-a-websocket-frame/25558586
