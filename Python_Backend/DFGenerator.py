@@ -14,57 +14,67 @@ class DFGeneratorInterface(metaclass=abc.ABCMeta):
     
     @staticmethod
     @abc.abstractmethod
-    def generateDF(image):
+    def generate_df(image):
         """Return a pandas dataframe"""
         raise NotImplementedError
+
+
 
 
 class IrisDFGenerator(DFGeneratorInterface):
     """Facial Landmark Dataframe Generator"""
 
-    __mp_face_mesh = mp.solutions.face_mesh
+    MP_FACE_MESH = mp.solutions.face_mesh
 
-    __points_idx = [33, 133, 362, 263, 61, 291, 199]
+    LEFT_EYE_LANDMARKS_ID = np.array([33, 133])
+    RIGHT_EYE_LANDMARKS_ID = np.array([362, 263])
 
-    __left_eye_landmarks_id = np.array([33, 133])
-    __right_eye_landmarks_id = np.array([362, 263])
+    YELLOW = (0, 255, 255)
+    GREEN = (0, 255, 0)
+    BLUE = (255, 0, 0)
+    RED = (0, 0, 255)
+    SMALL_CIRCLE_SIZE = 1
+    LARGE_CIRCLE_SIZE = 2
 
-    __dist_coeff = np.zeros((4, 1))
+    #POINTS_IDX = list(set([33, 133, 362, 263, 61, 291, 199])).sort()
+    POINTS_IDX = [33, 133, 362, 263, 61, 291, 199]
+    POINTS_IDX = list(set(POINTS_IDX))
+    POINTS_IDX.sort()
+
 
 
     @staticmethod
-    def generateDF(image):
+    def generate_df(image):
         """Overrides DFGeneratorInterface.generateDF()"""
 
-        IrisDFGenerator.__points_idx = list(set(IrisDFGenerator.__points_idx))
-        IrisDFGenerator.__points_idx.sort()
+        return IrisDFGenerator.__get_iris_landmarks(image)
 
-        return IrisDFGenerator.__get_iris_Landmarks(image)
 
 
     @staticmethod
-    def __get_iris_Landmarks(image):
-        """Get landmarks for iris and format dataframe appropriately"""
+    def __get_iris_landmarks(image):
+        """Get landmarks for iris and formats dataframe appropriately"""
 
         landmarks = None
         smooth_left_depth = -1
         smooth_right_depth = -1
         smooth_factor = 0.1
 
-        with IrisDFGenerator.__mp_face_mesh.FaceMesh(
+        with IrisDFGenerator.MP_FACE_MESH.FaceMesh(
             static_image_mode=False,
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5,
         ) as face_mesh:
-
-            frame = cv2.imread("images/tim.jpg")
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
+            # todo: get proper image format and convert it to cv2 image
+            image = cv2.imread("images/tim.jpg")
+            frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = face_mesh.process(frame_rgb)
 
-            frame_w, frame_h, frame_c = frame.shape
+            image_width, image_height, image_channels = image.shape
 
-            image_size = (frame_h, frame_w)
-            focal_length = frame_h
+            image_size = (image_height, image_width)
+            focal_length = image_height
     
             multi_face_landmarks = results.multi_face_landmarks
 
@@ -82,7 +92,7 @@ class IrisDFGenerator(DFGeneratorInterface):
                     left_eye_contours,
                 ) = from_landmarks_to_depth(
                     frame_rgb,
-                    landmarks[:, IrisDFGenerator.__left_eye_landmarks_id],
+                    landmarks[:, IrisDFGenerator.LEFT_EYE_LANDMARKS_ID],
                     image_size,
                     is_right_eye=False,
                     focal_length=focal_length,
@@ -95,7 +105,7 @@ class IrisDFGenerator(DFGeneratorInterface):
                     right_eye_contours,
                 ) = from_landmarks_to_depth(
                     frame_rgb,
-                    landmarks[:, IrisDFGenerator.__right_eye_landmarks_id],
+                    landmarks[:, IrisDFGenerator.RIGHT_EYE_LANDMARKS_ID],
                     image_size,
                     is_right_eye=True,
                     focal_length=focal_length,
@@ -117,23 +127,17 @@ class IrisDFGenerator(DFGeneratorInterface):
                         + left_depth * smooth_factor
                     )
 
-                print(
-                    f"depth in cm: {smooth_left_depth / 10:.2f}, {smooth_right_depth / 10:.2f}"
-                )
-                print(f"size: {left_iris_size:.2f}, {right_iris_size:.2f}")
-
-
                 if landmarks is not None:
 
                     landmark_idx = 0
-                    point_headers = []
-                    point_values = []
+                    df_headers = []
+                    df_values = []
 
                     # add subset of facemesh to dataframe
-                    for ii in IrisDFGenerator.__points_idx:
+                    for ii in IrisDFGenerator.POINTS_IDX:
 
                         landmark = (landmarks[0, ii], landmarks[1, ii], landmarks[2, ii])
-                        IrisDFGenerator.__addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values)
+                        IrisDFGenerator.__add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
 
                         landmark_idx += 1
 
@@ -146,7 +150,7 @@ class IrisDFGenerator(DFGeneratorInterface):
                     )
                     for landmark in eye_landmarks:
                     
-                        IrisDFGenerator.__addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values)
+                        IrisDFGenerator.__add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
 
                         landmark_idx += 1
 
@@ -159,45 +163,39 @@ class IrisDFGenerator(DFGeneratorInterface):
                     )
                     for landmark in iris_landmarks:
 
-                        IrisDFGenerator.__addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values)
+                        IrisDFGenerator.__add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
 
                         landmark_idx += 1
 
                     # create dataframe
-                    df = pd.DataFrame([point_values], columns = point_headers)
-                    print(df)
-            
-                IrisDFGenerator.__displayDebugImage(landmarks, eye_landmarks, iris_landmarks, frame, image_size)
+                    df = pd.DataFrame([df_values], columns = df_headers)
+
+                    IrisDFGenerator.__display_debug_image(landmarks, eye_landmarks, iris_landmarks, image, image_size)
+
+                    return df
 
 
 
     @staticmethod
-    def __displayDebugImage(face_landmarks, eye_landmarks, iris_landmarks, image, image_size):
-        """Overrides DFGeneratorInterface.__displayDebugImage()"""
-        
-        YELLOW = (0, 255, 255)
-        GREEN = (0, 255, 0)
-        BLUE = (255, 0, 0)
-        RED = (0, 0, 255)
-        SMALL_CIRCLE_SIZE = 1
-        LARGE_CIRCLE_SIZE = 2
+    def __display_debug_image(face_landmarks, eye_landmarks, iris_landmarks, image, image_size):
+        """Displays image with iris landmarks"""
 
         if face_landmarks is not None:
 
             # draw subset of facemesh
-            for ii in IrisDFGenerator.__points_idx:
+            for ii in IrisDFGenerator.POINTS_IDX:
                 pos = (np.array(image_size) * face_landmarks[:2, ii]).astype(np.int32)
-                image = cv2.circle(image, tuple(pos), LARGE_CIRCLE_SIZE, GREEN, -1)
+                image = cv2.circle(image, tuple(pos), IrisDFGenerator.LARGE_CIRCLE_SIZE, IrisDFGenerator.GREEN, -1)
 
             # draw eye contours
             for landmark in eye_landmarks:
                 pos = (np.array(image_size) * landmark[:2]).astype(np.int32)
-                image = cv2.circle(image, tuple(pos), SMALL_CIRCLE_SIZE, RED, -1)
+                image = cv2.circle(image, tuple(pos), IrisDFGenerator.SMALL_CIRCLE_SIZE, IrisDFGenerator.RED, -1)
 
             # draw iris landmarks
             for landmark in iris_landmarks:
                 pos = (np.array(image_size) * landmark[:2]).astype(np.int32)
-                image = cv2.circle(image, tuple(pos), SMALL_CIRCLE_SIZE, YELLOW, -1)
+                image = cv2.circle(image, tuple(pos), IrisDFGenerator.SMALL_CIRCLE_SIZE, IrisDFGenerator.YELLOW, -1)
 
         cv2.imshow('Debug Image', image)
 
@@ -207,19 +205,22 @@ class IrisDFGenerator(DFGeneratorInterface):
 
 
     @staticmethod
-    def __addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values):
-        point_headers.append("x{}".format(landmark_idx))
-        point_headers.append("y{}".format(landmark_idx))
-        point_headers.append("z{}".format(landmark_idx))
+    def __add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
+        """Helper function that adds a landmark to the dataframe"""
 
-        point_values.append(landmark[0])
-        point_values.append(landmark[1])
-        point_values.append(landmark[2])
+        df_headers.append("x{}".format(landmark_idx))
+        df_headers.append("y{}".format(landmark_idx))
+        df_headers.append("z{}".format(landmark_idx))
+
+        df_values.append(landmark[0])
+        df_values.append(landmark[1])
+        df_values.append(landmark[2])
+
 
 
 
 class FacialDFGenerator(DFGeneratorInterface):
-    """Facial Landmark Dataframe Generator"""
+    """Facial landmark dataframe generator"""
 
     __faceModule = mp.solutions.face_mesh
     __drawingModule = mp.solutions.drawing_utils
@@ -228,48 +229,52 @@ class FacialDFGenerator(DFGeneratorInterface):
     __lineDrawingSpec = __drawingModule.DrawingSpec(thickness=1, color=(0, 255, 0))
 
 
+
     @staticmethod
-    def generateDF(image):
+    def generate_df(image):
         """Overrides DFGeneratorInterface.generateDF()"""
         FacialDFGenerator.__get_face_Landmarks(image)
         pass
     
+
+
     @staticmethod
     def __get_face_Landmarks(image):
         """Get landmarks for face and format dataframe appropriately"""
 
         with FacialDFGenerator.__faceModule.FaceMesh(static_image_mode=True) as face:
             
-            # todo: take in proper image format and convert cv2 retval
+            # todo: take in proper image format and convert it tocv2 image
             image = cv2.imread("images/tim.jpg")
 
             results = face.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
             for facial_landmarks in results.multi_face_landmarks:
-                point_headers = []
-                point_values = []
+                df_headers = []
+                df_values = []
 
                 for i in range(0, 468):
-                    pt1 = facial_landmarks.landmark[i]
-                    point_headers.append("x{}".format(i))
-                    point_headers.append("y{}".format(i))
-                    point_headers.append("z{}".format(i))
+                    landmark = facial_landmarks.landmark[i]
+                    df_headers.append("x{}".format(i))
+                    df_headers.append("y{}".format(i))
+                    df_headers.append("z{}".format(i))
 
-                    point_values.append(pt1.x)
-                    point_values.append(pt1.y)
-                    point_values.append(pt1.z)
+                    df_values.append(landmark.x)
+                    df_values.append(landmark.y)
+                    df_values.append(landmark.z)
 
                 # create dataframe
-                df = pd.DataFrame([point_values], columns = point_headers)
-                print(df)
+                df = pd.DataFrame([df_values], columns = df_headers)
     
-            FacialDFGenerator.__displayDebugImage(results.multi_face_landmarks, image)
+                FacialDFGenerator.__display_debug_image(results.multi_face_landmarks, image)
 
-            return df
+                return df
+
+
 
     @staticmethod
-    def __displayDebugImage(landmarks, image):
-        """Overrides DFGeneratorInterface.__displayDebugImage()"""
+    def __display_debug_image(landmarks, image):
+        """Displays image with facial landmarks"""
         
         if landmarks != None:
             for faceLandmarks in landmarks:
@@ -281,4 +286,6 @@ class FacialDFGenerator(DFGeneratorInterface):
         cv2.destroyAllWindows()
 
 
-IrisDFGenerator.generateDF(2)
+
+IrisDFGenerator.generate_df(0)
+FacialDFGenerator.generate_df(0)
