@@ -3,6 +3,7 @@ import argparse
 import cv2
 import mediapipe as mp
 import numpy as np
+import pandas as pd
 
 from custom.iris_lm_depth import from_landmarks_to_depth 
 
@@ -24,6 +25,14 @@ RED = (0, 0, 255)
 SMALL_CIRCLE_SIZE = 1
 LARGE_CIRCLE_SIZE = 2
 
+def __addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values):
+    point_headers.append("x{}".format(landmark_idx))
+    point_headers.append("y{}".format(landmark_idx))
+    point_headers.append("z{}".format(landmark_idx))
+
+    point_values.append(landmark[0])
+    point_values.append(landmark[1])
+    point_values.append(landmark[2])
 
 def main(inp):
 
@@ -38,7 +47,7 @@ def main(inp):
         min_tracking_confidence=0.5,
     ) as face_mesh:
 
-        frame = cv2.imread("images/p.jpeg")
+        frame = cv2.imread("images/tim.jpg")
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = face_mesh.process(frame_rgb)
 
@@ -103,6 +112,53 @@ def main(inp):
             )
             print(f"size: {left_iris_size:.2f}, {right_iris_size:.2f}")
 
+
+            if landmarks is not None:
+
+                landmark_idx = 0
+                point_headers = []
+                point_values = []
+
+                # add subset of facemesh to dataframe
+                for ii in points_idx:
+
+                    landmark = (landmarks[0, ii], landmarks[1, ii], landmarks[2, ii])
+                    __addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values)
+
+                    landmark_idx += 1
+
+                # add eye contours to dataframe
+                eye_landmarks = np.concatenate(
+                    [
+                        right_eye_contours,
+                        left_eye_contours,
+                    ]
+                )
+                for landmark in eye_landmarks:
+                    
+                    __addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values)
+
+                    landmark_idx += 1
+
+                # add iris landmarks to dataframe
+                iris_landmarks = np.concatenate(
+                    [
+                        right_iris_landmarks,
+                        left_iris_landmarks,
+                    ]
+                )
+                for landmark in iris_landmarks:
+
+                    __addLandmarkToDataframe(landmark, landmark_idx, point_headers, point_values)
+
+                    landmark_idx += 1
+
+                # create dataframe
+                df = pd.DataFrame([point_values], columns = point_headers)
+                print(df)
+
+                
+
         if landmarks is not None:
 
             # draw subset of facemesh
@@ -163,3 +219,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args.i)
+
