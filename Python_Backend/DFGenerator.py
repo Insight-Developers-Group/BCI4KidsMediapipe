@@ -22,7 +22,7 @@ class DFGeneratorInterface(metaclass=abc.ABCMeta):
 
 
 class IrisDFGenerator(DFGeneratorInterface):
-    """Facial Landmark Dataframe Generator"""
+    """Facial landmark dataframe generator"""
 
     MP_FACE_MESH = mp.solutions.face_mesh
 
@@ -36,7 +36,6 @@ class IrisDFGenerator(DFGeneratorInterface):
     SMALL_CIRCLE_SIZE = 1
     LARGE_CIRCLE_SIZE = 2
 
-    #POINTS_IDX = list(set([33, 133, 362, 263, 61, 291, 199])).sort()
     POINTS_IDX = [33, 133, 362, 263, 61, 291, 199]
     POINTS_IDX = list(set(POINTS_IDX))
     POINTS_IDX.sort()
@@ -45,7 +44,7 @@ class IrisDFGenerator(DFGeneratorInterface):
 
     @staticmethod
     def generate_df(image):
-        """Overrides DFGeneratorInterface.generateDF()"""
+        """Overrides DFGeneratorInterface.generate_df()"""
 
         return IrisDFGenerator.__get_iris_landmarks(image)
 
@@ -67,7 +66,7 @@ class IrisDFGenerator(DFGeneratorInterface):
         ) as face_mesh:
             
             # todo: get proper image format and convert it to cv2 image
-            image = cv2.imread("images/tim.jpg")
+            image = cv2.imread("images/image.jpg")
             frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = face_mesh.process(frame_rgb)
 
@@ -232,7 +231,7 @@ class FacialDFGenerator(DFGeneratorInterface):
 
     @staticmethod
     def generate_df(image):
-        """Overrides DFGeneratorInterface.generateDF()"""
+        """Overrides DFGeneratorInterface.generate_df()"""
         FacialDFGenerator.__get_face_Landmarks(image)
         pass
     
@@ -245,10 +244,11 @@ class FacialDFGenerator(DFGeneratorInterface):
         with FacialDFGenerator.__faceModule.FaceMesh(static_image_mode=True) as face:
             
             # todo: take in proper image format and convert it tocv2 image
-            image = cv2.imread("images/tim.jpg")
+            image = cv2.imread("images/image.jpg")
 
             results = face.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
+            # add landmarks to dataframe
             for facial_landmarks in results.multi_face_landmarks:
                 df_headers = []
                 df_values = []
