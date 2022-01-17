@@ -11,8 +11,8 @@ function ReloadButton(props) {
     }
 
     return (
-        <div className="reloadIconBgrnd" onClick={toggle} >
-            <img className="reload-icon" src={reloadIcon} alt='Reload' />
+        <div className="reloadIconBgrnd" onClick={toggle} data-testid="reloadIconBgrnd" >
+            <img className="reload-icon" src={reloadIcon} alt='reload-icon' />
         </div>
     )
 }

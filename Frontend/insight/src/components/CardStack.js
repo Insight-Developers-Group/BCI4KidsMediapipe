@@ -20,9 +20,9 @@ function CardStack(props) {
     }
 
     return (
-        <div className="card_stack">
-            <Card order="card_first" cardClass={firstCard}/>
-            <Card order="card_second" cardClass={secondCard}/>
+        <div className="card_stack" data-testid='card_stack'>
+            <Card order="card_first" cardClass={firstCard} />
+            <Card order="card_second" cardClass={secondCard} />
         </div>
     )
 }

@@ -18,13 +18,13 @@ function ModeSwitcher(props) {
 
     return (
         <div className='footerElements'>
-            <div className='girlBgrnd' onClick={changeLabelToFaceTracking}>
-                <img className='girllogo' src={girllogo} />
+            <div className='girlBgrnd' onClick={changeLabelToFaceTracking} data-testid='girlBgrnd'>
+                <img className='girllogo' src={girllogo} alt='girllogo' />
             </div>
-            <div className='eyeBgrnd' onClick={changeLabelToEyeTracking}>
-                <img className='eyelogo' src={eyelogo} />
+            <div className='eyeBgrnd' onClick={changeLabelToEyeTracking} data-testid='eyeBgrnd'>
+                <img className='eyelogo' src={eyelogo} alt='eyelogo' />
             </div>
-            <p className='labelContent'>{trackingLabel}</p>
+            <p className='labelContent' data-testid='para'>{trackingLabel}</p>
         </div>
     )
 }
