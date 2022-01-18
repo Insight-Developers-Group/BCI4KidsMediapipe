@@ -19,6 +19,7 @@ function VideoDisplay(props) {
 
   useEffect(() => {
     getVideo();
+    console.log("live-feed-on")
   }, [videoRef]);
 
   const getVideo = () => {
@@ -35,12 +36,12 @@ function VideoDisplay(props) {
   };
   // -----------------------------------------------
 
-    return (
-        <video id="video-display" autoPlay={true} ref={videoRef}>
-          <source src={getVideo()}/>
-          Please enable your webcam to continue
-        </video>
-    )
+  return (
+    <video id="video-display" autoPlay={true} ref={videoRef}>
+      <source src={getVideo()} data-testid='video-display' />
+      Please enable your webcam to continue
+    </video>
+  )
 }
 
 export default VideoDisplay

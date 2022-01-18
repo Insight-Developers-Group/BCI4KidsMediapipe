@@ -17,7 +17,7 @@ function MenuButton(props) {
     }
 
     return (
-        <div className={menu_btn_class} onClick={toggle}>
+        <div className={menu_btn_class} onClick={toggle} data-testid="menu-btn">
             <div className="menu-btn__burger"></div>
         </div>
     )
