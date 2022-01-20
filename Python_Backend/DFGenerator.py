@@ -51,7 +51,7 @@ class IrisDFGenerator(DFGeneratorInterface):
 
 
     @staticmethod
-    def __get_iris_landmarks(image):
+    def __get_iris_landmarks(image_path):
         """Get landmarks for iris and formats dataframe appropriately"""
 
         landmarks = None
@@ -66,7 +66,7 @@ class IrisDFGenerator(DFGeneratorInterface):
         ) as face_mesh:
             
             # todo: get proper image format and convert it to cv2 image
-            image = cv2.imread("images/image.jpg")
+            image = cv2.imread(str(image_path))
             frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = face_mesh.process(frame_rgb)
 
@@ -232,19 +232,19 @@ class FacialDFGenerator(DFGeneratorInterface):
     @staticmethod
     def generate_df(image):
         """Overrides DFGeneratorInterface.generate_df()"""
-        FacialDFGenerator.__get_face_Landmarks(image)
-        pass
+        return FacialDFGenerator.__get_face_Landmarks(image)
+        
     
 
 
     @staticmethod
-    def __get_face_Landmarks(image):
+    def __get_face_Landmarks(image_path):
         """Get landmarks for face and format dataframe appropriately"""
 
         with FacialDFGenerator.__faceModule.FaceMesh(static_image_mode=True) as face:
             
             # todo: take in proper image format and convert it tocv2 image
-            image = cv2.imread("images/image.jpg")
+            image = cv2.imread(str(image_path))
 
             results = face.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
@@ -266,7 +266,7 @@ class FacialDFGenerator(DFGeneratorInterface):
                 # create dataframe
                 df = pd.DataFrame([df_values], columns = df_headers)
     
-                FacialDFGenerator.__display_debug_image(results.multi_face_landmarks, image)
+                #FacialDFGenerator.__display_debug_image(results.multi_face_landmarks, image)
 
                 return df
 
@@ -278,14 +278,10 @@ class FacialDFGenerator(DFGeneratorInterface):
         
         if landmarks != None:
             for faceLandmarks in landmarks:
-                FacialDFGenerator.__drawingModule.draw_landmarks(image, faceLandmarks, FacialDFGenerator.__faceModule.FACEMESH_CONTOURS, 
+                FacialDFGenerator.__drawingModule.draw_landmarks(image, faceLandmarks, FacialDFGenerator.__faceModule.FACE_CONTOURS, 
                                             FacialDFGenerator.__circleDrawingSpec, FacialDFGenerator.__lineDrawingSpec)
         cv2.imshow('Debug Image', image)
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-
-
-IrisDFGenerator.generate_df(0)
-FacialDFGenerator.generate_df(0)
