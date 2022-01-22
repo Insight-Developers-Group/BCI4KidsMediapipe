@@ -278,7 +278,7 @@ class FacialDFGenerator(DFGeneratorInterface):
         
         if landmarks != None:
             for faceLandmarks in landmarks:
-                FacialDFGenerator.__drawingModule.draw_landmarks(image, faceLandmarks, FacialDFGenerator.__faceModule.FACE_CONTOURS, 
+                FacialDFGenerator.__drawingModule.draw_landmarks(image, faceLandmarks, FacialDFGenerator.__faceModule.FACEMESH_CONTOURS, 
                                             FacialDFGenerator.__circleDrawingSpec, FacialDFGenerator.__lineDrawingSpec)
         cv2.imshow('Debug Image', image)
 
