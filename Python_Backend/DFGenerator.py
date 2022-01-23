@@ -10,6 +10,20 @@ import pandas as pd
 
 from custom.iris_lm_depth import from_landmarks_to_depth
 
+
+def add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
+        """Function that adds a landmark to the dataframe"""
+
+        df_headers.append("x{}".format(landmark_idx))
+        df_headers.append("y{}".format(landmark_idx))
+        df_headers.append("z{}".format(landmark_idx))
+
+        df_values.append(landmark[0])
+        df_values.append(landmark[1])
+        df_values.append(landmark[2])
+
+
+
 class DFGeneratorInterface(metaclass=abc.ABCMeta):
     
     @staticmethod
@@ -136,7 +150,7 @@ class IrisDFGenerator(DFGeneratorInterface):
                     for ii in IrisDFGenerator.POINTS_IDX:
 
                         landmark = (landmarks[0, ii], landmarks[1, ii], landmarks[2, ii])
-                        IrisDFGenerator.__add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
+                        add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
 
                         landmark_idx += 1
 
@@ -149,7 +163,7 @@ class IrisDFGenerator(DFGeneratorInterface):
                     )
                     for landmark in eye_landmarks:
                     
-                        IrisDFGenerator.__add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
+                        add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
 
                         landmark_idx += 1
 
@@ -162,7 +176,7 @@ class IrisDFGenerator(DFGeneratorInterface):
                     )
                     for landmark in iris_landmarks:
 
-                        IrisDFGenerator.__add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
+                        add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
 
                         landmark_idx += 1
 
@@ -203,20 +217,6 @@ class IrisDFGenerator(DFGeneratorInterface):
 
 
 
-    @staticmethod
-    def __add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
-        """Helper function that adds a landmark to the dataframe"""
-
-        df_headers.append("x{}".format(landmark_idx))
-        df_headers.append("y{}".format(landmark_idx))
-        df_headers.append("z{}".format(landmark_idx))
-
-        df_values.append(landmark[0])
-        df_values.append(landmark[1])
-        df_values.append(landmark[2])
-
-
-
 
 class FacialDFGenerator(DFGeneratorInterface):
     """Facial landmark dataframe generator"""
@@ -236,7 +236,6 @@ class FacialDFGenerator(DFGeneratorInterface):
         
     
 
-
     @staticmethod
     def __get_face_Landmarks(image_path):
         """Get landmarks for face and format dataframe appropriately"""
@@ -254,14 +253,10 @@ class FacialDFGenerator(DFGeneratorInterface):
                 df_values = []
 
                 for i in range(0, 468):
-                    landmark = facial_landmarks.landmark[i]
-                    df_headers.append("x{}".format(i))
-                    df_headers.append("y{}".format(i))
-                    df_headers.append("z{}".format(i))
-
-                    df_values.append(landmark.x)
-                    df_values.append(landmark.y)
-                    df_values.append(landmark.z)
+                    
+                    landmarks = facial_landmarks.landmark[i]
+                    landmark = (landmarks.x, landmarks.y, landmarks.z)
+                    add_landmark_to_df(landmark, i, df_headers, df_values)
 
                 # create dataframe
                 df = pd.DataFrame([df_values], columns = df_headers)
@@ -284,4 +279,3 @@ class FacialDFGenerator(DFGeneratorInterface):
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-
