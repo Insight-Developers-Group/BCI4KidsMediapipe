@@ -7,6 +7,11 @@ class Answer(Enum):
     YES = 1
     UNDEFINED = 2
 
+class FaceState(Enum):
+    NEUTRAL = 0
+    SMILE = 1 
+    FROWN = 2
+
 
 class AnswerGeneratorInterface(metaclass=abc.ABCMeta):
 
@@ -70,10 +75,6 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
         raise NotImplementedError
 
 
-class FaceState(Enum):
-    NEUTRAL = 0
-    SMILE = 1 
-    FROWN = 2
 
 
 class FacialAnswerGenerator(AnswerGeneratorInterface):
