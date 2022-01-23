@@ -4,6 +4,18 @@ import AnswerGenerator
 import StateGenerator
 import DFGenerator
 
+#python3 -m pip install --upgrade Pillow
+from PIL import Image
+import cv2 as cv
+import numpy
+
+#function to convert an image that is already in a Pillow image format (jpg) to cv2
+#https://stackoverflow.com/questions/14134892/convert-image-from-pil-to-opencv-format
+def convert_image(im):
+    open_cv_image = numpy.array(im)
+    open_cv_image = open_cv_image[:,:,::-1].copy()
+    return open_cv_image
+
 # Setup the socket properties
 # Standard loopback interface address (localhost) - this is the name of the docker network
 HOST = socket.gethostbyname('insight_project')
