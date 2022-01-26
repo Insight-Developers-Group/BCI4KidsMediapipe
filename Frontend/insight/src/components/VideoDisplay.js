@@ -59,8 +59,9 @@ function VideoDisplay(props) {
       () => {
         const imageSrc = webcamRef.current.getScreenshot();
         setimgSrc(imageSrc);
+        props.stack.push(imageSrc);
     
-      },[webcamRef,setimgSrc]
+      },[webcamRef,setimgSrc, props.stack]
     );
 
   return (

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-export default function SampleClient() {
+export default function SampleClient(props) {
 
     let socket = new WebSocket("ws://127.0.0.1:8765/");
 
@@ -33,7 +33,8 @@ export default function SampleClient() {
     useEffect(() => {
         const interval = setInterval(() => {
             console.log("Sending test packet to server");
-            socket.send("This is a test packet");
+            socket.send(props.stack);
+            props.stack.length = 0;
         }, SECOND_MS);
 
         return () => clearInterval(interval);
