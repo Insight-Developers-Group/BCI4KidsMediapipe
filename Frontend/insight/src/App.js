@@ -10,8 +10,11 @@ import VideoDisplay from './components/VideoDisplay'
 //import ModeButton from './components/ModeButton'
 import ModeSwitcher from './components/ModeSwitcher'
 import CardStack from './components/CardStack'
+import SampleClient from "./components/SampleClient"
 
 function App() {
+
+  const imageStack = [];
 
   return (
     <div className="App">
@@ -19,14 +22,14 @@ function App() {
       <HelpButton />
       <ReloadButton />
       <div className="webcam-block">
-        <VideoDisplay />
+        <VideoDisplay stack={imageStack} />
         <ModeSwitcher />
       </div>
       <CardStack />
-      
+      <SampleClient stack={imageStack} />
     </div>
   );
-  
+
 }
 
 export default App;
