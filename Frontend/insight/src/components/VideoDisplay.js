@@ -73,7 +73,7 @@ function VideoDisplay(props) {
         ref={webcamRef}
         screenshotFormat="image/jpeg" />
       <button onClick={capture}>Capture photo</button>
-      {imgSrc && (<img src={imgSrc} />) }
+      {imgSrc && (<img src={imgSrc} alt="Frame capture"/>) }
     </div>
 
     // <video id="video-display" autoPlay={true} ref={videoRef}>
