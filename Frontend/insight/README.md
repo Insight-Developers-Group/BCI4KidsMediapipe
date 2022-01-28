@@ -2,6 +2,17 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Installing Dependencies
+
+Several external packages may need to be installed prior to running the application. This includes the following packages and the commands used to install them:
+
+React Webcam
+### `npm install react-webcam`
+
+## Running the Test Websocket Server
+
+See `../../Python-Websocket-Test/ReadMe.md` for more information
+
 ## Available Scripts
 
 In the project directory, you can run:

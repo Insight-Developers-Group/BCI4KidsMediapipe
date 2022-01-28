@@ -3,11 +3,12 @@ import React, { useEffect } from 'react'
 export default function SampleClient(props) {
 
     let socket = new WebSocket("ws://127.0.0.1:8765/");
+    let socketOpen = false;
 
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
-
+        socketOpen = true;
     };
 
     socket.onmessage = function (event) {
@@ -22,6 +23,7 @@ export default function SampleClient(props) {
             // event.code is usually 1006 in this case
             console.log('[close] Connection died');
         }
+        socketOpen = false;
     };
 
     socket.onerror = function (error) {
@@ -32,13 +34,15 @@ export default function SampleClient(props) {
     const SECOND_MS = 1000;
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log("Sending test packet to server");
-            socket.send(props.stack);
-            props.stack.length = 0;
+            if (socketOpen && props.stack.length !== 0) {
+                console.log("Sending packet to server");
+                socket.send(props.stack);
+                props.stack.length = 0;
+            }
         }, SECOND_MS);
 
         return () => clearInterval(interval);
-    }, [])
+    })
 
 
     return (
