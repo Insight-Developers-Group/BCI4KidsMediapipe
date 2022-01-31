@@ -14,12 +14,12 @@ from StateGenerator import StateGenerator
 import DFGenerator
 
 # Initiate State Generator with the appropriate models
-facialStateGenerator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
-irisStateGenerator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
+facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
+iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
 
 # Two types of Generators
-facialAnswerGenerator = AnswerGenerator.FacialAnswerGenerator()
-irisAnswerGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
+facial_answer_generator = AnswerGenerator.FacialAnswerGenerator()
+iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 
 FACE = "FACE"
 IRIS = "IRIS"
@@ -35,20 +35,19 @@ def process_image(image_data):
 
         df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
 
-        state = facialStateGenerator.get_state(df)
+        state = facial_state_generator.get_state(df)
 
-        facialAnswerGenerator.add_state_to_queue(state)
-        answer = facialAnswerGenerator.determine_answer()
+        facial_answer_generator.add_state_to_queue(state)
+        answer = facial_answer_generator.determine_answer()
 
     elif (image_data[0] == IRIS):
 
         df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
 
-        state = irisStateGenerator.get_state(df)
+        state = iris_state_generator.get_state(df)
 
-        irisAnswerGenerator.add_state_to_queue(state)
-        answer = irisAnswerGenerator.determine_answer()
-
+        iris_answer_generator.add_state_to_queue(state)
+        answer = iris_answer_generator.determine_answer()
 
     return answer
 
