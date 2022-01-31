@@ -26,6 +26,7 @@ async def recv_img(websocket):
             if(i != "data:image/jpeg;base64"):
                 try:
                     ima = Image.open(io.BytesIO(base64.b64decode(i)))
+                    print("hi")
                     #convert the image to cv2 for use in the state generators
                     converted = convert_image(ima)
                 except:

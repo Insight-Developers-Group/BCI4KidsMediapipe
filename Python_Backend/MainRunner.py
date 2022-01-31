@@ -1,85 +1,115 @@
-from asyncio.windows_events import NULL
-import socket
+#!/usr/bin/env python
+
+import asyncio
+from enum import Enum
+import websockets
+from PIL import Image
+import cv2 as cv
+import numpy
+import io
+import base64
+from concurrent.futures import ProcessPoolExecutor
 import AnswerGenerator
 import StateGenerator
 import DFGenerator
 
-# Setup the socket properties
-# Standard loopback interface address (localhost) - this is the name of the docker network
-HOST = socket.gethostbyname('insight_project')
-PORT_1 = 9898        # Port to listen on (non-privileged ports are > 1023)
+# Initiate State Generator with the appropriate models
+stateGenerator = StateGenerator.StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT_1))
-    s.listen()
-    conn, addr = s.accept()  # accepting the socket from the connection
+# Two types of Generators
+facialAnswerGenerator = AnswerGenerator.FacialAnswerGenerator()
+irisAnswerGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 
-    # Queue of images to be processed Tuple of <Type, img>
-    img_queue = []
+FACE = "FACE"
+IRIS = "IRIS"
 
-    # Two types of Generators
-    facialDFGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
-    irisDFGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
+current_tracking_mode = FACE
+current_answer = AnswerGenerator.Answer.UNDEFINED
 
-    # Initiate State Generator with the appropriate models
-    stateGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 
-    # Two types of Generators
-    facialAnswerGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
-    irisAnswerGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
+def process_image(image_data):
 
-    FACE = "FACE"
-    IRIS = "IRIS"
+    answer = AnswerGenerator.Answer.UNDEFINED
 
-    with conn:
-        print('Connected by', addr)
+    # Use the generator based on the imageType
+    df = None
+    if (image_data[0] == FACE):
+        df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
 
-        # Dummy code to echo what is entered by the client
-        ############################################# START OF DUMMY CODE #############################################
-        while True:
-            data = conn.recv(1024)
-            if not data:
-                break
-            conn.sendall(data)
+    elif (image_data[0] == IRIS):
+        df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
+
+    else:
+        return answer
+
+    if current_tracking_mode != image_data[0]:
+
+        if image_data[0] == FACE:
+            stateGenerator = StateGenerator.StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
             
-        ############################################# END OF DUMMY CODE ################################################
+        elif image_data[0] == IRIS:
+            stateGenerator = StateGenerator.StateGenerator("../Machine_Learning_Model/iris_rf.pkl", "IRIS")
+
+    # Run Machine learning algorithm based on type
+    state = stateGenerator.get_state(df)
+
+    print("yui")
+    print(state)
+
+    # Run the Answer Generator
+    if (image_data[0] == FACE):
+        facialAnswerGenerator.add_state_to_queue(state)
+        answer = facialAnswerGenerator.determine_answer()
+
+    #elif (image_data[0] == IRIS):
+        #irisAnswerGenerator.add_state_to_queue(state)
+        #answer = irisAnswerGenerator.determine_answer()
+
+    return answer
 
 
-            
-            # Recieve image from connection and decode as necessary
 
-            # Place it in a queue of images
-            # Reference for working with Queues
-            # https://www.geeksforgeeks.org/queue-in-python/
+#function to convert an image that is already in a Pillow image format (jpg) to cv2
+#https://stackoverflow.com/questions/14134892/convert-image-from-pil-to-opencv-format
+def convert_image(im):
+    open_cv_image = numpy.array(im)
+    open_cv_image = open_cv_image[:,:,::-1].copy()
+    return open_cv_image
 
-            while len(img_queue) > 0:
-                img = img_queue.pop()
-                # Use the generator based on the imageType
-                df = None
-                if (img[0] == FACE):
-                    # df = facialDFGenerator.generateLandmarks(img[1])
-                    pass
-                elif (img[0] == IRIS):
-                    # df = irisDFGenerator.generateLandmarks(img[1])
-                    pass 
-                else:
-                    # Send an error message through the socket
-                    continue
+#async function to recieve an image or images through a websocket
+#https://stackoverflow.com/questions/26070547/decoding-base64-from-post-to-use-in-pil
+#takes in the message from the websocket and then strips out all the unneeded header information so we just have the base64 encoded data
+#this data can then be converted into a PIL image and then dealt with as needed
+async def recv_image(websocket):
 
-                # Run Machine learning algorithm based on type
-                # state = stateGenerator.getState(img[0], img[1])
+    async for message in websocket:
+        temp = message.split(",")
+        for i in temp:
+            if(i != "data:image/jpeg;base64"):
+                try:
+                    ima = Image.open(io.BytesIO(base64.b64decode(i)))
+                    print("hello")
+                    #convert the image to cv2 for use in the state generators
+                    converted = convert_image(ima)
 
-                # Run the Answer Generator
-                answer = None
-                if (img[0] == FACE):
-                    # answer = facialAnswerGenerator.getAnswer(img[1])
+                    answer = process_image((FACE, converted))
 
-                elif (img[0] == IRIS):
-                    # answer = irisAnswerGenerator.getAnswer(img[1])
+                    if (answer != current_answer) and (answer != AnswerGenerator.Answer.UNDEFINED):
+                        current_answer = answer
+                        print(answer)
+                        await websocket.send(answer)
 
-                    # If the answer is a nonetype it means not enough frames have been processed to give an answer - continue
-                if (answer == None):
-                    continue
+                except:
+                    print("there was an error with that image and it could not be decoded")
+                    #at this point we could call for the program to quit or return an error here, depends whats appropriate
 
-                # Send the response to the frontend
-                conn.sendall(answer)
+
+
+async def start_websocket():
+    async with websockets.serve(recv_image, "localhost", 8765):
+        await asyncio.Future()  # run forever
+
+
+
+asyncio.run(start_websocket())
+
