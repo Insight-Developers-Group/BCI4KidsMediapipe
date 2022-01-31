@@ -10,11 +10,12 @@ import io
 import base64
 from concurrent.futures import ProcessPoolExecutor
 import AnswerGenerator
-import StateGenerator
+from StateGenerator import StateGenerator
 import DFGenerator
 
 # Initiate State Generator with the appropriate models
-stateGenerator = StateGenerator.StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
+facialStateGenerator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
+irisStateGenerator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
 
 # Two types of Generators
 facialAnswerGenerator = AnswerGenerator.FacialAnswerGenerator()
@@ -23,7 +24,6 @@ irisAnswerGenerator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 FACE = "FACE"
 IRIS = "IRIS"
 
-current_tracking_mode = FACE
 current_answer = AnswerGenerator.Answer.UNDEFINED
 
 
@@ -31,39 +31,23 @@ def process_image(image_data):
 
     answer = AnswerGenerator.Answer.UNDEFINED
 
-    # Use the generator based on the imageType
-    df = None
     if (image_data[0] == FACE):
+
         df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
 
-    elif (image_data[0] == IRIS):
-        df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
+        state = facialStateGenerator.get_state(df)
 
-    else:
-        return answer
-
-    if current_tracking_mode != image_data[0]:
-
-        if image_data[0] == FACE:
-            stateGenerator = StateGenerator.StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
-            
-        elif image_data[0] == IRIS:
-            stateGenerator = StateGenerator.StateGenerator("../Machine_Learning_Model/iris_rf.pkl", "IRIS")
-
-    # Run Machine learning algorithm based on type
-    state = stateGenerator.get_state(df)
-
-    print("yui")
-    print(state)
-
-    # Run the Answer Generator
-    if (image_data[0] == FACE):
         facialAnswerGenerator.add_state_to_queue(state)
         answer = facialAnswerGenerator.determine_answer()
 
-    #elif (image_data[0] == IRIS):
-        #irisAnswerGenerator.add_state_to_queue(state)
-        #answer = irisAnswerGenerator.determine_answer()
+    elif (image_data[0] == IRIS):
+
+        df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
+
+        state = irisStateGenerator.get_state(df)
+
+        irisAnswerGenerator.add_state_to_queue(state)
+        answer = irisAnswerGenerator.determine_answer()
 
     return answer
 
@@ -105,11 +89,15 @@ async def recv_image(websocket):
 
 
 
-async def start_websocket():
-    async with websockets.serve(recv_image, "localhost", 8765):
-        await asyncio.Future()  # run forever
+#async def start_websocket():
+#    async with websockets.serve(recv_image, "localhost", 8765):
+#        await asyncio.Future()  # run forever
 
 
 
-asyncio.run(start_websocket())
+#asyncio.run(start_websocket())
+
+
+image = cv.imread(str("tim.jpg"))
+process_image((FACE, image))
 
