@@ -26,11 +26,7 @@ class StateGenerator:
     
     def get_state(self, img_df):
         with open(self.model_path, 'rb') as f:
-            print("get_state")
-            print(self.model_path)
-            print(self.model_type)
             model = pickle.load(f)
-            print("get_sss")
             #body_language_class is a number between 0 and len(states -1) state numbers correspond to model
             #i.e. for FACE: 0 = Neutral, 1 = Smile, 2 = Frown
             body_language_class = model.predict(img_df)[0]
