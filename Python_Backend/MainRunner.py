@@ -49,6 +49,7 @@ def process_image(image_data):
         irisAnswerGenerator.add_state_to_queue(state)
         answer = irisAnswerGenerator.determine_answer()
 
+
     return answer
 
 
@@ -89,15 +90,10 @@ async def recv_image(websocket):
 
 
 
-#async def start_websocket():
-#    async with websockets.serve(recv_image, "localhost", 8765):
-#        await asyncio.Future()  # run forever
+async def start_websocket():
+    async with websockets.serve(recv_image, "localhost", 8765):
+        await asyncio.Future()  # run forever
 
 
 
-#asyncio.run(start_websocket())
-
-
-image = cv.imread(str("tim.jpg"))
-process_image((FACE, image))
-
+asyncio.run(start_websocket())
