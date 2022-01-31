@@ -1,14 +1,21 @@
 import pickle
 import pandas as pd
+
+class ModelStates:
+    
+    FACE_STATES = ["NEUTRAL", "SMILE", "FROWN"]
+    IRIS_STATES = ["EYES_UP", "EYES_DOWN", "EYES_LEFT", "EYES_RIGHT", "EYES_CENTRE"]
+
+
 class StateGenerator:
     def __init__(self, model_path, model_type):
         self.model_path = model_path
         self.model_type = model_type
         self.states = None
         if (self.model_type == "FACE"):
-            self.states = ["NEUTRAL", "SMILE", "FROWN"]
+            self.states = ModelStates.FACE_STATES
         elif (self.model_type == "IRIS"):
-            self.states = ["EYES_UP", "EYES_DOWN", "EYES_LEFT", "EYES_RIGHT", "EYES_CENTRE"]
+            self.states = ModelStates.IRIS_STATES
         else:
             raise ValueError(model_type)
 
