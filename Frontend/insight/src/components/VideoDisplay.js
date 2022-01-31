@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import Webcam from "react-webcam";
 
 // const videoDisplay = document.getElementById("video-display");
 // if (window.visualViewport.height - videoDisplay.style.height - 80 >
@@ -13,34 +14,44 @@ import React, { useEffect, useRef } from 'react';
 // Component to display webcam view to the screen along with placeholder when camera is not accessible
 function VideoDisplay(props) {
 
-  // Following code sourced from:
-  // https://itnext.io/accessing-the-webcam-with-javascript-and-react-33cbe92f49cb
-  const videoRef = useRef(null);
+  const webcamRef = React.useRef(null);
+  const [imgSrc, setimgSrc] = React.useState(null);
 
+  // Capture a screenshot of the current webcam view and add to the imageSrc array
+  const capture = React.useCallback(
+    () => {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setimgSrc(imageSrc)
+      if (imageSrc != null) {
+        console.log("Saving image to array");
+        props.stack.push(imageSrc);
+      }
+    },[webcamRef, props.stack, setimgSrc]
+  );
+
+  // Repeatedly capture images from the webcam
+  const FRAME_RATE = 125; // Not completely sure about this number, seems to break the websocket if put much lower
   useEffect(() => {
-    getVideo();
-    console.log("live-feed-on")
-  }, [videoRef]);
+      const interval = setInterval(() => {
+          capture();
+      }, FRAME_RATE);
 
-  const getVideo = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: { width: 400 } })
-      .then(stream => {
-        let video = videoRef.current;
-        video.srcObject = stream;
-        video.play();
-      })
-      .catch(err => {
-        console.log("error:", err);
-      });
-  };
-  // -----------------------------------------------
+      return () => clearInterval(interval);
+  }, [capture])
+  
 
   return (
-    <video id="video-display" autoPlay={true} ref={videoRef}>
-      <source src={getVideo()} data-testid='video-display' />
-      Please enable your webcam to continue
-    </video>
+    <div>
+      <Webcam
+        id="video-display"
+        audio={false}
+        ref={webcamRef}
+        screenshotFormat="image/jpeg"
+        height={720}
+        width={1280} />
+      {/* <button onClick={capture}>Capture photo</button>
+      {imgSrc && (<img src={imgSrc} alt="Frame capture"/>) } */}
+    </div>
   )
 }
 

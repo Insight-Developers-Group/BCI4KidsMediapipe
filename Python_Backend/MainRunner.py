@@ -41,8 +41,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if not data:
                 break
             conn.sendall(data)
+            
         ############################################# END OF DUMMY CODE ################################################
 
+
+            
             # Recieve image from connection and decode as necessary
 
             # Place it in a queue of images

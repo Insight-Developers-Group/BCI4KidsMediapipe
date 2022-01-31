@@ -11,6 +11,7 @@
     "react-icons": "^4.3.1",
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",
+    "react-webcam": "^6.0.1",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
