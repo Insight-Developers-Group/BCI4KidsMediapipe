@@ -79,10 +79,12 @@ async def recv_image(websocket):
 
                     answer = process_image((FACE, converted))
 
-                    if (answer != current_answer) and (answer != AnswerGenerator.Answer.UNDEFINED):
+                    if (answer != current_answer):
                         current_answer = answer
-                        print(answer)
-                        await websocket.send(answer)
+
+                        if (answer != AnswerGenerator.Answer.UNDEFINED):
+                            print(answer)
+                            await websocket.send(answer)
 
                 except:
                     print("there was an error with that image and it could not be decoded")
