@@ -80,7 +80,7 @@ class IrisDFGenerator(DFGeneratorInterface):
 
 
     @staticmethod
-    def __get_iris_landmarks(image_path):
+    def __get_iris_landmarks(image):
         """Get landmarks for iris and formats dataframe appropriately"""
 
         landmarks = None
@@ -94,8 +94,6 @@ class IrisDFGenerator(DFGeneratorInterface):
             min_tracking_confidence=0.5,
         ) as face_mesh:
             
-            # todo: get proper image format and convert it to cv2 image
-            image = cv2.imread(str(image_path))
             frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = face_mesh.process(frame_rgb)
 
@@ -260,14 +258,11 @@ class FacialDFGenerator(DFGeneratorInterface):
     
 
     @staticmethod
-    def __get_face_Landmarks(image_path):
+    def __get_face_Landmarks(image):
         """Get landmarks for face and format dataframe appropriately"""
 
         with FacialDFGenerator.__faceModule.FaceMesh(static_image_mode=True) as face:
             
-            # todo: take in proper image format and convert it tocv2 image
-            image = cv2.imread(str(image_path))
-
             results = face.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
             # check that only one face is in frame, otherwise throw an exception
@@ -311,3 +306,4 @@ class FacialDFGenerator(DFGeneratorInterface):
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+

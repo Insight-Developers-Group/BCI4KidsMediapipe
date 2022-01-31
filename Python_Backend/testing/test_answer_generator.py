@@ -142,7 +142,6 @@ class TestAnswerGenerator(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             ag = AnswerGenerator.FacialAnswerGenerator()        
             ag.add_state_to_queue("San Pellegrino")
-
+            
         self.assertTrue("FacialAnswerGenerator: Invalid state cannot be added to queue" in str(context.exception))
-    
 
