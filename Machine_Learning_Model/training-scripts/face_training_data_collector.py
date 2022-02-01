@@ -12,6 +12,8 @@ circleDrawingSpec = drawingModule.DrawingSpec(thickness=1, circle_radius=1, colo
 lineDrawingSpec = drawingModule.DrawingSpec(thickness=1, color=(0, 255, 0))
 
 def collect(outputfile):
+    if (outputfile is None):
+        raise TypeError("No output file specified.")
     FIRST_TIME = True
     cap = cv2.VideoCapture(0)
     with faceModule.FaceMesh() as face:

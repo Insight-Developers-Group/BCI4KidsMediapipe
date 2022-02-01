@@ -45,6 +45,8 @@ def __add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
 
 
 def main(inp,outputfilepath):
+    if (outputfilepath is None):
+        raise TypeError("No output file specified.")
     FIRST_TIME = True
     if inp is None:
         frame_height, frame_width = (720, 1280)
