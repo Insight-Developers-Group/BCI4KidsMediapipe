@@ -108,7 +108,7 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
                 self.__past_frames.append(frame)
 
                 self.__update_counters(popped_frame, frame)
-
+                self.__update_states_queue()
                 return
         
         raise Exception("IrisAnswerGenerator: Invalid frame cannot be added to queue")
@@ -122,7 +122,7 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
             if ModelStates.IRIS_STATES[x] == popped_frame:
                 self.__state_counters[x] -= 1
             
-            elif ModelStates.IRIS_STATES[x] == added_frame:
+            if ModelStates.IRIS_STATES[x] == added_frame:
                 self.__state_counters[x] += 1
 
         return
@@ -130,8 +130,6 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
 
     def determine_answer(self):
         """ Returns Yes, No, or Undefined based on current states in queue """
-
-        self.__update_states_queue()
 
         if self.__determine_series(IrisState.EYES_UP.value, IrisState.EYES_DOWN.value, self.NUM_OF_UP_DOWN_PATTERNS_FOR_YES):
             return Answer.YES
@@ -163,18 +161,18 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
         self.__frames_in_invalid_state += 1
         self.__frames_in_current_state = 0
 
-        if self.__frames_in_invalid_state > self.INVALID_BUFFER:
-            self.__add_state_to_queue(ModelStates.IRIS_STATES[IrisState.INVALID_INIT])
+        if self.__frames_in_invalid_state >= self.INVALID_BUFFER:
+            self.__add_state_to_queue("INVALID")
 
 
     def __add_state_to_queue(self, state):
         """ Retruns True if state is added to __past_states queue """
 
         # Check that the last state added is not the same as the current state
-        if self.__past_states[self.STATE_QUEUE_SIZE - 1] != state or self.__frames_in_current_state > self.MAX_FRAMES_PER_STATE:
+        if self.__past_states[self.STATE_QUEUE_SIZE - 1] != state or self.__frames_in_current_state >= self.MAX_FRAMES_PER_STATE:
 
             self.__past_states.append(state)
-            self.__past_states.pop()
+            self.__past_states.pop(0)
 
             return True
 
@@ -193,12 +191,12 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
 
         num_of_up_down_patterns = 0
 
-        for i in range(len(self.__past_frames) - 1):
+        for i in range(len(self.__past_states) - 1):
             
-            if self.__past_frames[i] == ModelStates.FACE_STATES[state_0] and self.__past_frames[i + 1] == ModelStates.FACE_STATES[state_1]:            
+            if self.__past_states[i] == ModelStates.IRIS_STATES[state_0] and self.__past_states[i + 1] == ModelStates.IRIS_STATES[state_1]:            
                 num_of_up_down_patterns += 1
 
-            elif self.__past_frames[i] == ModelStates.FACE_STATES[state_0] and self.__past_frames[i + 1] == ModelStates.FACE_STATES[state_1]:
+            elif self.__past_states[i + 1] == ModelStates.IRIS_STATES[state_0] and self.__past_states[i] == ModelStates.IRIS_STATES[state_1]:
                 num_of_up_down_patterns += 1
             
             else:
