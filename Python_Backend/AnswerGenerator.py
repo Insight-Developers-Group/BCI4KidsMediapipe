@@ -133,10 +133,10 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
 
         self.__update_states_queue()
 
-        if self.__determine_series(self, IrisState.EYES_UP.value, IrisState.EYES_DOWN.value, self.NUM_OF_UP_DOWN_PATTERNS_FOR_YES):
+        if self.__determine_series(IrisState.EYES_UP.value, IrisState.EYES_DOWN.value, self.NUM_OF_UP_DOWN_PATTERNS_FOR_YES):
             return Answer.YES
 
-        elif self.__determine_series(self, IrisState.EYES_RIGHT.value, IrisState.EYES_LEFT.value, self.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO):
+        elif self.__determine_series(IrisState.EYES_RIGHT.value, IrisState.EYES_LEFT.value, self.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO):
             return Answer.NO
         
         return Answer.UNDEFINED
@@ -259,10 +259,10 @@ class FacialAnswerGenerator(AnswerGeneratorInterface):
     def determine_answer(self):
         """ Returns Yes, No, Undefined, or Error based on current frames in queue """
 
-        if self.__determine_series(self, FaceState.SMILE.value, self.NUM_OF_FRAMES_TO_CREATE_YES_SERIES):
+        if self.__determine_series(FaceState.SMILE.value, self.NUM_OF_FRAMES_TO_CREATE_YES_SERIES):
             return Answer.YES
 
-        elif self.__determine_series(self, FaceState.FROWN.value, self.NUM_OF_FRAMES_TO_CREATE_NO_SERIES):
+        elif self.__determine_series(FaceState.FROWN.value, self.NUM_OF_FRAMES_TO_CREATE_NO_SERIES):
             return Answer.NO
         
         return Answer.UNDEFINED
