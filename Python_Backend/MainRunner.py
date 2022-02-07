@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import asyncio
+import binascii
 from enum import Enum
 import websockets
 from PIL import Image
+from PIL import UnidentifiedImageError
 import cv2 as cv
 import numpy
 import io
@@ -85,9 +87,16 @@ async def recv_image(websocket):
                             print(answer)
                             await websocket.send(answer)
 
-                except:
-                    print("there was an error with that image and it could not be decoded")
+                #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
+                except (UnidentifiedImageError, ValueError, TypeError) as ex:
+                    print("there was an error with that image and it could not be decoded and opened as an image")
+                    print(ex)
                     #at this point we could call for the program to quit or return an error here, depends whats appropriate
+                
+                #except the error from decoding the base64 data
+                except (binascii.Error) as decod:
+                    print("There was an error decoding the image data in base64")
+                    print(decod)
 
 
 
