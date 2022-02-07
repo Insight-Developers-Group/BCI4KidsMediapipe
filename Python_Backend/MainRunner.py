@@ -107,4 +107,3 @@ async def start_websocket():
 
 
 asyncio.run(start_websocket())
-print("test")
