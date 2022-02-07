@@ -243,3 +243,42 @@ code {
 .footerElements{
   display: flex;
 }
+
+/*-- Help Menu --*/
+.help-menu-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+  background-color: hsla(0, 0%, 7%, 0.5);
+}
+
+.help-menu {
+  position: fixed;
+  border-radius: 2rem;
+  display: block;
+  width: min(60vw, 90ch);
+  height: 30rem;
+  left: calc((100vw - min(60vw, 90ch)) / 2);
+  top: calc((100vh - 30rem) / 2);
+  background-color: #FFFFFF;
+  z-index: 6;
+}
+
+.help-menu-close {
+
+}
+
+.help-menu-icon {
+  width: 3rem;
+}
+
+.help-menu-title {
+  color: #000000;
+}
+
+.help-menu-content {
+  color: #000000;
+}
