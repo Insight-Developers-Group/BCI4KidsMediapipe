@@ -8,7 +8,7 @@ sys.path.insert(0, '../')
 from StateGenerator import StateGenerator
 
 
-class TestAnswerGenerator(unittest.TestCase):
+class TestStateGenerator(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         __main__.MockFaceClassifier = MockFaceClassifier
         self.cls = MockFaceClassifier
