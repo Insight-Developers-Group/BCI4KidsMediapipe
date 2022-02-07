@@ -59,8 +59,8 @@ class IrisAnswerGenerator(AnswerGeneratorInterface):
                              25,  # eyes_right
                              25]  # eyes_center
 
-    INVALID_BUFFER       = FRAME_QUEUE_SIZE * 2   # Number of frames queue can be invalid (no state) before an invalid state is added to __past_states
-    MAX_FRAMES_PER_STATE = FRAME_QUEUE_SIZE * 6   # Number of frames allowed in one state, before adding state to __past_states queue again
+    INVALID_BUFFER       = FRAME_QUEUE_SIZE * 2 + 1 # Number of frames queue can be invalid (no state) before an invalid state is added to __past_states
+    MAX_FRAMES_PER_STATE = FRAME_QUEUE_SIZE * 6     # Number of frames allowed in one state, before adding state to __past_states queue again
 
     INIT_STATE = "INIT"
 

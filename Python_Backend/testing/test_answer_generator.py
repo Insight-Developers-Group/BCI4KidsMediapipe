@@ -352,6 +352,110 @@ class TestAnswerGenerator(unittest.TestCase):
         
         self.assertEqual(ag.determine_answer(), Answer.YES)
 
+    def test_determine_yes_series_reverse(self):
+        ag = AnswerGenerator.IrisAnswerGenerator()
+
+        for i in range(ag.NUM_OF_UP_DOWN_PATTERNS_FOR_YES):
+
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_DOWN.value]):
+            
+                ag.add_frame_to_queue("EYES_DOWN") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_UP.value]):
+            
+                ag.add_frame_to_queue("EYES_UP") 
+        
+        self.assertEqual(ag.determine_answer(), Answer.YES)
+
+    def test_determine_no_series(self):
+        ag = AnswerGenerator.IrisAnswerGenerator()
+
+        for i in range(ag.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO):
+
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_LEFT.value]):
+            
+                ag.add_frame_to_queue("EYES_LEFT") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_RIGHT.value]):
+            
+                ag.add_frame_to_queue("EYES_RIGHT") 
+        
+        self.assertEqual(ag.determine_answer(), Answer.NO)
+
+    def test_determine_no_series_reverse(self):
+        ag = AnswerGenerator.IrisAnswerGenerator()
+
+        for i in range(ag.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO):
+
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_RIGHT.value]):
+            
+                ag.add_frame_to_queue("EYES_RIGHT") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_LEFT.value]):
+            
+                ag.add_frame_to_queue("EYES_LEFT") 
+        
+        self.assertEqual(ag.determine_answer(), Answer.NO)
+
+    def test_determine_undefined_series_0(self):
+        ag = AnswerGenerator.IrisAnswerGenerator()
+
+        for i in range(ag.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO + 1):
+
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_LEFT.value]):
+            
+                ag.add_frame_to_queue("EYES_LEFT") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_RIGHT.value]):
+            
+                ag.add_frame_to_queue("EYES_UP") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_RIGHT.value]):
+            
+                ag.add_frame_to_queue("EYES_RIGHT") 
+        
+        self.assertEqual(ag.determine_answer(), Answer.UNDEFINED)
+
+    def test_determine_no_series_with_eyes_up_frames(self):
+        ag = AnswerGenerator.IrisAnswerGenerator()
+
+        for i in range(ag.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO + 1):
+
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_LEFT.value]):
+            
+                ag.add_frame_to_queue("EYES_LEFT") 
+
+                if x % 5 == 0:
+                    ag.add_frame_to_queue("EYES_UP") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_RIGHT.value]):
+            
+                ag.add_frame_to_queue("EYES_RIGHT") 
+
+                if x % 5 == 0:
+                    ag.add_frame_to_queue("EYES_UP") 
+        
+        self.assertEqual(ag.determine_answer(), Answer.NO)
+
+    def test_determine_yes_series_with_eyes_centre_frames(self):
+        ag = AnswerGenerator.IrisAnswerGenerator()
+
+        for i in range(ag.NUM_OF_LEFT_RIGHT_PATTERNS_FOR_NO + 1):
+
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_LEFT.value]):
+            
+                ag.add_frame_to_queue("EYES_LEFT") 
+
+                if x % 5 == 0:
+                    ag.add_frame_to_queue("EYES_CENTRE") 
+            
+            for x in range(ag.FRAMES_FOR_STATE_LIST[AnswerGenerator.IrisState.EYES_RIGHT.value]):
+            
+                ag.add_frame_to_queue("EYES_RIGHT") 
+
+                if x % 6 == 0:
+                    ag.add_frame_to_queue("EYES_CENTRE") 
+
     def test_iris_add_invalid_frame(self):
         with self.assertRaises(Exception) as context:
             ag = AnswerGenerator.FacialAnswerGenerator()        
