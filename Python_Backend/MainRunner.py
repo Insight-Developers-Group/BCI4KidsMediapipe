@@ -12,6 +12,8 @@ from concurrent.futures import ProcessPoolExecutor
 import AnswerGenerator
 from StateGenerator import StateGenerator
 import DFGenerator
+import json 
+
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
@@ -83,7 +85,11 @@ async def recv_image(websocket):
 
                         if (answer != AnswerGenerator.Answer.UNDEFINED):
                             print(answer)
-                            await websocket.send(answer)
+                            response = {}
+                            response['response'] = answer
+                            json_object = json.dumps(response, indent = 4) 
+
+                            await websocket.send(json_object)
 
                 except:
                     print("there was an error with that image and it could not be decoded")
