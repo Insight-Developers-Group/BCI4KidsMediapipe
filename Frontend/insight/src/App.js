@@ -27,7 +27,6 @@ function App() {
         <VideoDisplay stack={imageStack} />
         <ModeSwitcher />
       </div>
-      <CardStack />
       <SampleClient stack={imageStack} />
     </div>
   );

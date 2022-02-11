@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import CardStack from "./CardStack";
 
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
@@ -38,7 +39,7 @@ export default function SampleClient(props) {
     useEffect(() => {
         const interval = setInterval(() => {
             if (socketOpen && props.stack.length !== 0) {
-                console.log("Sending packet to server");
+                // console.log("Sending packet to server");
                 // Oldest frames in the image stack array are sent first
                 let item = props.stack.shift();
                 socket.send(item);
@@ -49,5 +50,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <div></div>;
+    return <div><CardStack response="yes" /></div>;
 }
