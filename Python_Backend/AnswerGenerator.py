@@ -2,6 +2,9 @@ import abc
 from enum import Enum
 from StateGenerator import ModelStates
 
+class InvalidStateException(Exception):
+    pass
+
 class Answer(Enum):
     NO = 0
     YES = 1
@@ -113,7 +116,7 @@ class FacialAnswerGenerator(AnswerGeneratorInterface):
 
                 return
         
-        raise Exception("FacialAnswerGenerator: Invalid state cannot be added to queue")
+        raise InvalidStateException("FacialAnswerGenerator: Invalid state cannot be added to queue")
 
 
 
