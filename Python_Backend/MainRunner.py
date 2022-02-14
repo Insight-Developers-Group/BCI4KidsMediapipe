@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
 import asyncio
-import binascii
-import os
-from multiprocessing.sharedctypes import Value
-import websockets
-from PIL import Image
-from PIL import UnidentifiedImageError
-import cv2 as cv
-import numpy
-import io
 import base64
+import binascii
+import io
+import numpy
+from PIL import Image, UnidentifiedImageError
+import websockets
+
 import AnswerGenerator
-from StateGenerator import StateGenerator
 import DFGenerator
+from StateGenerator import StateGenerator
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")

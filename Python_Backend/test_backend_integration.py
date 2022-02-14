@@ -1,5 +1,4 @@
 import cv2 
-import os
 import unittest
 import sys
 sys.path.insert(0, '../')
