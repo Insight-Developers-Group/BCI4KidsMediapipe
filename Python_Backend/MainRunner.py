@@ -14,6 +14,8 @@ from concurrent.futures import ProcessPoolExecutor
 import AnswerGenerator
 from StateGenerator import StateGenerator
 import DFGenerator
+import json 
+
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
@@ -85,7 +87,11 @@ async def recv_image(websocket):
 
                         if (answer != AnswerGenerator.Answer.UNDEFINED):
                             print(answer)
-                            await websocket.send(answer)
+                            response = {}
+                            response['response'] = answer
+                            json_object = json.dumps(response, indent = 4) 
+
+                            await websocket.send(json_object)
 
                 #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
                 except (UnidentifiedImageError, ValueError, TypeError) as ex:
@@ -105,5 +111,5 @@ async def start_websocket():
         await asyncio.Future()  # run forever
 
 
-
-asyncio.run(start_websocket())
+if __name__ == "__main__":
+    asyncio.run(start_websocket())
