@@ -80,30 +80,33 @@ async def recv_image(websocket):
 
                     #convert the image to cv2 for use in the state generators
 
-                    number = random.randint(0,10)
+                    # number = random.randint(0,10)
 
-                    if ( number  <5 ):
+                    # if ( number  <5 ):
 
-                        answer = "YES"
-                    else:
-                        answer = "NO"
-                    time.sleep(1)
-                    # converted = convert_image(ima)
-                    # try:
-                    #     answer = process_image((FACE, converted))
-                    # except:
-                    #     pass
-
-                    # if (answer != current_answer):
-                    #     current_answer = answer
+                    #     answer = "YES"
+                    # else:
+                    #     answer = "NO"
+                    # 
+                    converted = convert_image(ima)
+                    try:
+                        answer = process_image((FACE, converted))
+                    except:
+                        print("exception occured")
+                        return None
                     # TEMPORARY REMOVAL
-                    if (answer != AnswerGenerator.Answer.UNDEFINED):
-                        print("Generated Answer: {}".format(answer))
-                        #Put the answer in a json to send
-                        returnInformation = {}
-                        returnInformation['Answer'] = answer
-                        json_returnInfo = json.dumps(returnInformation, indent = 4)
-                        await websocket.send(json_returnInfo)
+                    if (answer == AnswerGenerator.Answer.UNDEFINED):
+                        answer = "NO"
+                    if (answer == AnswerGenerator.Answer.YES):
+                        answer = "YES"
+                    
+                    # print("Generated Answer: {}".format(answer))
+                    #Put the answer in a json to send
+                    returnInformation = {}
+                    returnInformation['Answer'] = answer
+                    json_returnInfo = json.dumps(returnInformation, indent = 4)
+                    await websocket.send(json_returnInfo)
+                        
 
                 #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
                 except (UnidentifiedImageError, ValueError, TypeError) as ex:
