@@ -34,7 +34,7 @@ export default function SampleClient(props) {
     };
 
     // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component/65049865
-    const SECOND_MS = 9; // Rate at which frames are sent to the server, made this lower than the VideoDisplay frame rate to prevent bottlenecks
+    const SECOND_MS = 33; // Rate at which frames are sent to the server, made this lower than the VideoDisplay frame rate to prevent bottlenecks
     useEffect(() => {
         const interval = setInterval(() => {
             if (socketOpen && props.stack.length !== 0) {

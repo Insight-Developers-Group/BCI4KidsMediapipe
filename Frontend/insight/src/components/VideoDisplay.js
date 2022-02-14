@@ -27,7 +27,7 @@ function VideoDisplay(props) {
     }, [webcamRef, props.stack, setimgSrc]);
 
     // Repeatedly capture images from the webcam
-    const FRAME_RATE = 10; // Sets the framerate at which images are captured from the camera
+    const FRAME_RATE = 34; // Sets the framerate at which images are captured from the camera
     useEffect(() => {
         const interval = setInterval(() => {
             capture();
