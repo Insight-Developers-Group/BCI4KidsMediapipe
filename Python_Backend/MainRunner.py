@@ -158,22 +158,14 @@ async def recv_image(websocket):
 
 
 
-#async def start_websocket():
-#    async with websockets.serve(recv_image, "localhost", 8765):
-#        await asyncio.Future()  # run forever
+async def start_websocket():
+    async with websockets.serve(recv_image, "localhost", 8765):
+        await asyncio.Future()  # run forever
+
+def main():
+    asyncio.run(start_websocket())
+
+if __name__ == "__main__":
+    main()
 
 
-
-#asyncio.run(start_websocket())
-
-import os
-
-print('getcwd:      ', os.getcwd())
-print('__file__:    ', __file__)
-
-image = cv.imread("testing/smile_1.jpg")
-
-for x in range(30):
-    answer = process_image((FACE, image))
-
-    print(answer)
