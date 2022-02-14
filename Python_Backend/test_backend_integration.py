@@ -4,7 +4,7 @@ import unittest
 import sys
 sys.path.insert(0, '../')
 
-from MainRunner import process_image
+import MainRunner
 from AnswerGenerator import Answer
 
 FACE = "FACE"
@@ -17,7 +17,7 @@ class TestBackendIntegration(unittest.TestCase):
         image = cv2.imread("testing/test_resources/smile_1.jpg")
 
         for x in range(30):
-            answer = process_image((FACE, image))
+            answer = MainRunner.process_image((FACE, image))
 
         self.assertEqual(answer.value, Answer.YES.value)
 
@@ -30,9 +30,9 @@ class TestBackendIntegration(unittest.TestCase):
         for x in range(30):
 
             if x % 5 == 0:
-                process_image((FACE, image_neutral))
+                MainRunner.process_image((FACE, image_neutral))
 
-            answer = process_image((FACE, image_smile))
+            answer = MainRunner.process_image((FACE, image_smile))
 
         self.assertEqual(answer.value, Answer.YES.value)
 
@@ -45,10 +45,36 @@ class TestBackendIntegration(unittest.TestCase):
         for x in range(30):
 
             if x % 5 == 0:
-                process_image((FACE, image_smile))
+                MainRunner.process_image((FACE, image_smile))
 
-            answer = process_image((FACE, image_neutral))
-
-            answer
+            answer = MainRunner.process_image((FACE, image_neutral))
 
         self.assertEqual(answer.value, Answer.UNDEFINED.value)
+
+    def test_facial_no_face_detected_exception(self):
+
+        image = cv2.imread("testing/test_resources/panda.png")
+        answer = MainRunner.process_image((FACE, image))
+
+        self.assertEqual(answer, MainRunner.no_face_detected_exception)
+
+    def test_facial_multi_face_detected_0_exception(self):
+
+        image = cv2.imread("testing/test_resources/two_faces_1.png")
+        answer = MainRunner.process_image((FACE, image))
+
+        self.assertEqual(answer, MainRunner.multi_face_detected_exception)
+
+    def test_facial_multi_face_detected_1_exception(self):
+
+        image = cv2.imread("testing/test_resources/three_faces_1.png")
+        answer = MainRunner.process_image((FACE, image))
+
+        self.assertEqual(answer, MainRunner.multi_face_detected_exception)
+    
+    def test_facial_invalid_path_exception(self):
+
+        image = cv2.imread("invalid/path/pic.png")
+        answer = MainRunner.process_image((FACE, image))
+
+        self.assertEqual(answer, MainRunner.df_generator_exception)

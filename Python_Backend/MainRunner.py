@@ -28,7 +28,7 @@ IRIS = "IRIS"
 
 # Error Strings
 invalid_state_exception = "ERROR: Invalid State Exception"
-no_face_dectected_exception = "ERROR: No Face Detected"
+no_face_detected_exception = "ERROR: No Face Detected"
 multi_face_detected_exception = "ERROR: Multiple Faces Detected"
 invalid_model_type = "ERROR: Invalid Model Type"
 
@@ -49,7 +49,7 @@ def process_image(image_data):
             df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
         
         except DFGenerator.NoFaceDetectedException:
-            return no_face_dectected_exception
+            return no_face_detected_exception
         
         except DFGenerator.MultiFaceDetectedException:
             return multi_face_detected_exception
@@ -82,7 +82,7 @@ def process_image(image_data):
             df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
 
         except DFGenerator.NoFaceDetectedException:
-            return no_face_dectected_exception
+            return no_face_detected_exception
         
         except DFGenerator.MultiFaceDetectedException:
             return multi_face_detected_exception
