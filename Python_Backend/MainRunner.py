@@ -15,6 +15,7 @@ import AnswerGenerator
 from StateGenerator import StateGenerator
 import DFGenerator
 import json
+import time
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
@@ -78,6 +79,8 @@ async def recv_image(websocket):
 
                     #convert the image to cv2 for use in the state generators
                     answer = "YES"
+                    time.sleep(1)
+                    answer = "NO"
                     # converted = convert_image(ima)
                     # try:
                     #     answer = process_image((FACE, converted))
