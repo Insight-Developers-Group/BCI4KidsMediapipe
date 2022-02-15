@@ -41,7 +41,7 @@ def process_image(image_data):
 
         state = facial_state_generator.get_state(df)
 
-        facial_answer_generator.add_state_to_queue(state)
+        facial_answer_generator.add_frame_to_queue(state)
         answer = facial_answer_generator.determine_answer()
 
     elif (image_data[0] == IRIS):
@@ -50,7 +50,7 @@ def process_image(image_data):
 
         state = iris_state_generator.get_state(df)
 
-        iris_answer_generator.add_state_to_queue(state)
+        iris_answer_generator.add_frame_to_queue(state)
         answer = iris_answer_generator.determine_answer()
 
     return answer
