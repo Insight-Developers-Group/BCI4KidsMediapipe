@@ -79,21 +79,12 @@ async def recv_image(websocket):
                     ima = Image.open(io.BytesIO(base64.b64decode(i)))
 
                     #convert the image to cv2 for use in the state generators
-
-                    # number = random.randint(0,10)
-
-                    # if ( number  <5 ):
-
-                    #     answer = "YES"
-                    # else:
-                    #     answer = "NO"
-                    # 
                     converted = convert_image(ima)
                     try:
                         answer = process_image((FACE, converted))
                     except:
-                        print("exception occured")
-                        return None
+                        print("exception occured.")
+                        pass
                     # TEMPORARY REMOVAL
                     if (answer == AnswerGenerator.Answer.UNDEFINED):
                         answer = "NO"
