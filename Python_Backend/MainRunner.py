@@ -7,6 +7,7 @@ import io
 import numpy
 from PIL import Image, UnidentifiedImageError
 import websockets
+import contextvars
 
 import AnswerGenerator
 import DFGenerator
@@ -35,7 +36,7 @@ df_generator_exception = "ERROR: DF Generator Failed"
 state_generator_exception = "ERROR: State Generator Failed"
 answer_generator_exception = "ERROR: Answer Generator Failed"
 
-current_answer = AnswerGenerator.Answer.UNDEFINED
+current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 
 
 def process_image(image_data):
@@ -136,11 +137,19 @@ async def recv_image(websocket):
 
                     #convert the image to cv2 for use in the state generators
                     converted = convert_image(ima)
+                    try:
+                        answer = process_image((FACE, converted))
+                    except:
+                        print("exception occured.")
+                        pass
 
-                    answer = process_image((FACE, converted))
+                    if (answer != current_answer.get()):
+                        current_answer.set(answer)
 
-                    if (answer != current_answer):
-                        current_answer = answer
+                        if (answer == AnswerGenerator.Answer.UNDEFINED):
+                            answer = "NO"
+                        if (answer == AnswerGenerator.Answer.YES):
+                            answer = "YES"
 
                         if (answer != AnswerGenerator.Answer.UNDEFINED):
                             print("Generated Answer: {}".format(answer))
