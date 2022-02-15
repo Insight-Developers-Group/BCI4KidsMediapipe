@@ -262,16 +262,18 @@ class FacialDFGenerator(DFGeneratorInterface):
         """Get landmarks for face and format dataframe appropriately"""
 
         with FacialDFGenerator.__faceModule.FaceMesh(static_image_mode=True) as face:
-            
+
             results = face.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
             # check that only one face is in frame, otherwise throw an exception
             if not results.multi_face_landmarks:
 
+                print("no face")
                 raise Exception("FacialDFGenerator: No face detected")
 
             elif multiple_faces_detected(image):
-
+                
+                print("multi face")
                 raise Exception("FacialDFGenerator: Multiple faces detected")
 
             # add landmarks to dataframe

@@ -19,7 +19,7 @@ import time
 import random
 
 # Initiate State Generator with the appropriate models
-facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
+facial_state_generator = StateGenerator("../Machine_Learning_Model/roxanne.pkl", "FACE")
 iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
 
 # Two types of Generators
@@ -39,7 +39,6 @@ def process_image(image_data):
     if (image_data[0] == FACE):
 
         df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
-
         state = facial_state_generator.get_state(df)
 
         facial_answer_generator.add_state_to_queue(state)
@@ -76,6 +75,7 @@ async def recv_image(websocket):
         for i in temp:
             if(i != "data:image/jpeg;base64"):
                 try:
+
                     ima = Image.open(io.BytesIO(base64.b64decode(i)))
 
                     #convert the image to cv2 for use in the state generators
@@ -93,7 +93,8 @@ async def recv_image(websocket):
                         answer = process_image((FACE, converted))
                     except:
                         print("exception occured")
-                        return None
+                        answer = "NO"
+                        pass
                     # TEMPORARY REMOVAL
                     if (answer == AnswerGenerator.Answer.UNDEFINED):
                         answer = "NO"
