@@ -44,7 +44,7 @@ function CardStack(props) {
     return (
         <div className="card_stack" data-testid='card_stack'>
             <Card order="card_first" cardClass={firstCard} />
-            <Card order="card_second" cardClass={secondCard} />;
+            <Card order="card_second" cardClass={secondCard} />
         </div>
     )
 }
