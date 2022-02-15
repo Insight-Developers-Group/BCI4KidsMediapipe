@@ -12,6 +12,9 @@ import AnswerGenerator
 import DFGenerator
 from StateGenerator import StateGenerator
 
+import json 
+
+
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
 iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
@@ -73,6 +76,7 @@ def process_image(image_data):
         except Exception:
             return  state_generator_exception
 
+
     elif (image_data[0] == IRIS):
         
         try:
@@ -105,6 +109,7 @@ def process_image(image_data):
 
         except Exception:
             return  state_generator_exception
+
 
     return answer
 
@@ -140,7 +145,11 @@ async def recv_image(websocket):
 
                         if (answer != AnswerGenerator.Answer.UNDEFINED):
                             print(answer)
-                            await websocket.send(answer)
+                            response = {}
+                            response['response'] = answer
+                            json_object = json.dumps(response, indent = 4) 
+
+                            await websocket.send(json_object)
 
                 #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
                 except (UnidentifiedImageError, ValueError, TypeError) as ex:
@@ -164,5 +173,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
