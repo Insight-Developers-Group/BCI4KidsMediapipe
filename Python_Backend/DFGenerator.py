@@ -10,6 +10,12 @@ import pandas as pd
 
 from custom.iris_lm_depth import from_landmarks_to_depth
 
+class NoFaceDetectedException(Exception):
+    pass
+
+class MultiFaceDetectedException(Exception):
+    pass
+
 
 def add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
     """Function that adds a landmark to the dataframe"""
@@ -107,11 +113,11 @@ class IrisDFGenerator(DFGeneratorInterface):
             # check that only one face is in frame, otherwise throw an exception
             if not multi_face_landmarks:
 
-                raise Exception("IrisDFGenerator: No face detected")
+                raise NoFaceDetectedException("IrisDFGenerator: No face detected")
 
             elif multiple_faces_detected(image):
 
-                raise Exception("IrisDFGenerator: Multiple faces detected")
+                raise MultiFaceDetectedException("IrisDFGenerator: Multiple faces detected")
 
             face_landmarks = multi_face_landmarks[0]
             landmarks = np.array(
@@ -268,11 +274,11 @@ class FacialDFGenerator(DFGeneratorInterface):
             # check that only one face is in frame, otherwise throw an exception
             if not results.multi_face_landmarks:
 
-                raise Exception("FacialDFGenerator: No face detected")
+                raise NoFaceDetectedException("FacialDFGenerator: No face detected")
 
             elif multiple_faces_detected(image):
 
-                raise Exception("FacialDFGenerator: Multiple faces detected")
+                raise MultiFaceDetectedException("FacialDFGenerator: Multiple faces detected")
 
             # add landmarks to dataframe
             for facial_landmarks in results.multi_face_landmarks:

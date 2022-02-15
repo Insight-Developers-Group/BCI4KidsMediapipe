@@ -1,22 +1,19 @@
 #!/usr/bin/env python
 
 import asyncio
-import binascii
-from enum import Enum
-import websockets
-from PIL import Image
-from PIL import UnidentifiedImageError
-import cv2 as cv
-import numpy
-import io
 import base64
-from concurrent.futures import ProcessPoolExecutor
+import binascii
+import io
+import numpy
+from PIL import Image, UnidentifiedImageError
+import websockets
+import contextvars
+
 import AnswerGenerator
-from StateGenerator import StateGenerator
 import DFGenerator
-import json
-import time
-import random
+from StateGenerator import StateGenerator
+import json 
+
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
@@ -29,7 +26,17 @@ iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 FACE = "FACE"
 IRIS = "IRIS"
 
-current_answer = AnswerGenerator.Answer.UNDEFINED
+# Error Strings
+invalid_state_exception = "ERROR: Invalid State Exception"
+no_face_detected_exception = "ERROR: No Face Detected"
+multi_face_detected_exception = "ERROR: Multiple Faces Detected"
+invalid_model_type = "ERROR: Invalid Model Type"
+
+df_generator_exception = "ERROR: DF Generator Failed"
+state_generator_exception = "ERROR: State Generator Failed"
+answer_generator_exception = "ERROR: Answer Generator Failed"
+
+current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 
 
 def process_image(image_data):
@@ -38,21 +45,71 @@ def process_image(image_data):
 
     if (image_data[0] == FACE):
 
-        df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
+        try: 
+            df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
+        
+        except DFGenerator.NoFaceDetectedException:
+            return no_face_detected_exception
+        
+        except DFGenerator.MultiFaceDetectedException:
+            return multi_face_detected_exception
 
-        state = facial_state_generator.get_state(df)
+        except Exception:
+            return df_generator_exception
 
-        facial_answer_generator.add_state_to_queue(state)
-        answer = facial_answer_generator.determine_answer()
+        try:
+            state = facial_state_generator.get_state(df)
+
+        except ValueError:
+            return invalid_model_type
+
+        except Exception:
+            return state_generator_exception
+
+        try:
+            facial_answer_generator.add_state_to_queue(state)
+            answer = facial_answer_generator.determine_answer()
+
+        except AnswerGenerator.InvalidStateException:
+            return invalid_state_exception
+
+        except Exception:
+            return  state_generator_exception
+
 
     elif (image_data[0] == IRIS):
+        
+        try:
+            df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
 
-        df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
+        except DFGenerator.NoFaceDetectedException:
+            return no_face_detected_exception
+        
+        except DFGenerator.MultiFaceDetectedException:
+            return multi_face_detected_exception
 
-        state = iris_state_generator.get_state(df)
+        except Exception:
+            return df_generator_exception
 
-        iris_answer_generator.add_state_to_queue(state)
-        answer = iris_answer_generator.determine_answer()
+        try:
+            state = iris_state_generator.get_state(df)
+
+        except ValueError:
+            return invalid_model_type
+
+        except Exception:
+            return state_generator_exception
+
+        try:
+            iris_answer_generator.add_state_to_queue(state)
+            answer = iris_answer_generator.determine_answer()
+        
+        except AnswerGenerator.InvalidStateException:
+            return invalid_state_exception 
+
+        except Exception:
+            return  state_generator_exception
+
 
     return answer
 
@@ -85,23 +142,26 @@ async def recv_image(websocket):
                     except:
                         print("exception occured.")
                         pass
-                    # TEMPORARY REMOVAL
-                    if (answer == AnswerGenerator.Answer.UNDEFINED):
-                        answer = "NO"
-                    if (answer == AnswerGenerator.Answer.YES):
-                        answer = "YES"
-                    
-                    # print("Generated Answer: {}".format(answer))
-                    #Put the answer in a json to send
-                    returnInformation = {}
-                    returnInformation['Answer'] = answer
-                    json_returnInfo = json.dumps(returnInformation, indent = 4)
-                    await websocket.send(json_returnInfo)
-                        
+
+                    if (answer != current_answer.get()):
+                        current_answer.set(answer)
+
+                        if (answer == AnswerGenerator.Answer.UNDEFINED):
+                            answer = "NO"
+                        if (answer == AnswerGenerator.Answer.YES):
+                            answer = "YES"
+
+                        if (answer != AnswerGenerator.Answer.UNDEFINED):
+                            print("Generated Answer: {}".format(answer))
+                            #Put the answer in a json to send
+                            returnInformation = {}
+                            returnInformation['Answer'] = answer
+                            json_returnInfo = json.dumps(returnInformation, indent = 4)
+                            await websocket.send(json_returnInfo)
 
                 #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
                 except (UnidentifiedImageError, ValueError, TypeError) as ex:
-                    print("there was an error with that image and it could not be decoded and opened as an image")
+                    print("There was an error with that image and it could not be decoded and opened as an image")
                     print(ex)
                     #at this point we could call for the program to quit or return an error here, depends whats appropriate
                 
@@ -116,6 +176,9 @@ async def start_websocket():
     async with websockets.serve(recv_image, "localhost", 8765):
         await asyncio.Future()  # run forever
 
+def main():
+    asyncio.run(start_websocket())
 
 if __name__ == "__main__":
-    asyncio.run(start_websocket())
+    main()
+
