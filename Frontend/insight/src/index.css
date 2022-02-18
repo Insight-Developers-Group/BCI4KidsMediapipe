@@ -20,15 +20,15 @@ code {
 
 .webcam-block {
     position: absolute;
-    top: 32px;
-    left: 32px;
-    height: calc(100% - 96px);
-    width: calc(100% - 64px);
+    top: 2rem;
+    left: 2rem;
+    height: calc(100% - 6rem);
+    width: calc(100% - 4rem);
     text-align: center;
 }
 
 #video-display {
-    height: calc(100vh - 96px);
+    height: 100%;
     width: min-content;
     border-radius: 16px;
     background-color: #111111;
@@ -199,13 +199,22 @@ code {
     transition: all 0.5s ease-in-out;
 }
 
-.girlBgrnd {
+.footerElements {
+    display: flex;
     position: absolute;
+    bottom: -4rem;
+    height: 4rem;
+    align-items: center;
+    margin-top: 0;
+    gap: 0.5rem;
+}
+
+.girlBgrnd {
+    position: relative;
     width: 42px;
     height: 42px;
     border-radius: 100%;
     z-index: 1;
-    transform: translateY(0.5em);
 }
 
 .eye-selected-face-bg {
@@ -227,13 +236,11 @@ code {
 }
 
 .eyeBgrnd {
-    position: absolute;
+    position: relative;
     width: 42px;
     height: 42px;
-    left: 3.5em;
     border-radius: 100%;
     z-index: 1;
-    transform: translateY(0.5em);
 }
 
 .eye-selected-eye-bg {
@@ -255,18 +262,14 @@ code {
 }
 
 .labelContent {
-    position: absolute;
     width: max-content;
     height: min-content;
-    left: 6.5rem;
     font-style: normal;
     font-weight: normal;
     font-size: 2rem;
     line-height: 39px;
     color: white;
-    margin-top: 8px;
-    margin-bottom: 0px;
-    margin-inline-start: 0.8rem;
+    margin-inline-start: 0.6rem;
 }
 
 .labelContent::before {
@@ -274,8 +277,5 @@ code {
     color: white;
     position: relative;
     right: 0.5rem;
-}
-
-.footerElements {
-    display: flex;
+    bottom: 0.1rem;
 }

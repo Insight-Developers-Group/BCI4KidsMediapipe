@@ -37,18 +37,14 @@ function VideoDisplay(props) {
     }, [capture]);
 
     return (
-        <div>
-            <Webcam
-                id="video-display"
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                height={720}
-                width={1280}
-            />
-            {/* <button onClick={capture}>Capture photo</button>
-      {imgSrc && (<img src={imgSrc} alt="Frame capture"/>) } */}
-        </div>
+        <Webcam
+            id="video-display"
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            height={720}
+            width={1280}
+        />
     );
 }
 
