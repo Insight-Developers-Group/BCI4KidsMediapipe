@@ -50,9 +50,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return (
-        <div>
-            <CardStack response={resp} />
-        </div>
-    );
+    return <CardStack response={resp} />;
 }
