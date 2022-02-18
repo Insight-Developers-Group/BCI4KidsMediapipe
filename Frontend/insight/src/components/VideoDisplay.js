@@ -21,7 +21,7 @@ function VideoDisplay(props) {
         const imageSrc = webcamRef.current.getScreenshot();
         setimgSrc(imageSrc);
         if (imageSrc != null) {
-            console.log("Saving image to array");
+            // console.log("Saving image to array");
             props.stack.push(imageSrc);
         }
     }, [webcamRef, props.stack, setimgSrc]);

@@ -14,9 +14,7 @@ export default function SampleClient(props) {
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
         setResp(obj.Answer.toLowerCase());
-        console.log(
-            `[message] Data received from server: ${resp}`
-        );
+        console.log(`[message] Data received from server: ${resp}`);
     };
 
     socket.onclose = function (event) {
@@ -52,5 +50,9 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <div><CardStack response={resp} /></div>;
+    return (
+        <div>
+            <CardStack response={resp} />
+        </div>
+    );
 }
