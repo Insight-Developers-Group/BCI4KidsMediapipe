@@ -42,7 +42,12 @@ export default function SampleClient(props) {
                 // console.log("Sending packet to server");
                 // Oldest frames in the image stack array are sent first
                 let item = props.stack.shift();
-                socket.send(item);
+                let message = JSON.stringify({
+                    mode: props.mode,
+                    image: item,
+                });
+                // console.log("Sending message to server: " + message);
+                socket.send(message);
                 props.stack.length = 0;
             }
         }, SECOND_MS);
