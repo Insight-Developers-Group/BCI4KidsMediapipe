@@ -28,8 +28,10 @@ code {
 }
 
 #video-display {
+    display: inline-block;
     height: 100%;
     width: min-content;
+    max-width: 100%;
     border-radius: 16px;
     background-color: #111111;
     box-shadow: 4px 4px 10px #00000040;
