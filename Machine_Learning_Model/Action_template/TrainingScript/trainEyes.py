@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
     )
     parser.add_argument(
-        "-seqLen", metavar="state2", type=str, help="How long each sequence action is in frames"
+        "-seqLen", metavar="sequenceLength", type=str, help="How long each sequence action is in frames"
 
     )
 
