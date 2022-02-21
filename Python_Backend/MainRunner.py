@@ -134,6 +134,7 @@ async def recv_image(websocket):
             as_json = json.loads(message)
         except json.JSONDecodeError as ex:
             print("There was an error with the JSON data from the frontend")
+            pass
         
         msg_mode = as_json["mode"]
         if (msg_mode == "face"):
