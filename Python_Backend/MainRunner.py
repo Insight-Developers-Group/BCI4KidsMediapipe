@@ -26,6 +26,8 @@ iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 FACE = "FACE"
 IRIS = "IRIS"
 
+MAX_SIZE_IRIS_DATA_QUEUE = 98
+
 # Error Strings
 invalid_state_exception = "ERROR: Invalid State Exception"
 no_face_detected_exception = "ERROR: No Face Detected"
@@ -36,8 +38,9 @@ df_generator_exception = "ERROR: DF Generator Failed"
 state_generator_exception = "ERROR: State Generator Failed"
 answer_generator_exception = "ERROR: Answer Generator Failed"
 
+# Member Variables
 current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
-
+iris_data_queue = contextvars.ContextVar('iris_data_queue', default=[])
 
 def process_image(image_data):
 
@@ -82,6 +85,15 @@ def process_image(image_data):
         try:
             df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
 
+            if (len(iris_data_queue) < MAX_SIZE_IRIS_DATA_QUEUE):
+                iris_data_queue.append(df)
+                return answer
+            
+            else:
+                iris_data_queue.pop(0)
+                iris_data_queue.append(df)
+
+
         except DFGenerator.NoFaceDetectedException:
             return no_face_detected_exception
         
@@ -92,7 +104,7 @@ def process_image(image_data):
             return df_generator_exception
 
         try:
-            state = iris_state_generator.get_state(df)
+            state = iris_state_generator.get_state(iris_data_queue)
 
         except ValueError:
             return invalid_model_type
