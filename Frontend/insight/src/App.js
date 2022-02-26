@@ -10,6 +10,8 @@ import VideoDisplay from './components/VideoDisplay'
 import ModeSwitcher from './components/ModeSwitcher'
 import CardStack from './components/CardStack'
 import SampleClient from "./components/SampleClient"
+import ErrorResponse from "./components/ErrorResponse"
+import { useState, useEffect } from "react";
 
 function App() {
 
@@ -17,7 +19,7 @@ function App() {
   // Images will be constantly added through the VideoDisplay component
   // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
   const imageStack = [];
-
+  const [message, setMessage] = useState("");
   return (
     <div className="App">
       <MenuButton />
@@ -27,7 +29,8 @@ function App() {
         <VideoDisplay stack={imageStack} />
         <ModeSwitcher />
       </div>
-      <SampleClient stack={imageStack} />
+      <SampleClient stack={imageStack} changeMessage={setMessage} />
+      <ErrorResponse msg={message} />
     </div>
   );
 

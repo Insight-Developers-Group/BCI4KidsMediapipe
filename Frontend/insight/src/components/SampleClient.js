@@ -5,6 +5,7 @@ export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
     let socketOpen = false;
     let [resp, setResp] = React.useState("yes");
+    let [err, setErr] = React.useState("e");
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
@@ -17,6 +18,14 @@ export default function SampleClient(props) {
         console.log(
             `[message] Data received from server: ${resp}`
         );
+
+        // If the response if not a yes or a no, it must be an error
+        if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
+            setErr(obj.Answer.toLowerCase());
+            console.log(
+                `[Error] Error received from server: ${err}`
+            );
+        }
     };
 
     socket.onclose = function (event) {
@@ -52,5 +61,6 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
+    props.changeMessage(err);  // Update the message state stored in the App component
     return <div><CardStack response={resp} /></div>;
 }

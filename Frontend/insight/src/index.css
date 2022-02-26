@@ -247,3 +247,30 @@ code {
 .footerElements{
   display: flex;
 }
+
+.App{
+  display: flex;
+}
+.error-response{
+  text-align: center;
+  background-color: #FFFABA;
+  color: black;
+  width: inherit;
+  padding: 0 1em 0 1em;
+  font-size: 1.2em;
+  z-index: 1;
+  border-radius: 10px;
+  margin: 2em 14em 10em 11em;
+}
+
+@media only screen and (max-width: 580px){
+  .error-response{
+    height: 130px;
+  }
+}
+
+@media only screen and (max-width: 1200px){
+  .error-response{
+    height: 130px;
+  }
+}
