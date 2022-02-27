@@ -206,7 +206,7 @@ def main(inp,outputfilepath):
                 # draw iris landmarks
                 iris_landmarks = np.concatenate(
                     [
-                        right_iris_landmarks[0:3],
+                        right_iris_landmarks[0:5],
                         left_iris_landmarks[0:5],
                     ]
                 )
