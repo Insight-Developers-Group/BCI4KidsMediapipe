@@ -232,7 +232,7 @@ def main(dirname, firstState, secondState, thirdState, no_sequences, sequence_le
                         iris_landmarks = np.concatenate(
                             [
                                 right_iris_landmarks[0:5],
-                                left_iris_landmarks[0:5],
+                                left_iris_landmarks[0:3],
                             ]
                         )
                         for landmark in iris_landmarks:
