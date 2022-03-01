@@ -4,6 +4,9 @@ import numpy as np
 import os
 from matplotlib import pyplot as plt
 import mediapipe as mp
+import winsound
+frequency = 2500  # Set Frequency To 2500 Hertz
+duration = 1000  # Set Duration To 1000 ms == 1 second
 
 
 drawingModule = mp.solutions.drawing_utils
@@ -23,7 +26,7 @@ def __add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
     df_values.append(landmark[1])
     df_values.append(landmark[2])
 
-def main(dirname, firstState, secondState, no_sequences, sequence_length):
+def main(dirname, firstState, secondState,thirdstate, no_sequences, sequence_length):
     no_sequences = int(no_sequences)
     sequence_length = int(sequence_length)
     if (dirname is None):
@@ -32,6 +35,8 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
         raise TypeError("First State Not Specified")
     if (secondState is None):
         raise TypeError("Second State Note Specified")
+    if (thirdstate is None):
+        raise TypeError("Third State Note Specified")
     if (no_sequences is None or no_sequences < 1):
         raise TypeError("Video Number is none or less than 1")
     if (sequence_length is None or sequence_length < 1):
@@ -40,7 +45,7 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
     DATA_PATH = os.path.join(dirname) 
 
     # Actions that we try to detect
-    actions = np.array([firstState, secondState ])
+    actions = np.array([firstState, secondState, thirdstate ])
 
     ## Create the Appropriate Directories
     for action in actions: 
@@ -63,6 +68,11 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
     cap = cv2.VideoCapture(0)
     with mp_face_mesh.FaceMesh() as face:
         for action in actions:
+            winsound.Beep(frequency//2, duration)
+            cv2.waitKey(500)
+            winsound.Beep(frequency//2, duration)
+            cv2.waitKey(500)
+            winsound.Beep(frequency//2, duration)
             # Loop through sequences aka videos
             for sequence in range(no_sequences):
                 while cap.isOpened():
@@ -107,7 +117,9 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
                         cv2.putText(image, 'Get in Position for {} Video Number {}'.format(action, sequence), (15, 12),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
                         # Show to screen
+                        
                         cv2.imshow('Raw Webcam Feed', image)
+                        winsound.Beep(frequency, duration)
                         cv2.waitKey(2000)
                     else:
                         cv2.putText(image, 'Collecting frames for {} Video Number {}'.format(action, sequence), (15, 12),
@@ -144,6 +156,9 @@ if __name__ == "__main__":
         "-s2", metavar="state2", type=str, help="state2name"
     )
     parser.add_argument(
+        "-s3", metavar="state3", type=str, help="state3name"
+    )
+    parser.add_argument(
         "-seqNo", metavar="sequenceNum", type=str, help="Number of sequences of action to capture"
 
     )
@@ -155,4 +170,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print(args)
-    main( args.o, args.s1, args.s2, args.seqNo, args.seqLen)
+    main( args.o, args.s1, args.s2, args.s3, args.seqNo, args.seqLen)

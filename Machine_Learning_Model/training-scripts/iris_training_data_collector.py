@@ -150,6 +150,7 @@ def main(inp,outputfilepath):
                         left_iris_landmarks,
                     ]
                 )
+                print(len(iris_landmarks))
                 for landmark in iris_landmarks:
 
                     __add_landmark_to_df(
@@ -206,8 +207,8 @@ def main(inp,outputfilepath):
                 # draw iris landmarks
                 iris_landmarks = np.concatenate(
                     [
-                        right_iris_landmarks[0:5],
-                        left_iris_landmarks[0:5],
+                        right_iris_landmarks[0:1],
+                        left_iris_landmarks[0:1],
                     ]
                 )
                 for landmark in iris_landmarks:
