@@ -96,13 +96,53 @@ code {
   top: 1.5em;
   justify-content: center;
   align-items: center;
-  transition: all .5s ease-in-out;
+  /* transition: all .01s ease-in-out; */
   display: flex;
   border: none;
   background: white;
   border-radius: 4.25em;
   z-index: 1;
   box-shadow: 6px 6px 10px #00000040;
+}
+
+ul{
+  padding-left: 1em ;
+  color: black;
+  margin: 1em 1em 0.5em 1em;
+  font-size: 1.1em;
+  list-style-type: none;
+}
+
+ul>li{
+  padding: 0.1em 0 0.1em 0;
+}
+
+.menu-btn > ul{
+  display: none;
+}
+
+.menu-btn-open{
+  width: 14.5em;
+  height: 17.5em;
+  border-radius: 1em;
+  display: inline;
+  /* z-index: -1; */
+}
+
+.menu-wrapper{
+  position: absolute;
+}
+
+.burger-wrapper{
+  display: flex;
+  height: 2em;
+  width: 2em;
+  align-items: center;
+}
+
+.menu-btn-open > .burger-wrapper{
+  margin-top: 0.5em;
+  margin-left: 0.5em;
 }
 
 .menu-btn__burger{
@@ -242,6 +282,10 @@ code {
   margin-top: 8px;
   margin-bottom: 0px;
   margin-inline-start: 0.8rem;
+}
+
+.App{
+  position: relative;
 }
 
 .footerElements{

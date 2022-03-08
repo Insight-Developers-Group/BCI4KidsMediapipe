@@ -17,9 +17,23 @@ function MenuButton(props) {
     }
 
     return (
-        <div className={menu_btn_class} onClick={toggle} data-testid="menu-btn">
-            <div className="menu-btn__burger"></div>
+        <div className='menu-wrapper'>
+            <div className={menu_btn_class} data-testid="menu-btn">
+                <div onClick={toggle} className="burger-wrapper">
+                    <div className="menu-btn__burger"></div>
+                </div>
+                < ul >
+                    <li>Upload Training Data</li>
+                    <li>About</li>
+                    <li>Turn Off Camera</li>
+                    <li>Other</li>
+                    <li>Example</li>
+                    <li>Options</li>
+                </ul >
+
+            </div>
         </div>
+
     )
 }
 
