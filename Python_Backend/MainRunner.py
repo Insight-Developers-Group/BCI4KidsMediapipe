@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 
 import asyncio
-from enum import Enum
-import websockets
-from PIL import Image
-import cv2 as cv
-import numpy
-import io
 import base64
-from concurrent.futures import ProcessPoolExecutor
+import binascii
+import io
+import numpy
+from PIL import Image, UnidentifiedImageError
+import websockets
+import contextvars
+
 import AnswerGenerator
-from StateGenerator import StateGenerator
 import DFGenerator
+from StateGenerator import StateGenerator
+import json 
+
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
@@ -24,7 +26,17 @@ iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 FACE = "FACE"
 IRIS = "IRIS"
 
-current_answer = AnswerGenerator.Answer.UNDEFINED
+# Error Strings
+invalid_state_exception = "ERROR: Invalid State Exception"
+no_face_detected_exception = "ERROR: No Face Detected"
+multi_face_detected_exception = "ERROR: Multiple Faces Detected"
+invalid_model_type = "ERROR: Invalid Model Type"
+
+df_generator_exception = "ERROR: DF Generator Failed"
+state_generator_exception = "ERROR: State Generator Failed"
+answer_generator_exception = "ERROR: Answer Generator Failed"
+
+current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 
 
 def process_image(image_data):
@@ -33,21 +45,71 @@ def process_image(image_data):
 
     if (image_data[0] == FACE):
 
-        df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
+        try: 
+            df = DFGenerator.FacialDFGenerator.generate_df(image_data[1])
+        
+        except DFGenerator.NoFaceDetectedException:
+            return no_face_detected_exception
+        
+        except DFGenerator.MultiFaceDetectedException:
+            return multi_face_detected_exception
 
-        state = facial_state_generator.get_state(df)
+        except Exception:
+            return df_generator_exception
 
-        facial_answer_generator.add_state_to_queue(state)
-        answer = facial_answer_generator.determine_answer()
+        try:
+            state = facial_state_generator.get_state(df)
+
+        except ValueError:
+            return invalid_model_type
+
+        except Exception:
+            return state_generator_exception
+
+        try:
+            facial_answer_generator.add_state_to_queue(state)
+            answer = facial_answer_generator.determine_answer()
+
+        except AnswerGenerator.InvalidStateException:
+            return invalid_state_exception
+
+        except Exception:
+            return  state_generator_exception
+
 
     elif (image_data[0] == IRIS):
+        
+        try:
+            df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
 
-        df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
+        except DFGenerator.NoFaceDetectedException:
+            return no_face_detected_exception
+        
+        except DFGenerator.MultiFaceDetectedException:
+            return multi_face_detected_exception
 
-        state = iris_state_generator.get_state(df)
+        except Exception:
+            return df_generator_exception
 
-        iris_answer_generator.add_state_to_queue(state)
-        answer = iris_answer_generator.determine_answer()
+        try:
+            state = iris_state_generator.get_state(df)
+
+        except ValueError:
+            return invalid_model_type
+
+        except Exception:
+            return state_generator_exception
+
+        try:
+            iris_answer_generator.add_state_to_queue(state)
+            answer = iris_answer_generator.determine_answer()
+        
+        except AnswerGenerator.InvalidStateException:
+            return invalid_state_exception 
+
+        except Exception:
+            return  state_generator_exception
+
 
     return answer
 
@@ -67,7 +129,26 @@ def convert_image(im):
 async def recv_image(websocket):
 
     async for message in websocket:
-        temp = message.split(",")
+        #take in message as a json and then get the data from it according to its tags
+        try:
+            as_json = json.loads(message)
+        except json.JSONDecodeError as ex:
+            print("There was an error with the JSON data from the frontend")
+            pass
+        
+        msg_mode = as_json["mode"]
+        if (msg_mode == "face"):
+            mode = FACE
+        elif (msg_mode == "eye"):
+            mode = IRIS
+        #safe default if there is a problem with the mode type
+        else:
+            print("Something is wrong with the recieved mode type, defaulting to face tracking.")
+            mode = FACE
+
+        img_data = as_json["image"]
+
+        temp = img_data.split(",")
         for i in temp:
             if(i != "data:image/jpeg;base64"):
                 try:
@@ -75,19 +156,38 @@ async def recv_image(websocket):
 
                     #convert the image to cv2 for use in the state generators
                     converted = convert_image(ima)
+                    try:
+                        answer = process_image((mode, converted))
+                    except:
+                        print("exception occured.")
+                        pass
 
-                    answer = process_image((FACE, converted))
+                    if (answer != current_answer.get()):
+                        current_answer.set(answer)
 
-                    if (answer != current_answer):
-                        current_answer = answer
+                        if (answer == AnswerGenerator.Answer.UNDEFINED):
+                            answer = "NO"
+                        if (answer == AnswerGenerator.Answer.YES):
+                            answer = "YES"
 
                         if (answer != AnswerGenerator.Answer.UNDEFINED):
-                            print(answer)
-                            await websocket.send(answer)
+                            print("Generated Answer: {}".format(answer))
+                            #Put the answer in a json to send
+                            returnInformation = {}
+                            returnInformation['Answer'] = answer
+                            json_returnInfo = json.dumps(returnInformation, indent = 4)
+                            await websocket.send(json_returnInfo)
 
-                except:
-                    print("there was an error with that image and it could not be decoded")
+                #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
+                except (UnidentifiedImageError, ValueError, TypeError) as ex:
+                    print("There was an error with that image and it could not be decoded and opened as an image")
+                    print(ex)
                     #at this point we could call for the program to quit or return an error here, depends whats appropriate
+                
+                #except the error from decoding the base64 data
+                except (binascii.Error) as decod:
+                    print("There was an error decoding the image data in base64")
+                    print(decod)
 
 
 
@@ -95,6 +195,9 @@ async def start_websocket():
     async with websockets.serve(recv_image, "localhost", 8765):
         await asyncio.Future()  # run forever
 
+def main():
+    asyncio.run(start_websocket())
 
+if __name__ == "__main__":
+    main()
 
-asyncio.run(start_websocket())
