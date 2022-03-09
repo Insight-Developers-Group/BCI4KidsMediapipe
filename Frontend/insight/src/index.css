@@ -77,7 +77,7 @@ code {
 }
 
 .card_yes {
-    background-color: #80db78;
+    background: linear-gradient(99.28deg, #5cc653 0%, #2bd4acfa 100%);
 }
 
 .card_no {
