@@ -21,7 +21,7 @@ function VideoDisplay(props) {
         const imageSrc = webcamRef.current.getScreenshot();
         setimgSrc(imageSrc);
         if (imageSrc != null) {
-            console.log("Saving image to array");
+            // console.log("Saving image to array");
             props.stack.push(imageSrc);
         }
     }, [webcamRef, props.stack, setimgSrc]);
@@ -37,18 +37,14 @@ function VideoDisplay(props) {
     }, [capture]);
 
     return (
-        <div>
-            <Webcam
-                id="video-display"
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                height={720}
-                width={1280}
-            />
-            {/* <button onClick={capture}>Capture photo</button>
-      {imgSrc && (<img src={imgSrc} alt="Frame capture"/>) } */}
-        </div>
+        <Webcam
+            id="video-display"
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            height={720}
+            width={1280}
+        />
     );
 }
 

@@ -129,7 +129,26 @@ def convert_image(im):
 async def recv_image(websocket):
 
     async for message in websocket:
-        temp = message.split(",")
+        #take in message as a json and then get the data from it according to its tags
+        try:
+            as_json = json.loads(message)
+        except json.JSONDecodeError as ex:
+            print("There was an error with the JSON data from the frontend")
+            pass
+        
+        msg_mode = as_json["mode"]
+        if (msg_mode == "face"):
+            mode = FACE
+        elif (msg_mode == "eye"):
+            mode = IRIS
+        #safe default if there is a problem with the mode type
+        else:
+            print("Something is wrong with the recieved mode type, defaulting to face tracking.")
+            mode = FACE
+
+        img_data = as_json["image"]
+
+        temp = img_data.split(",")
         for i in temp:
             if(i != "data:image/jpeg;base64"):
                 try:
@@ -138,7 +157,7 @@ async def recv_image(websocket):
                     #convert the image to cv2 for use in the state generators
                     converted = convert_image(ima)
                     try:
-                        answer = process_image((FACE, converted))
+                        answer = process_image((mode, converted))
                     except:
                         print("exception occured.")
                         pass

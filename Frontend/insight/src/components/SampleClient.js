@@ -14,9 +14,7 @@ export default function SampleClient(props) {
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
         setResp(obj.Answer.toLowerCase());
-        console.log(
-            `[message] Data received from server: ${resp}`
-        );
+        console.log(`[message] Data received from server: ${resp}`);
     };
 
     socket.onclose = function (event) {
@@ -44,7 +42,12 @@ export default function SampleClient(props) {
                 // console.log("Sending packet to server");
                 // Oldest frames in the image stack array are sent first
                 let item = props.stack.shift();
-                socket.send(item);
+                let message = JSON.stringify({
+                    mode: props.mode,
+                    image: item,
+                });
+                // console.log("Sending message to server: " + message);
+                socket.send(message);
                 props.stack.length = 0;
             }
         }, SECOND_MS);
@@ -52,5 +55,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <div><CardStack response={resp} /></div>;
+    return <CardStack response={resp} />;
 }
