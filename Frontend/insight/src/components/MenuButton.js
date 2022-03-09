@@ -23,12 +23,12 @@ function MenuButton(props) {
                     <div className="menu-btn__burger"></div>
                 </div>
                 < ul >
-                    <li>Upload Training Data</li>
-                    <li>About</li>
-                    <li>Turn Off Camera</li>
-                    <li>Other</li>
-                    <li>Example</li>
-                    <li>Options</li>
+                    <li><button>Upload Training Data</button></li>
+                    <li><button>About</button></li>
+                    <li><button>Turn Off Camera</button></li>
+                    <li><button>Other</button></li>
+                    <li><button>Example</button></li>
+                    <li><button>Options</button></li>
                 </ul >
 
             </div>

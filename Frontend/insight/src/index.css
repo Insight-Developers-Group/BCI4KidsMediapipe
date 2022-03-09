@@ -109,12 +109,20 @@ ul{
   padding-left: 1em ;
   color: black;
   margin: 1em 1em 0.5em 1em;
-  font-size: 1.1em;
+  
   list-style-type: none;
 }
 
 ul>li{
   padding: 0.1em 0 0.1em 0;
+}
+li>button{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-family: 'Andika', sans-serif;
 }
 
 .menu-btn > ul{
