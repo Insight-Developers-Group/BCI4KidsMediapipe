@@ -14,10 +14,12 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-        setResp(obj.Answer.toLowerCase());
-        console.log(
-            `[message] Data received from server: ${resp}`
-        );
+        if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
+            setResp(obj.Answer.toLowerCase());
+            console.log(
+                `[message] Data received from server: ${resp}`
+            );
+        }
 
         // If the response if not a yes or a no, it must be an error
         if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
@@ -53,7 +55,12 @@ export default function SampleClient(props) {
                 // console.log("Sending packet to server");
                 // Oldest frames in the image stack array are sent first
                 let item = props.stack.shift();
-                socket.send(item);
+                let message = JSON.stringify({
+                    mode: props.mode,
+                    image: item,
+                });
+                // console.log("Sending message to server: " + message);
+                socket.send(message);
                 props.stack.length = 0;
             }
         }, SECOND_MS);
