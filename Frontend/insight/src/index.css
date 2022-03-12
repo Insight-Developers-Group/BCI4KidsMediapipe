@@ -87,11 +87,8 @@ code {
 }
 
 .card_yes {
-    background: linear-gradient(
-        99.28deg,
-        #77e66d 0%,
-        rgba(75, 218, 184, 0.98) 100%
-    );
+    background: linear-gradient(99.28deg, #5cc653 0%, #2bd4acfa 100%);
+
 }
 
 .card_no {
@@ -324,6 +321,66 @@ code {
     line-height: 39px;
     color: white;
     margin-inline-start: 0.6rem;
+}
+
+.footerElements {
+    display: flex;
+}
+
+/*-- Help Menu --*/
+.help-menu-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+    background-color: hsla(0, 0%, 7%, 0.5);
+}
+
+.help-menu {
+    position: fixed;
+    border-radius: 2rem;
+    display: block;
+    width: min(60vw, 90ch);
+    height: 30rem;
+    left: calc((100vw - min(60vw, 90ch)) / 2);
+    top: calc((100vh - 30rem) / 2);
+    background-color: #ffffff;
+    z-index: 6;
+    transition: opacity 0.3s ease-in;
+}
+
+.help-menu-close {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+}
+
+.help-menu-icon {
+    position: absolute;
+    width: 3rem;
+    left: 2rem;
+    top: 1rem;
+}
+
+.help-menu-title {
+    position: absolute;
+    color: #000000;
+    top: 1.2rem;
+    left: 6rem;
+    margin: 0;
+}
+
+.help-menu-content {
+    color: #000000;
+    position: absolute;
+    width: calc(100% - 4rem);
+    height: calc(100% - 5rem);
+    /* top: 17%; */
+    margin-top: 5rem;
+    padding-inline: 2rem;
+    /* background-color: #ff7171dd; */
 }
 
 .labelContent::before {
