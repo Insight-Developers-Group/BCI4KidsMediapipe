@@ -10,6 +10,10 @@ sys.path.insert(0, '../')
 from videosource import WebcamSource
 from custom.iris_lm_depth import from_landmarks_to_depth
 
+import winsound
+frequency = 2500  # Set Frequency To 2500 Hertz
+duration = 1000  # Set Duration To 1000 ms == 1 second
+
 def __add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
     """Helper function that adds a landmark to the dataframe"""
 
@@ -21,7 +25,7 @@ def __add_landmark_to_df(landmark, landmark_idx, df_headers, df_values):
     df_values.append(landmark[1])
     df_values.append(landmark[2])
 
-def main(dirname, firstState, secondState, no_sequences, sequence_length):
+def main(dirname, firstState, secondState, thirdState, no_sequences, sequence_length):
     no_sequences = int(no_sequences)
     sequence_length = int(sequence_length)
     if (dirname is None):
@@ -30,6 +34,8 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
         raise TypeError("First State Not Specified")
     if (secondState is None):
         raise TypeError("Second State Note Specified")
+    if (thirdState is None):
+        raise TypeError("Third State Note Specified")
     if (no_sequences is None or no_sequences < 1):
         raise TypeError("Video Number is none or less than 1")
     if (sequence_length is None or sequence_length < 1):
@@ -38,7 +44,7 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
     DATA_PATH = os.path.join(dirname) 
 
     # Actions that we try to detect
-    actions = np.array([firstState, secondState ])
+    actions = np.array([firstState, secondState, thirdState ])
 
     ## Create the Appropriate Directories
     for action in actions: 
@@ -88,6 +94,12 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
     ) as face_mesh:
         for action in actions:
             # Loop through sequences aka videos
+            winsound.Beep(frequency//2, duration)
+            cv2.waitKey(500)
+            winsound.Beep(frequency//2, duration)
+            cv2.waitKey(500)
+            winsound.Beep(frequency//2, duration)
+
             for sequence in range(no_sequences):
                 # Loop through video length aka sequence length
                 for idx, (frame, frame_rgb) in enumerate(source):
@@ -219,8 +231,8 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
                         # draw iris landmarks
                         iris_landmarks = np.concatenate(
                             [
-                                right_iris_landmarks[0:3],
-                                left_iris_landmarks[0:5],
+                                right_iris_landmarks[0:5],
+                                left_iris_landmarks[0:3],
                             ]
                         )
                         for landmark in iris_landmarks:
@@ -252,7 +264,9 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
                                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
                             # Show to screen
                             source.show(frame)
+                            winsound.Beep(frequency, duration)
                             cv2.waitKey(2000)
+                            winsound.Beep(frequency//3, duration//3)
                         else:
                             cv2.putText(frame, 'Collecting frames for {} Video Number {}'.format(action, sequence), (15, 12),
                                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
@@ -262,6 +276,11 @@ def main(dirname, firstState, secondState, no_sequences, sequence_length):
                             print(keypoints)
                             npy_path = os.path.join(DATA_PATH, action, str(sequence), str(count))
                             np.save(npy_path, keypoints)
+    winsound.Beep(frequency//4, duration//2)
+    cv2.waitKey(500)
+    winsound.Beep(frequency//4, duration//2)
+    cv2.waitKey(500)
+    winsound.Beep(frequency//4, duration//2)
 
     
 
@@ -279,16 +298,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "-s2", metavar="state2", type=str, help="state2name"
     )
+
+    parser.add_argument(
+        "-s3", metavar="state2", type=str, help="state2name"
+    )
     parser.add_argument(
         "-seqNo", metavar="sequenceNum", type=str, help="Number of sequences of action to capture"
 
     )
     parser.add_argument(
-        "-seqLen", metavar="state2", type=str, help="How long each sequence action is in frames"
+        "-seqLen", metavar="sequenceLength", type=str, help="How long each sequence action is in frames"
 
     )
 
 
     args = parser.parse_args()
     print(args)
-    main( args.o, args.s1, args.s2, args.seqNo, args.seqLen)
+    
+    main( args.o, args.s1, args.s2, args.s3, args.seqNo, args.seqLen)
