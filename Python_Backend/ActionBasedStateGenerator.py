@@ -31,7 +31,9 @@ class ActionBasedStateGenerator:
         model.add(LSTM(64, return_sequences=False, activation='relu'))
         model.add(Dense(64, activation='relu'))
         model.add(Dense(32, activation='relu'))
-        model.add(Dense(self.states.shape[0], activation='softmax'))
+        model.add(Dense(np.array(self.states).shape[0], activation='softmax'))
+        model.load_weights(self.model_path)
         res = model.predict(np.expand_dims(sequence, axis=0))[0]
-        print(res)
-        return res
+        # print(res)
+        # print(self.states[np.argmax(res)])
+        return self.states[np.argmax(res)]
