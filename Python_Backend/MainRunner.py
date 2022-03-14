@@ -13,11 +13,14 @@ import AnswerGenerator
 import DFGenerator
 from StateGenerator import StateGenerator
 import json 
+from ActionBasedStateGenerator import ActionBasedStateGenerator
 
 
 # Initiate State Generator with the appropriate models
 facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
-iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
+iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/iris.pkl", 48)
+
+#Initiate actionList to send to 
 
 # Two types of Generators
 facial_answer_generator = AnswerGenerator.FacialAnswerGenerator()
