@@ -88,7 +88,6 @@ code {
 
 .card_yes {
     background: linear-gradient(99.28deg, #5cc653 0%, #2bd4acfa 100%);
-
 }
 
 .card_no {
@@ -389,4 +388,10 @@ code {
     position: relative;
     right: 0.5rem;
     bottom: 0.1rem;
+}
+
+@media only screen and (max-width: 720px) {
+    .labelContent {
+        display: none;
+    }
 }
