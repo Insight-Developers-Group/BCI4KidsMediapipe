@@ -17,6 +17,11 @@ function App() {
     const imageStack = [];
     const [trackingMode, setTrackingMode] = React.useState("face");
 
+    let [first_card, setFirstCard] = React.useState("card_none");
+    let [second_card, setSecondCard] = React.useState("card_none");
+
+    let [response, setResponse] = React.useState("");
+
     return (
         <div className="App">
             <MenuButton />
@@ -29,7 +34,20 @@ function App() {
                     changeMode={setTrackingMode}
                 />
             </div>
-            <SampleClient stack={imageStack} mode={trackingMode} />
+            <CardStack
+                response={response}
+                setResponse={setResponse}
+                firstCard={first_card}
+                setFirstCard={setFirstCard}
+                secondCard={second_card}
+                setSecondCard={setSecondCard}
+            />
+            <SampleClient
+                stack={imageStack}
+                mode={trackingMode}
+                response={response}
+                setResponse={setResponse}
+            />
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import eyelogo from "../Resources/eyelogo.svg";
 import girllogo from "../Resources/girllogo.svg";
-import girllogolight from "../Resources/girllogo-light.svg";
+// import girllogolight from "../Resources/girllogo-light.svg";
 
 function ModeSwitcher(props) {
     const [trackingLabel, setTrackingLabel] = React.useState("Face Tracking");

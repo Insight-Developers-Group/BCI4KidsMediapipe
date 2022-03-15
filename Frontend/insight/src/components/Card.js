@@ -19,7 +19,9 @@ function Card(props) {
 
     return (
         <div className={"card " + props.cardClass + " " + props.order}>
-            <h3 className="card_label">{cardLabel}</h3>
+            <h3 className="card_label" data-testid="card_label">
+                {cardLabel}
+            </h3>
         </div>
     );
 }
