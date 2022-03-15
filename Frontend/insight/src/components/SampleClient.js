@@ -11,8 +11,8 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-        props.setResp(obj.Answer.toLowerCase());
-        console.log(`[message] Data received from server: ${props.resp}`);
+        props.setResponse(obj.Answer.toLowerCase());
+        console.log(`[message] Data received from server: ${props.response}`);
     };
 
     socket.onclose = function (event) {
