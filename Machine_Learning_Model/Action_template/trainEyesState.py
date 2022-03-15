@@ -187,17 +187,16 @@ def main(dirname, no_sequences, sequence_length):
                                 left_iris_landmarks,
                             ]
                         )
+
                         for landmark in iris_landmarks:
 
-                            __add_landmark_to_df(
-                                landmark, df_values)
+                            __add_landmark_to_df(landmark, df_values)
 
                             landmark_idx += 1
 
                         for landmark in eye_landmarks:
 
-                            __add_landmark_to_df(
-                                landmark, df_values)
+                            __add_landmark_to_df(landmark, df_values)
 
                             landmark_idx += 1
 
@@ -205,9 +204,10 @@ def main(dirname, no_sequences, sequence_length):
                         for ii in POINTS_IDX:
 
                             landmark = (landmarks[0, ii],
-                                        landmarks[1, ii], landmarks[2, ii])
-                            __add_landmark_to_df(
-                                landmark, df_values)
+                                        landmarks[1, ii], 
+                                        landmarks[2, ii])
+
+                            __add_landmark_to_df(landmark, df_values)
 
                             landmark_idx += 1
 
@@ -311,16 +311,6 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-o", metavar="FolderName", type=str, help="Path to output file"
-    )
-    parser.add_argument(
-        "-s1", metavar="state1", type=str, help="state1name"
-    )
-    parser.add_argument(
-        "-s2", metavar="state2", type=str, help="state2name"
-    )
-
-    parser.add_argument(
-        "-s3", metavar="state2", type=str, help="state2name"
     )
     parser.add_argument(
         "-seqNo", metavar="sequenceNum", type=str, help="Number of sequences of action to capture"
