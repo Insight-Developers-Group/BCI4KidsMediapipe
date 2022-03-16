@@ -9,9 +9,7 @@ from PIL import Image, UnidentifiedImageError
 import websockets
 import contextvars
 
-import AnswerGenerator
 import DFGenerator
-from StateGenerator import StateGenerator
 import json 
 
 #new imports for dummy server
@@ -23,14 +21,6 @@ folder = contextvars.ContextVar('folder', default="")
 iris_itr = contextvars.ContextVar('iris_itr', default=0)
 face_itr = contextvars.ContextVar('face_itr', default=0)
 
-
-# Initiate State Generator with the appropriate models
-facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
-iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
-
-# Two types of Generators
-facial_answer_generator = AnswerGenerator.FacialAnswerGenerator()
-iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
 
 FACE = "FACE"
 IRIS = "IRIS"
@@ -45,7 +35,6 @@ df_generator_exception = "ERROR: DF Generator Failed"
 state_generator_exception = "ERROR: State Generator Failed"
 answer_generator_exception = "ERROR: Answer Generator Failed"
 
-current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 
 def get_landmarks(image_data):
     if (image_data[0] == FACE):
@@ -79,7 +68,7 @@ def get_landmarks(image_data):
 
     else:
         print("how did this even happen?")
-        return Exception
+        raise Exception
 
 
     return df
