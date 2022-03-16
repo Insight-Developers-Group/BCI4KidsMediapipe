@@ -5,7 +5,7 @@ export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
     let socketOpen = false;
     let [resp, setResp] = React.useState("yes");
-    let [err, setErr] = React.useState("e");
+    let [err, setErr] = React.useState("");
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
@@ -16,6 +16,7 @@ export default function SampleClient(props) {
         let obj = JSON.parse(event.data);
         if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
             setResp(obj.Answer.toLowerCase());
+            setErr('');
             console.log(
                 `[message] Data received from server: ${resp}`
             );

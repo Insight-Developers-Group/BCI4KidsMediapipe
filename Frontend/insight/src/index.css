@@ -343,21 +343,12 @@ code {
   background-color: #FFFABA;
   color: black;
   width: inherit;
+  height: min-content;
+  width: max-content;
   padding: 0 1em 0 1em;
   font-size: 1.2em;
   z-index: 1;
-  border-radius: 10px;
-  margin: 2em 14em 10em 11em;
-}
-
-@media only screen and (max-width: 580px){
-  .error-response{
-    height: 130px;
-  }
-}
-
-@media only screen and (max-width: 1200px){
-  .error-response{
-    height: 130px;
-  }
+  border-radius: 1rem;
+  margin: auto;
+  margin-top: 3rem;
 }
