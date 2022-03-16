@@ -26,10 +26,10 @@ face_itr = contextvars.ContextVar('face_itr', default=0)
 
 DATA_PATH = os.path.join(sys.argv[1])
 ACTION_NAME = sys.argv[2] 
-SEQUENCE_LENGTH = sys.argv[3]
-NO_SEQUENCES = sys.argv[4]
+SEQUENCE_LENGTH = int(sys.argv[3])
+NO_SEQUENCES = int(sys.argv[4])
 
-for sequence in range(int(NO_SEQUENCES)):
+for sequence in range(NO_SEQUENCES):
     try: 
         os.makedirs(os.path.join(DATA_PATH, ACTION_NAME, str(sequence)))
     except:
@@ -135,24 +135,23 @@ async def recv_image(websocket):
                         pass
                     
                     if(mode == FACE):
-                        if (face_sq_itr.get() > NO_SEQUENCES):
-                            # if the number of sequences is exceeded just save the CSV's
-                            fn = str(folder.get()) + "/" + mode + "/" + str(face_itr.get()) + ".csv"
-                            lm.to_csv(fn)
+                        print(face_sq_itr.get())
+                        if (face_sq_itr.get() >= NO_SEQUENCES):
+                            print('Sequences Finished')
+                            quit()
                         else:
-                            print('Adding frame')
+                            # print('Adding frame')
                             face_itr.set(face_itr.get()+1)
                             if (face_itr.get() == SEQUENCE_LENGTH):
                                 face_sq_itr.set(face_sq_itr.get()+1)
                                 face_itr.set(0)
                             keypoints = np.array(lm)[0]
-                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(face_sq_itr), str(face_itr))
+                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(face_sq_itr.get()), str(face_itr.get()))
                             np.save(npy_path, keypoints)
                     elif(mode == IRIS):
-                        if (iris_sq_itr.get() > NO_SEQUENCES):
-                            # if the number of sequences is exceeded just save the CSV's
-                            fn = str(folder.get()) + "/" + mode + "/" + str(face_itr.get()) + ".csv"
-                            lm.to_csv(fn)
+                        if (iris_sq_itr.get() >= NO_SEQUENCES):
+                            print('Sequences Finished')
+                            quit()
                         else:
                             iris_itr.set(iris_itr.get()+1)
                             #go to the next folder
@@ -160,7 +159,7 @@ async def recv_image(websocket):
                                 iris_sq_itr.set(iris_sq_itr.get()+1)
                                 iris_itr.set(0)
                             keypoints = np.array(lm)[0]
-                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(iris_sq_itr), str(iris_itr))
+                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(face_sq_itr.get()), str(face_itr.get()))
                             np.save(npy_path, keypoints)
 
                     ##############################################################
@@ -183,13 +182,6 @@ async def start_websocket():
         await asyncio.Future()  # run forever
 
 def main():
-    try:
-        os.mkdir(sys.argv[1])
-        os.mkdir(sys.argv[1] + "/" + FACE)
-        os.mkdir(sys.argv[1] + "/" + IRIS)
-    except:
-        print("please make sure the specified folder name doesnt already exist. If no folder name was specified, please give one when trying again")
-        quit()
     folder.set(sys.argv[1])
     asyncio.run(start_websocket())
 
