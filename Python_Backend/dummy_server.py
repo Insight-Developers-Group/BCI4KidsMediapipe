@@ -104,10 +104,15 @@ async def recv_image(websocket):
             print("Something is wrong with the recieved mode type, defaulting to face tracking.")
             mode = FACE
 
+        #take the image field of the JSON object
         img_data = as_json["image"]
 
+        #split it on the commas to split off the actual image data
         temp = img_data.split(",")
+        #loop through the data to only find the image data
         for i in temp:
+            #this is a header attached to the image data that is not needed for the backend server
+            #if the item is not the header it must be the image data so we can then use it
             if(i != "data:image/jpeg;base64"):
                 try:
                     ima = Image.open(io.BytesIO(base64.b64decode(i)))
