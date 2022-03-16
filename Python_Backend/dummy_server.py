@@ -9,28 +9,32 @@ from PIL import Image, UnidentifiedImageError
 import websockets
 import contextvars
 
-import AnswerGenerator
 import DFGenerator
-from StateGenerator import StateGenerator
 import json 
 
 #new imports for dummy server
-import pandas
+import pandas as pd
 import os
 import sys
+import numpy as np
 
 folder = contextvars.ContextVar('folder', default="")
+face_sq_itr = contextvars.ContextVar('face_sq_itr', default=0)
+iris_sq_itr = contextvars.ContextVar('iris_sq_itr', default=0)
 iris_itr = contextvars.ContextVar('iris_itr', default=0)
 face_itr = contextvars.ContextVar('face_itr', default=0)
 
+DATA_PATH = os.path.join(sys.argv[1])
+ACTION_NAME = sys.argv[2] 
+SEQUENCE_LENGTH = sys.argv[3]
+NO_SEQUENCES = sys.argv[4]
 
-# Initiate State Generator with the appropriate models
-facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
-iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
-
-# Two types of Generators
-facial_answer_generator = AnswerGenerator.FacialAnswerGenerator()
-iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
+for sequence in range(int(NO_SEQUENCES)):
+    try: 
+        os.makedirs(os.path.join(DATA_PATH, ACTION_NAME, str(sequence)))
+    except:
+        pass
+print('folders Created')
 
 FACE = "FACE"
 IRIS = "IRIS"
@@ -45,7 +49,6 @@ df_generator_exception = "ERROR: DF Generator Failed"
 state_generator_exception = "ERROR: State Generator Failed"
 answer_generator_exception = "ERROR: Answer Generator Failed"
 
-current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 
 def get_landmarks(image_data):
     if (image_data[0] == FACE):
@@ -132,13 +135,33 @@ async def recv_image(websocket):
                         pass
                     
                     if(mode == FACE):
-                        fn = str(folder.get()) + "/" + mode + "/" + str(face_itr.get()) + ".csv"
-                        pandas.DataFrame.to_csv(lm, fn, ",")
-                        face_itr.set(face_itr.get()+1)
+                        if (face_sq_itr.get() > NO_SEQUENCES):
+                            # if the number of sequences is exceeded just save the CSV's
+                            fn = str(folder.get()) + "/" + mode + "/" + str(face_itr.get()) + ".csv"
+                            lm.to_csv(fn)
+                        else:
+                            print('Adding frame')
+                            face_itr.set(face_itr.get()+1)
+                            if (face_itr.get() == SEQUENCE_LENGTH):
+                                face_sq_itr.set(face_sq_itr.get()+1)
+                                face_itr.set(0)
+                            keypoints = np.array(lm)[0]
+                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(face_sq_itr), str(face_itr))
+                            np.save(npy_path, keypoints)
                     elif(mode == IRIS):
-                        fn = str(folder.get()) + "/" + mode + "/" + str(iris_itr.get()) + ".csv"
-                        pandas.DataFrame.to_csv(lm, fn, ",")
-                        iris_itr.set(iris_itr.get()+1)
+                        if (iris_sq_itr.get() > NO_SEQUENCES):
+                            # if the number of sequences is exceeded just save the CSV's
+                            fn = str(folder.get()) + "/" + mode + "/" + str(face_itr.get()) + ".csv"
+                            lm.to_csv(fn)
+                        else:
+                            iris_itr.set(iris_itr.get()+1)
+                            #go to the next folder
+                            if (iris_itr.get() == SEQUENCE_LENGTH):
+                                iris_sq_itr.set(iris_sq_itr.get()+1)
+                                iris_itr.set(0)
+                            keypoints = np.array(lm)[0]
+                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(iris_sq_itr), str(iris_itr))
+                            np.save(npy_path, keypoints)
 
                     ##############################################################
 
