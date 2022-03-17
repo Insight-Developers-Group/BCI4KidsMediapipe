@@ -36,7 +36,6 @@ function App() {
                     mode={trackingMode}
                     changeMode={setTrackingMode}
                 />
-                <div>{clrblindMode ? `Enabled` : `Disabled`}</div>
             </div>
             <CardStack
                 response={response}
