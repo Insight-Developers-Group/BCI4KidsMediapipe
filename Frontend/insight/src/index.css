@@ -122,19 +122,18 @@ code {
 /* Adapted from http://www.java2s.com/example/html-css/css-animation/jumping-dots-animation.html */
 
 .waiting-dots-cont {
-    position: absolute;
-    left: 2.75em;
-    bottom: 0.2em;
+    display: inline;
 }
 .waiting-dot {
-    width: 12px;
-    height: 12px;
+    width: 0.25em;
+    height: 0.25em;
     background: white;
     display: inline-block;
     border-radius: 50%;
-    right: 0px;
-    bottom: 0px;
-    margin: 0px 2.5px;
+    right: 0;
+    bottom: 0;
+    margin: 0 0.0875em;
+    margin-bottom: 0.25em;
     position: relative;
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -162,13 +161,13 @@ code {
 }
 @keyframes jump {
     0% {
-        bottom: 0px;
+        bottom: 0;
     }
     10% {
-        bottom: 5px;
+        bottom: 0.5rem;
     }
     20% {
-        bottom: 0px;
+        bottom: 0;
     }
 }
 
