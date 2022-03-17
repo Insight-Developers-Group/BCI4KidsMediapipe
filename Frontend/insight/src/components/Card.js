@@ -13,13 +13,25 @@ function Card(props) {
             break;
 
         case "card_waiting":
-            cardLabel = "...";
+            return (
+                <div
+                    className={"card " + props.cardClass + " " + props.order}
+                    data-testid={props.testid}>
+                    <span class="waiting-dots-cont">
+                        {" "}
+                        <span class="waiting-dot dot-1"></span>{" "}
+                        <span class="waiting-dot dot-2"></span>{" "}
+                        <span class="waiting-dot dot-3"></span>{" "}
+                    </span>
+                </div>
+            );
             break;
 
         default:
             cardLabel = "";
             break;
     }
+
     if (props.faded) {
         return (
             <div
