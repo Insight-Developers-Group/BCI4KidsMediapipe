@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-import CardStack from "./CardStack";
 
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
     let socketOpen = false;
-    let [resp, setResp] = React.useState("yes");
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
@@ -13,8 +11,8 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-        setResp(obj.Answer.toLowerCase());
-        console.log(`[message] Data received from server: ${resp}`);
+        props.setResponse(obj.Answer.toLowerCase());
+        console.log(`[message] Data received from server: ${props.response}`);
     };
 
     socket.onclose = function (event) {
@@ -55,5 +53,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <CardStack response={resp} />;
+    return <div></div>;
 }
