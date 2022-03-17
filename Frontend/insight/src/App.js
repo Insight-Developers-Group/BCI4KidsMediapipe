@@ -17,9 +17,11 @@ function App() {
     const imageStack = [];
     const [trackingMode, setTrackingMode] = React.useState("face");
 
+    // States for current saved responses in the system
     let [first_card, setFirstCard] = React.useState("card_none");
     let [second_card, setSecondCard] = React.useState("card_none");
 
+    // Variable that holds new responses from the backend to be used in updating cards
     let [response, setResponse] = React.useState("");
 
     return (

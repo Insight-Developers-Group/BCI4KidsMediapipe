@@ -12,13 +12,36 @@ function Card(props) {
             cardLabel = "No";
             break;
 
+        case "card_waiting":
+            cardLabel = "...";
+            break;
+
         default:
             cardLabel = "";
             break;
     }
+    if (props.faded) {
+        return (
+            <div
+                className={
+                    "card " +
+                    props.cardClass +
+                    " " +
+                    props.order +
+                    " card-faded"
+                }
+                data-testid={props.testid}>
+                <h3 className="card_label" data-testid="card_label">
+                    {cardLabel}
+                </h3>
+            </div>
+        );
+    }
 
     return (
-        <div className={"card " + props.cardClass + " " + props.order}>
+        <div
+            className={"card " + props.cardClass + " " + props.order}
+            data-testid={props.testid}>
             <h3 className="card_label" data-testid="card_label">
                 {cardLabel}
             </h3>
