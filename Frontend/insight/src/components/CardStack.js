@@ -1,89 +1,47 @@
 import Card from "./Card";
-import React, { useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 // Component function for the bottom-right card stack item
 function CardStack(props) {
     // State of firstCard and secondCard affects the type of each card (yes/no)
     // Valid states are: "card_yes", "card_no", and "card_none"
-    const [firstCardFaded, setFirstCardFaded] = React.useState(false);
+    let [firstCard, setFirstCard] = useState("card_yes");
+    let [secondCard, setSecondCard] = useState("card_no");
+    let [prevResponse, setPrevResponse] = useState(props.response);
 
     function addYesCard() {
-        if (props.firstCard !== "card_waiting") {
-            props.setSecondCard(props.firstCard);
-            props.setFirstCard("card_yes");
-        } else {
-            props.setFirstCard("card_yes");
-        }
+        setSecondCard(firstCard);
+        setFirstCard("card_yes");
     }
 
     function addNoCard() {
-        if (props.firstCard !== "card_waiting") {
-            props.setSecondCard(props.firstCard);
-            props.setFirstCard("card_no");
-        } else {
-            props.setFirstCard("card_no");
-        }
+        setSecondCard(firstCard);
+        setFirstCard("card_no");
     }
-
-    function addWaitingCard() {
-        if (
-            props.firstCard !== "card_waiting" &&
-            props.firstCard !== "card_none"
-        ) {
-            props.setSecondCard(props.firstCard);
-            props.setFirstCard("card_waiting");
-        }
-    }
-
-    const FADE_DELAY = 5000; // Time before first card fades out
-    const WAITING_DELAY = 5000; // Time before first card replaced with waiting card (this delay happens after FADE_DELAY)
 
     useEffect(() => {
-        setFirstCardFaded(false);
-
         if (props.response === "yes") {
             addYesCard();
-            props.setResponse(""); // Need to clear this so subsequent identical responses are handled correctly
+            setPrevResponse(props.response);
         } else if (props.response === "no") {
             addNoCard();
-            props.setResponse("");
-        } else if (props.response === "wait") {
-            addWaitingCard();
-            props.setResponse("");
+            setPrevResponse(props.response);
         }
-
-        // Fade out cards after a specified number of seconds
-        // Shows users that there hasn't been a response for a while
-        let timer2;
-        const timer = setTimeout(() => {
-            setFirstCardFaded(true);
-            timer2 = setTimeout(() => {
-                setFirstCardFaded(false);
-                addWaitingCard();
-            }, WAITING_DELAY);
-        }, FADE_DELAY);
-
-        return () => {
-            clearTimeout(timer);
-            clearTimeout(timer2);
-        };
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // else if (props.response === prevResponse) {
+        //     if (props.response === 'yes') {
+        //         addYesCard();
+        //         setPrevResponse(props.response);
+        //     }
+        //     else if (props.response === 'no') {
+        //         addNoCard();
+        //         setPrevResponse(props.response);
+        //     }
+        // }
     }, [props.response]);
 
     return (
         <div className="card_stack" data-testid="card_stack">
-            <Card
-                order="card_first"
-                cardClass={props.firstCard}
-                testid="first_card"
-                faded={firstCardFaded}
-            />
-            <Card
-                order="card_second"
-                cardClass={props.secondCard}
-                testid="second_card"
-                faded={false}
-            />
+            <Card order="card_first" cardClass={firstCard} />
+            <Card order="card_second" cardClass={secondCard} />
         </div>
     );
 }

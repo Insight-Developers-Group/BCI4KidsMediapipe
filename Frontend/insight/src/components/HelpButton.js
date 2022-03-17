@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import helpLogo from '../Resources/helplogo.svg';
-import HelpMenu from './HelpMenu';
 
 function HelpButton(props) {
 
@@ -16,16 +15,10 @@ function HelpButton(props) {
     }, [isOpen])
 
     return (
-        <div>
-            <div
-                className="helpIconBgrnd"
-                onClick={toggle}
-                data-testid="helpIconBgrnd">
-                <img className="help-icon" src={helpLogo} alt="help-icon" />
-            </div>
-            {isOpen && <HelpMenu toggle={toggle} />}
+        <div className="helpIconBgrnd" onClick={toggle} data-testid="helpIconBgrnd">
+            <img className="help-icon" src={helpLogo} alt='help-icon' />
         </div>
-    );
+    )
 }
 
 export default HelpButton

@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
+import CardStack from "./CardStack";
 
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
     let socketOpen = false;
-  
+    let [resp, setResp] = React.useState("yes");
     let [err, setErr] = React.useState("");
-  
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
@@ -14,16 +14,17 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-      
         if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
-            props.changeMessage('');
-            props.setResponse(obj.Answer.toLowerCase());
-            console.log(`[message] Data received from server: ${props.response}`);
+            setResp(obj.Answer.toLowerCase());
+            setErr('');
+            console.log(
+                `[message] Data received from server: ${resp}`
+            );
         }
 
         // If the response if not a yes or a no, it must be an error
         if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
-            props.changeMessage(obj.Answer.toLowerCase());
+            setErr(obj.Answer.toLowerCase());
             console.log(
                 `[Error] Error received from server: ${err}`
             );
@@ -69,5 +70,5 @@ export default function SampleClient(props) {
     });
 
     props.changeMessage(err);  // Update the message state stored in the App component
-    return <div></div>;
+    return <div><CardStack response={resp} /></div>;
 }

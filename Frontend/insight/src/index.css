@@ -8,7 +8,7 @@ body {
     font-family: "Andika", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #212223;
+    background: linear-gradient(#212223, #323232) no-repeat center center fixed;
     color: #fffffff2;
     width: 100%;
 }
@@ -59,7 +59,6 @@ code {
 .card_label {
     padding: 0;
     margin: 0;
-    height: min-content;
     font-style: normal;
     font-weight: normal;
     font-size: 2em;
@@ -74,24 +73,6 @@ code {
     z-index: 2;
 }
 
-@keyframes first-card-animation {
-    0% {
-        opacity: 10%;
-    }
-    100% {
-        opacity: 100%;
-    }
-}
-
-.card_first {
-    animation: first-card-animation 0.7s;
-}
-
-.card-faded {
-    transition: opacity 0.5s ease-out;
-    opacity: 90%;
-}
-
 .card_second {
     top: 0.45em;
     left: 0.45em;
@@ -99,7 +80,6 @@ code {
     height: 2.6em;
     line-height: 2.6em;
     z-index: 1;
-    opacity: 80%;
 }
 
 .card_none {
@@ -107,68 +87,15 @@ code {
 }
 
 .card_yes {
-    background: linear-gradient(99.28deg, #5cc653 0%, #2bd4acfa 100%);
+    background: linear-gradient(
+        99.28deg,
+        #77e66d 0%,
+        rgba(75, 218, 184, 0.98) 100%
+    );
 }
 
 .card_no {
     background: linear-gradient(109.38deg, #ff5a5a 21.05%, #f254a0 81.42%);
-}
-
-.card_waiting {
-    background: linear-gradient(292.69deg, #5c8aff 20.45%, #43d2ff 77.48%);
-}
-
-/* Waiting card jump animations */
-/* Adapted from http://www.java2s.com/example/html-css/css-animation/jumping-dots-animation.html */
-
-.waiting-dots-cont {
-    display: inline;
-}
-.waiting-dot {
-    width: 0.25em;
-    height: 0.25em;
-    background: white;
-    display: inline-block;
-    border-radius: 50%;
-    right: 0;
-    bottom: 0;
-    margin: 0 0.0875em;
-    margin-bottom: 0.25em;
-    position: relative;
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Edge */
-    user-select: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .waiting-dot {
-        animation: jump 4s infinite;
-    }
-}
-
-.waiting-dots-cont .dot-1 {
-    -webkit-animation-delay: 400ms;
-    animation-delay: 200ms;
-}
-.waiting-dots-cont .dot-2 {
-    -webkit-animation-delay: 800ms;
-    animation-delay: 400ms;
-}
-.waiting-dots-cont .dot-3 {
-    -webkit-animation-delay: 120ms;
-    animation-delay: 600ms;
-}
-@keyframes jump {
-    0% {
-        bottom: 0;
-    }
-    10% {
-        bottom: 0.5rem;
-    }
-    20% {
-        bottom: 0;
-    }
 }
 
 .menu-btn,
@@ -345,7 +272,7 @@ code {
 }
 
 .eye-selected-face-bg {
-    background-color: #2c2c2c;
+    background-color: #383b3d;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
 }
 
@@ -376,16 +303,16 @@ code {
 }
 
 .face-selected-eye-bg {
-    background-color: #2c2c2c;
+    background-color: #383b3d;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .eyelogo {
     position: absolute;
-    width: 2rem;
-    height: 2rem;
-    left: 5px;
-    top: 6px;
+    width: 28px;
+    height: 28px;
+    left: 7px;
+    top: 8px;
 }
 
 .labelContent {
@@ -399,83 +326,16 @@ code {
     margin-inline-start: 0.6rem;
 }
 
-.footerElements {
-    display: flex;
-}
-
-/*-- Help Menu --*/
-.help-menu-overlay {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 5;
-    background-color: hsla(0, 0%, 7%, 0.5);
-    animation: show-menu 0.3s;
-}
-
-.help-menu {
-    position: fixed;
-    border-radius: 2rem;
-    display: block;
-    width: min(60vw, 90ch);
-    height: 30rem;
-    left: calc((100vw - min(60vw, 90ch)) / 2);
-    top: calc((100vh - 30rem) / 2);
-    background-color: #ffffff;
-    z-index: 6;
-    /* transition: opacity 0.3s ease-in; */
-    animation: show-menu 0.3s;
-}
-
-@keyframes show-menu {
-    0% {
-        opacity: 0%;
-    }
-    100% {
-        opacity: 100%;
-    }
-}
-
-.help-menu-close {
-    position: absolute;
-    right: 0.75rem;
-    top: 0.75rem;
-}
-
-.help-menu-icon {
-    position: absolute;
-    width: 3rem;
-    left: 2rem;
-    top: 1rem;
-}
-
-.help-menu-title {
-    position: absolute;
-    color: #000000;
-    top: 1.2rem;
-    left: 6rem;
-    margin: 0;
-}
-
-.help-menu-content {
-    color: #000000;
-    position: absolute;
-    width: calc(100% - 4rem);
-    height: calc(100% - 5rem);
-    /* top: 17%; */
-    margin-top: 5rem;
-    padding-inline: 2rem;
-    /* background-color: #ff7171dd; */
-}
-
 .labelContent::before {
     content: "|";
     color: white;
     position: relative;
     right: 0.5rem;
     bottom: 0.1rem;
+}
+
+.App{
+  display: flex;
 }
 
 .error-response{
@@ -491,10 +351,4 @@ code {
   border-radius: 1rem;
   margin: auto;
   margin-top: 3rem;
-}
-
-@media only screen and (max-width: 720px) {
-    .labelContent {
-        display: none;
-    }
 }

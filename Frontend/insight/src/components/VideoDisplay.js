@@ -1,10 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Webcam from "react-webcam";
+
+// const videoDisplay = document.getElementById("video-display");
+// if (window.visualViewport.height - videoDisplay.style.height - 80 >
+//     window.visualViewport.width - videoDisplay.style.width - 32) {
+//   videoDisplay.style.height = '100%';
+//   videoDisplay.style.width = '0';
+// } else {
+//   videoDisplay.style.height = '0';
+//   videoDisplay.style.width = '100%';
+// }
 
 // Component to display webcam view to the screen along with placeholder when camera is not accessible
 function VideoDisplay(props) {
     const webcamRef = React.useRef(null);
-    const [, setimgSrc] = React.useState(null);
+    const [imgSrc, setimgSrc] = React.useState(null);
 
     // Capture a screenshot of the current webcam view and add to the imageSrc array
     const capture = React.useCallback(() => {
