@@ -21,7 +21,7 @@ from ActionBasedStateGenerator import ActionBasedStateGenerator
 
 # Initiate State Generator with the appropriate models
 MAX_SIZE_IRIS_DATA_QUEUE = 48
-facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
+facial_state_generator = StateGenerator("../Machine_Learning_Model/facial_model.pkl", "FACE")
 iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/Action_template/3_state_test.h5", MAX_SIZE_IRIS_DATA_QUEUE)
 
 #Initiate actionList to send to 
@@ -258,4 +258,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
