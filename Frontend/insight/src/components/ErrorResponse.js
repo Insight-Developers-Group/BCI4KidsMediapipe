@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-export default function ErrorResponsed(props) {
-    const [err, setErr] = useState("e");
+export default function ErrorResponse(props) {
     const errCmp = useRef();
-    function updateErr(msg) {
-        setErr(msg);
-    }
 
     useEffect(() => {
 

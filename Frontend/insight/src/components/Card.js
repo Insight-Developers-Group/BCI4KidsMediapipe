@@ -17,15 +17,14 @@ function Card(props) {
                 <div
                     className={"card " + props.cardClass + " " + props.order}
                     data-testid={props.testid}>
-                    <span class="waiting-dots-cont">
+                    <span className="waiting-dots-cont">
                         {" "}
-                        <span class="waiting-dot dot-1"></span>{" "}
-                        <span class="waiting-dot dot-2"></span>{" "}
-                        <span class="waiting-dot dot-3"></span>{" "}
+                        <span className="waiting-dot dot-1"></span>{" "}
+                        <span className="waiting-dot dot-2"></span>{" "}
+                        <span className="waiting-dot dot-3"></span>{" "}
                     </span>
                 </div>
             );
-            break;
 
         default:
             cardLabel = "";
