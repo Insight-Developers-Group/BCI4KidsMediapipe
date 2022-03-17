@@ -77,12 +77,14 @@ function CardStack(props) {
                 cardClass={props.firstCard}
                 testid="first_card"
                 faded={firstCardFaded}
+                colorBlindMode={props.colorBlindMode}
             />
             <Card
                 order="card_second"
                 cardClass={props.secondCard}
                 testid="second_card"
                 faded={false}
+                colorBlindMode={props.colorBlindMode}
             />
         </div>
     );

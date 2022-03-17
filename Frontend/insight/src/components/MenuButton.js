@@ -16,6 +16,10 @@ function MenuButton(props) {
         else console.log("Menu Closed");
     }
 
+    function switchClrBlndMode() {
+        props.changeColorBlindMode((prevMode) => !prevMode);
+    }
+
     return (
         <div className="menu-wrapper">
             <div className={menu_btn_class} data-testid="menu-btn">
@@ -33,13 +37,13 @@ function MenuButton(props) {
                         <button>Turn Off Camera</button>
                     </li>
                     <li>
-                        <button>Other</button>
+                        <button>Flip Response Card Locations</button>
                     </li>
                     <li>
-                        <button>Example</button>
+                        <button onClick={switchClrBlndMode}>Enable Colorblind Mode</button>
                     </li>
                     <li>
-                        <button>Options</button>
+                        <button>Reduce Animations</button>
                     </li>
                 </ul>
             </div>
