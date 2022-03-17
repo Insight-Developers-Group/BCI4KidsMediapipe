@@ -4,7 +4,7 @@ import pandas as pd
 class ModelStates:
     
     FACE_STATES = ["NEUTRAL", "SMILE", "FROWN"]
-    IRIS_STATES = ["EYES_UP", "EYES_DOWN", "EYES_LEFT", "EYES_RIGHT", "EYES_CENTRE"]
+    IRIS_STATES = ["NEUTRAL", "YES", "NO"]
 
 
 class StateGenerator:

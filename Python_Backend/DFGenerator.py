@@ -71,7 +71,7 @@ class IrisDFGenerator(DFGeneratorInterface):
     SMALL_CIRCLE_SIZE = 1
     LARGE_CIRCLE_SIZE = 2
 
-    POINTS_IDX = [33, 133, 362, 263, 61, 291, 199]
+    POINTS_IDX = [33, 133, 362, 263]
     POINTS_IDX = list(set(POINTS_IDX))
     POINTS_IDX.sort()
 
@@ -172,26 +172,13 @@ class IrisDFGenerator(DFGeneratorInterface):
                 df_headers = []
                 df_values = []
 
-                # add subset of facemesh to dataframe
-                for ii in IrisDFGenerator.POINTS_IDX:
-
-                    landmark = (landmarks[0, ii], landmarks[1, ii], landmarks[2, ii])
-                    add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
-
-                    landmark_idx += 1
-
                 # add eye contours to dataframe
                 eye_landmarks = np.concatenate(
                     [
-                        right_eye_contours,
-                        left_eye_contours,
+                        right_eye_contours[0:17],
+                        left_eye_contours[0:17],
                     ]
                 )
-                for landmark in eye_landmarks:
-                    
-                    add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
-
-                    landmark_idx += 1
 
                 # add iris landmarks to dataframe
                 iris_landmarks = np.concatenate(
@@ -202,9 +189,28 @@ class IrisDFGenerator(DFGeneratorInterface):
                 )
                 for landmark in iris_landmarks:
 
-                    add_landmark_to_df(landmark, landmark_idx, df_headers, df_values)
+                    add_landmark_to_df(
+                        landmark, landmark_idx, df_headers, df_values)
 
                     landmark_idx += 1
+
+                for landmark in eye_landmarks:
+
+                    add_landmark_to_df(
+                        landmark, landmark_idx, df_headers, df_values)
+
+                    landmark_idx += 1
+
+                # add subset of facemesh to dataframe
+                for ii in IrisDFGenerator.POINTS_IDX:
+
+                    landmark = (landmarks[0, ii],
+                                landmarks[1, ii], landmarks[2, ii])
+                    add_landmark_to_df(
+                        landmark, landmark_idx, df_headers, df_values)
+
+                    landmark_idx += 1
+
 
                 # create dataframe
                 df = pd.DataFrame([df_values], columns = df_headers)

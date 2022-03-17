@@ -18,7 +18,14 @@ function App() {
     // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
     const imageStack = [];
     const [trackingMode, setTrackingMode] = React.useState("face");
-    const [message, setMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    // States for current saved responses in the system
+    let [first_card, setFirstCard] = React.useState("card_none");
+    let [second_card, setSecondCard] = React.useState("card_none");
+
+    // Variable that holds new responses from the backend to be used in updating cards
+    let [response, setResponse] = React.useState("");
 
     return (
         <div className="App">
@@ -32,8 +39,22 @@ function App() {
                     changeMode={setTrackingMode}
                 />
             </div>
-            <SampleClient stack={imageStack} mode={trackingMode} changeMessage={setMessage} />
-            <ErrorResponse msg={message} />
+            <CardStack
+                response={response}
+                setResponse={setResponse}
+                firstCard={first_card}
+                setFirstCard={setFirstCard}
+                secondCard={second_card}
+                setSecondCard={setSecondCard}
+            />
+            <SampleClient
+                stack={imageStack}
+                mode={trackingMode}
+                response={response}
+                setResponse={setResponse}
+                changeMessage={setErrorMessage}
+            />
+            <ErrorResponse msg={errorMessage} />
         </div>
     );
 }
