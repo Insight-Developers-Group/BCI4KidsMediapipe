@@ -225,7 +225,7 @@ code {
 
 .menu-btn-open {
     width: max-content;
-    max-width: 30ch;
+    max-width: 33ch;
     height: min-content;
     /* border-radius: 1em; */
     display: inline;
