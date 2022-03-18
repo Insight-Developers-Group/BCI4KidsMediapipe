@@ -15,7 +15,7 @@ export default function SampleClient(props) {
         let obj = JSON.parse(event.data);
         if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
             setResp(obj.Answer.toLowerCase());
-            props.setMessage('');
+            props.changeMessage('');
             console.log(
                 `[message] Data received from server: ${resp}`
             );
@@ -23,7 +23,7 @@ export default function SampleClient(props) {
 
         // If the response if not a yes or a no, it must be an error
         if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
-            props.setMessage(obj.Answer.toLowerCase());
+            props.changeMessage(obj.Answer.toLowerCase());
         }
     };
 
