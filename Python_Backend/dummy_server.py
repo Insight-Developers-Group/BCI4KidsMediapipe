@@ -29,15 +29,18 @@ ACTION_NAME = sys.argv[2]
 SEQUENCE_LENGTH = int(sys.argv[3])
 NO_SEQUENCES = int(sys.argv[4])
 
+FACE = "FACE"
+IRIS = "IRIS"
+
 for sequence in range(NO_SEQUENCES):
     try: 
-        os.makedirs(os.path.join(DATA_PATH, ACTION_NAME, str(sequence)))
+        os.makedirs(os.path.join(DATA_PATH, IRIS, ACTION_NAME, str(sequence)))
+        os.makedirs(os.path.join(DATA_PATH, FACE, ACTION_NAME, str(sequence)))
     except:
         pass
 print('folders Created')
 
-FACE = "FACE"
-IRIS = "IRIS"
+
 
 # Error Strings
 invalid_state_exception = "ERROR: Invalid State Exception"
@@ -82,7 +85,7 @@ def get_landmarks(image_data):
 
     else:
         print("how did this even happen?")
-        return Exception
+        raise Exception
 
 
     return df
@@ -134,33 +137,36 @@ async def recv_image(websocket):
                         print("exception occured.")
                         pass
                     
-                    if(mode == FACE):
-                        print(face_sq_itr.get())
-                        if (face_sq_itr.get() >= NO_SEQUENCES):
-                            print('Sequences Finished')
-                            quit()
-                        else:
-                            # print('Adding frame')
-                            face_itr.set(face_itr.get()+1)
-                            if (face_itr.get() == SEQUENCE_LENGTH):
-                                face_sq_itr.set(face_sq_itr.get()+1)
-                                face_itr.set(0)
-                            keypoints = np.array(lm)[0]
-                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(face_sq_itr.get()), str(face_itr.get()))
-                            np.save(npy_path, keypoints)
-                    elif(mode == IRIS):
-                        if (iris_sq_itr.get() >= NO_SEQUENCES):
-                            print('Sequences Finished')
-                            quit()
-                        else:
-                            iris_itr.set(iris_itr.get()+1)
-                            #go to the next folder
-                            if (iris_itr.get() == SEQUENCE_LENGTH):
-                                iris_sq_itr.set(iris_sq_itr.get()+1)
-                                iris_itr.set(0)
-                            keypoints = np.array(lm)[0]
-                            npy_path = os.path.join(DATA_PATH, ACTION_NAME, str(face_sq_itr.get()), str(face_itr.get()))
-                            np.save(npy_path, keypoints)
+                    if(lm.empty==False):
+                        print(mode)
+                        if(mode == FACE):
+                            print(face_sq_itr.get())
+                            if (face_sq_itr.get() >= NO_SEQUENCES):
+                                print('Sequences Finished')
+                                quit()
+                            else:
+                                # print('Adding frame')
+                                face_itr.set(face_itr.get()+1)
+                                if (face_itr.get() == SEQUENCE_LENGTH):
+                                    face_sq_itr.set(face_sq_itr.get()+1)
+                                    face_itr.set(0)
+                                keypoints = np.array(lm)[0]
+                                npy_path = os.path.join(DATA_PATH, FACE, ACTION_NAME, str(face_sq_itr.get()), str(face_itr.get()))
+                                np.save(npy_path, keypoints)
+                        elif(mode == IRIS):
+                            print(iris_sq_itr.get())
+                            if (iris_sq_itr.get() >= NO_SEQUENCES):
+                                print('Sequences Finished')
+                                quit()
+                            else:
+                                iris_itr.set(iris_itr.get()+1)
+                                #go to the next folder
+                                if (iris_itr.get() == SEQUENCE_LENGTH):
+                                    iris_sq_itr.set(iris_sq_itr.get()+1)
+                                    iris_itr.set(0)
+                                keypoints = np.array(lm)[0]
+                                npy_path = os.path.join(DATA_PATH, IRIS, ACTION_NAME, str(iris_sq_itr.get()), str(iris_itr.get()))
+                                np.save(npy_path, keypoints)
 
                     ##############################################################
 
