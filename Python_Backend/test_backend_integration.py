@@ -18,7 +18,7 @@ class TestBackendIntegration(unittest.TestCase):
         for x in range(30):
             answer = MainRunner.process_image((FACE, image))
 
-        self.assertEqual(answer.value, Answer.YES.value)
+        self.assertEqual(answer, "YES")
 
 
     def test_facial_yes_mixed_response(self):
@@ -33,7 +33,7 @@ class TestBackendIntegration(unittest.TestCase):
 
             answer = MainRunner.process_image((FACE, image_smile))
 
-        self.assertEqual(answer.value, Answer.YES.value)
+        self.assertEqual(answer, "YES")
 
 
     def test_facial_undefined_mixed_response(self):
@@ -48,7 +48,7 @@ class TestBackendIntegration(unittest.TestCase):
 
             answer = MainRunner.process_image((FACE, image_neutral))
 
-        self.assertEqual(answer.value, Answer.UNDEFINED.value)
+        self.assertEqual(answer, "NO")
 
     def test_facial_no_face_detected_exception(self):
 

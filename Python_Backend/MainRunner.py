@@ -8,20 +8,27 @@ import numpy
 from PIL import Image, UnidentifiedImageError
 import websockets
 import contextvars
+import traceback
+
+import numpy as np
 
 import AnswerGenerator
 import DFGenerator
 from StateGenerator import StateGenerator
 import json 
+from ActionBasedStateGenerator import ActionBasedStateGenerator
 
 
 # Initiate State Generator with the appropriate models
-facial_state_generator = StateGenerator("../Machine_Learning_Model/smile_neutral_rf.pkl", "FACE")
-iris_state_generator = StateGenerator("../Machine_Learning_Model/iris.pkl", "IRIS")
+MAX_SIZE_IRIS_DATA_QUEUE = 48
+facial_state_generator = StateGenerator("../Machine_Learning_Model/facial_model.pkl", "FACE")
+iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/Action_template/3_state_test.h5", MAX_SIZE_IRIS_DATA_QUEUE)
+
+#Initiate actionList to send to 
 
 # Two types of Generators
 facial_answer_generator = AnswerGenerator.FacialAnswerGenerator()
-iris_answer_generator = None  # TODO MAKE THIS THE ACTUAL DATA TYPE
+iris_answer_generator = AnswerGenerator.IrisAnswerGenerator()
 
 FACE = "FACE"
 IRIS = "IRIS"
@@ -36,8 +43,36 @@ df_generator_exception = "ERROR: DF Generator Failed"
 state_generator_exception = "ERROR: State Generator Failed"
 answer_generator_exception = "ERROR: Answer Generator Failed"
 
+# Member Variables
 current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
+iris_data_queue = contextvars.ContextVar('iris_data_queue', default=[])
 
+def compareIrisLandmarks(irisLandmarks, eyeLandmarks, eyeAnchors):
+    deltaVals = []
+    for i in range(0, len(irisLandmarks), 3):
+        x = irisLandmarks[i]
+        y = irisLandmarks[i+1]
+        z = irisLandmarks[i+2]
+        
+        #compare to 
+        for j in range(0, len(eyeLandmarks), 3):
+            x_c = eyeLandmarks[j]
+            y_c = eyeLandmarks[j+1]
+            z_c = eyeLandmarks[j+2]
+            
+            deltaVals.append(x - x_c)
+            deltaVals.append(y - y_c)
+            deltaVals.append(z - z_c)
+        
+        for j in range(0, len(eyeAnchors), 3):
+            x_c = eyeLandmarks[j]
+            y_c = eyeLandmarks[j+1]
+            z_c = eyeLandmarks[j+2]
+            
+            deltaVals.append(x - x_c)
+            deltaVals.append(y - y_c)
+            deltaVals.append(z - z_c)
+    return deltaVals
 
 def process_image(image_data):
 
@@ -67,13 +102,14 @@ def process_image(image_data):
             return state_generator_exception
 
         try:
-            facial_answer_generator.add_state_to_queue(state)
+            facial_answer_generator.add_frame_to_queue(state)
             answer = facial_answer_generator.determine_answer()
 
         except AnswerGenerator.InvalidStateException:
             return invalid_state_exception
 
-        except Exception:
+        except Exception as e: 
+            traceback.print_exc()
             return  state_generator_exception
 
 
@@ -81,6 +117,19 @@ def process_image(image_data):
         
         try:
             df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
+            res = np.array(df)[0]
+            keypoints = compareIrisLandmarks(res[15:30], res[81:108], res[132:138]) + compareIrisLandmarks(res[0:15], res[30:57], res[138:])
+            print(len(keypoints))
+
+            if (len(iris_data_queue.get()) < MAX_SIZE_IRIS_DATA_QUEUE):
+
+                iris_data_queue.get().append(keypoints)
+                return answer
+            
+            else:
+                iris_data_queue.get().pop(0)
+                iris_data_queue.get().append(keypoints)
+
 
         except DFGenerator.NoFaceDetectedException:
             return no_face_detected_exception
@@ -88,26 +137,35 @@ def process_image(image_data):
         except DFGenerator.MultiFaceDetectedException:
             return multi_face_detected_exception
 
-        except Exception:
+        except Exception as e:
+            print("dataframeError:")
+            traceback.print_exc()
+            # print(e.with_traceback)
             return df_generator_exception
 
         try:
-            state = iris_state_generator.get_state(df)
+            state = iris_state_generator.get_state(np.array(iris_data_queue.get()))
+            print(state)
 
         except ValueError:
+            traceback.print_exc()
             return invalid_model_type
 
         except Exception:
+            print("ERROR FROM ACTION STATE GENERATOR")
+            traceback.print_exc()
             return state_generator_exception
 
         try:
-            iris_answer_generator.add_state_to_queue(state)
+            iris_answer_generator.add_frame_to_queue(state)
             answer = iris_answer_generator.determine_answer()
+            print(answer)
         
         except AnswerGenerator.InvalidStateException:
             return invalid_state_exception 
 
         except Exception:
+            traceback.print_exc()
             return  state_generator_exception
 
 
@@ -200,4 +258,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-import CardStack from "./CardStack";
 
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
     let socketOpen = false;
-    let [resp, setResp] = React.useState("yes");
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
@@ -13,8 +11,8 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-        setResp(obj.Answer.toLowerCase());
-        console.log(`[message] Data received from server: ${resp}`);
+        props.setResponse(obj.Answer.toLowerCase());
+        console.log(`[message] Data received from server: ${props.response}`);
     };
 
     socket.onclose = function (event) {
@@ -35,7 +33,7 @@ export default function SampleClient(props) {
     };
 
     // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component/65049865
-    const SECOND_MS = 33; // Rate at which frames are sent to the server, made this lower than the VideoDisplay frame rate to prevent bottlenecks
+    const SECOND_MS = 120; // Rate at which frames are sent to the server, made this lower than the VideoDisplay frame rate to prevent bottlenecks
     useEffect(() => {
         const interval = setInterval(() => {
             if (socketOpen && props.stack.length !== 0) {
@@ -55,5 +53,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <CardStack response={resp} />;
+    return <div></div>;
 }
