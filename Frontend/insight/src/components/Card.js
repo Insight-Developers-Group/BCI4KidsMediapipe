@@ -2,6 +2,16 @@ import React from "react";
 
 // Component function for the individual cards in the card stack component (at "./CardStack.js")
 function Card(props) {
+    let fullCardClass = "card " + props.cardClass + " " + props.order;
+
+    if (props.faded) {
+        fullCardClass += " card-faded";
+    }
+
+    if (props.colorBlindMode) {
+        fullCardClass += " " + props.cardClass + "-colorblind";
+    }
+
     let cardLabel;
     switch (props.cardClass) {
         case "card_yes":
@@ -14,9 +24,7 @@ function Card(props) {
 
         case "card_waiting":
             return (
-                <div
-                    className={"card " + props.cardClass + " " + props.order}
-                    data-testid={props.testid}>
+                <div className={fullCardClass} data-testid={props.testid}>
                     <span class="waiting-dots-cont">
                         {" "}
                         <span class="waiting-dot dot-1"></span>{" "}
@@ -25,45 +33,14 @@ function Card(props) {
                     </span>
                 </div>
             );
-            break;
 
         default:
             cardLabel = "";
             break;
     }
 
-    if (props.faded) {
-        return (
-            <div
-                className={
-                    "card " +
-                    props.cardClass +
-                    " " +
-                    props.order +
-                    " card-faded"
-                }
-                data-testid={props.testid}>
-                <h3 className="card_label" data-testid="card_label">
-                    {cardLabel}
-                </h3>
-            </div>
-        );
-    }
-    if (props.colorBlindMode === true) {
-        return (
-            <div
-                className={"card " + props.cardClass + " " + props.order + " " + props.cardClass + "-colorblind"}
-                data-testid={props.testid}>
-                <h3 className="card_label" data-testid="card_label">
-                    {cardLabel}
-                </h3>
-            </div>
-        );
-    }
     return (
-        <div
-            className={"card " + props.cardClass + " " + props.order}
-            data-testid={props.testid}>
+        <div className={fullCardClass} data-testid={props.testid}>
             <h3 className="card_label" data-testid="card_label">
                 {cardLabel}
             </h3>
