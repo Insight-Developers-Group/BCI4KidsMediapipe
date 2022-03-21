@@ -55,7 +55,7 @@ function CardStack(props) {
         // Shows users that there hasn't been a response for a while
         let timer2;
         const timer = setTimeout(() => {
-            setFirstCardFaded(true);
+            if (props.firstCard !== "card_waiting") setFirstCardFaded(true);
             timer2 = setTimeout(() => {
                 setFirstCardFaded(false);
                 addWaitingCard();
@@ -78,6 +78,7 @@ function CardStack(props) {
                 testid="first_card"
                 faded={firstCardFaded}
                 colorBlindMode={props.colorBlindMode}
+                darkTextMode={props.darkTextMode}
             />
             <Card
                 order="card_second"
@@ -85,6 +86,7 @@ function CardStack(props) {
                 testid="second_card"
                 faded={false}
                 colorBlindMode={props.colorBlindMode}
+                darkTextMode={props.darkTextMode}
             />
         </div>
     );
