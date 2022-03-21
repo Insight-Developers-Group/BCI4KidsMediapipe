@@ -55,7 +55,7 @@ function CardStack(props) {
         // Shows users that there hasn't been a response for a while
         let timer2;
         const timer = setTimeout(() => {
-            setFirstCardFaded(true);
+            if (props.firstCard !== "card_waiting") setFirstCardFaded(true);
             timer2 = setTimeout(() => {
                 setFirstCardFaded(false);
                 addWaitingCard();
