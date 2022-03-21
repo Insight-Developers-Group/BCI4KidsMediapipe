@@ -78,6 +78,7 @@ function CardStack(props) {
                 testid="first_card"
                 faded={firstCardFaded}
                 colorBlindMode={props.colorBlindMode}
+                darkTextMode={props.darkTextMode}
             />
             <Card
                 order="card_second"
@@ -85,6 +86,7 @@ function CardStack(props) {
                 testid="second_card"
                 faded={false}
                 colorBlindMode={props.colorBlindMode}
+                darkTextMode={props.darkTextMode}
             />
         </div>
     );

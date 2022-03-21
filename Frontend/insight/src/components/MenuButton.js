@@ -20,6 +20,10 @@ function MenuButton(props) {
         props.changeColorBlindMode((prevMode) => !prevMode);
     }
 
+    function switchDarkTextMode() {
+        props.changeDarkTextMode((prevMode) => !prevMode);
+    }
+
     return (
         <div className="menu-wrapper">
             <div className={menu_btn_class} data-testid="menu-btn">
@@ -40,10 +44,14 @@ function MenuButton(props) {
                         <button>Flip Response Card Locations</button>
                     </li>
                     <li>
-                        <button onClick={switchClrBlndMode}>Enable Colorblind Mode</button>
+                        <button onClick={switchClrBlndMode}>
+                            Enable Colorblind Mode
+                        </button>
                     </li>
                     <li>
-                        <button>Reduce Animations</button>
+                        <button onClick={switchDarkTextMode}>
+                            Darken Card Text
+                        </button>
                     </li>
                 </ul>
             </div>

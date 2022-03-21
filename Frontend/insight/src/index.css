@@ -130,6 +130,10 @@ code {
     background: linear-gradient(292.69deg, #15b2d5 20.45%, #5cffff 77.48%);
 }
 
+.card-dark {
+    color: #000000d9;
+}
+
 /* Waiting card jump animations */
 /* Adapted from http://www.java2s.com/example/html-css/css-animation/jumping-dots-animation.html */
 
@@ -139,7 +143,7 @@ code {
 .waiting-dot {
     width: 0.25em;
     height: 0.25em;
-    background: white;
+    background: #ffffffd9;
     display: inline-block;
     border-radius: 50%;
     right: 0;
@@ -151,6 +155,10 @@ code {
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Edge */
     user-select: none;
+}
+
+.card-dark > .waiting-dots-cont > .waiting-dot {
+    background: #000000d9;
 }
 
 @media (prefers-reduced-motion: no-preference) {

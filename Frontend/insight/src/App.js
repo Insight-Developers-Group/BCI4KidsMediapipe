@@ -20,14 +20,21 @@ function App() {
     // States for current saved responses in the system
     let [first_card, setFirstCard] = React.useState("card_none");
     let [second_card, setSecondCard] = React.useState("card_none");
-    const [clrblindMode, setClrBlindMode] = React.useState(false);
 
     // Variable that holds new responses from the backend to be used in updating cards
     let [response, setResponse] = React.useState("");
 
+    // Variables for switching user settings
+    const [clrblindMode, setClrBlindMode] = React.useState(false); // Enables/disables colorblind mode
+    const [darkTextMode, setDarkTextMode] = React.useState(false);
+
     return (
         <div className="App">
-            <MenuButton colorBlindMode={clrblindMode} changeColorBlindMode={setClrBlindMode} />
+            <MenuButton
+                colorBlindMode={clrblindMode}
+                changeColorBlindMode={setClrBlindMode}
+                changeDarkTextMode={setDarkTextMode}
+            />
             <HelpButton />
             <ReloadButton />
             <div className="webcam-block">
@@ -45,6 +52,7 @@ function App() {
                 secondCard={second_card}
                 setSecondCard={setSecondCard}
                 colorBlindMode={clrblindMode}
+                darkTextMode={darkTextMode}
             />
             <SampleClient
                 stack={imageStack}

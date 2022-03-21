@@ -4,13 +4,10 @@ import React from "react";
 function Card(props) {
     let fullCardClass = "card " + props.cardClass + " " + props.order;
 
-    if (props.faded) {
-        fullCardClass += " card-faded";
-    }
-
-    if (props.colorBlindMode) {
+    if (props.faded) fullCardClass += " card-faded";
+    if (props.colorBlindMode)
         fullCardClass += " " + props.cardClass + "-colorblind";
-    }
+    if (props.darkTextMode) fullCardClass += " card-dark";
 
     let cardLabel;
     switch (props.cardClass) {
