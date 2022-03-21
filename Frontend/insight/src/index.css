@@ -110,8 +110,16 @@ code {
     background: linear-gradient(99.28deg, #5cc653 0%, #2bd4acfa 100%);
 }
 
+.card_yes-colorblind{
+    background: linear-gradient(99.28deg, #e2e06a 0%, #d9b44f 100%);
+}
+
 .card_no {
     background: linear-gradient(109.38deg, #ff5a5a 21.05%, #f254a0 81.42%);
+}
+
+.card_no-colorblind{
+    background: linear-gradient(99.28deg, #c99eff 0%, #8e6bc5 100%);
 }
 
 .card_waiting {
@@ -217,7 +225,7 @@ code {
 
 .menu-btn-open {
     width: max-content;
-    max-width: 30ch;
+    max-width: 33ch;
     height: min-content;
     /* border-radius: 1em; */
     display: inline;

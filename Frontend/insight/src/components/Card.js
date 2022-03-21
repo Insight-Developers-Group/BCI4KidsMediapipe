@@ -49,7 +49,17 @@ function Card(props) {
             </div>
         );
     }
-
+    if (props.colorBlindMode === true) {
+        return (
+            <div
+                className={"card " + props.cardClass + " " + props.order + " " + props.cardClass + "-colorblind"}
+                data-testid={props.testid}>
+                <h3 className="card_label" data-testid="card_label">
+                    {cardLabel}
+                </h3>
+            </div>
+        );
+    }
     return (
         <div
             className={"card " + props.cardClass + " " + props.order}
