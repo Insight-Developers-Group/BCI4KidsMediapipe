@@ -4,7 +4,6 @@ import CardStack from "./CardStack";
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
     let socketOpen = false;
-    let [resp, setResp] = React.useState("yes");
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
@@ -14,16 +13,15 @@ export default function SampleClient(props) {
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
         if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
-            setResp(obj.Answer.toLowerCase());
             props.changeMessage('');
-            console.log(
-                `[message] Data received from server: ${resp}`
-            );
         }
 
         // If the response if not a yes or a no, it must be an error
         if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
             props.changeMessage(obj.Answer.toLowerCase());
+            console.log(
+                `[Error] Error received from server: ${props.message}`
+            );
         }
     };
 
@@ -65,5 +63,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <div><CardStack response={resp} /></div>;
+    return <div></div>;
 }

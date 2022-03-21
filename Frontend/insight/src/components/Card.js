@@ -12,6 +12,20 @@ function Card(props) {
             cardLabel = "No";
             break;
 
+        case "card_waiting":
+            return (
+                <div
+                    className={"card " + props.cardClass + " " + props.order}
+                    data-testid={props.testid}>
+                    <span className="waiting-dots-cont">
+                        {" "}
+                        <span className="waiting-dot dot-1"></span>{" "}
+                        <span className="waiting-dot dot-2"></span>{" "}
+                        <span className="waiting-dot dot-3"></span>{" "}
+                    </span>
+                </div>
+            );
+
         default:
             cardLabel = "";
             break;

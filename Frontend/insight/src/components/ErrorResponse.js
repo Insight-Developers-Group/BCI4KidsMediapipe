@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-export default function ErrorResponsed(props) {
-
+export default function ErrorResponse(props) {
     const errCmp = useRef();
 
     useEffect(() => {
