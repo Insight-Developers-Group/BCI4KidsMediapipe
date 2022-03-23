@@ -135,7 +135,7 @@ async def recv_image(websocket):
                         lm = get_landmarks((mode, converted))
                     except:
                         print("exception occured.")
-                        pass
+                        continue
                     
                     if(lm.empty==False):
                         print(mode)
