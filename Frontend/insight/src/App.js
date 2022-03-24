@@ -20,9 +20,17 @@ function App() {
     const [trackingMode, setTrackingMode] = React.useState("face");
     const [message, setMessage] = useState("");
 
+    // Variables for switching user settings
+    const [clrblindMode, setClrBlindMode] = React.useState(false); // Enables/disables colorblind mode
+    const [darkTextMode, setDarkTextMode] = React.useState(false);
+
     return (
         <div className="App">
-            <MenuButton />
+            <MenuButton
+                colorBlindMode={clrblindMode}
+                changeColorBlindMode={setClrBlindMode}
+                changeDarkTextMode={setDarkTextMode}
+            />
             <HelpButton />
             <ReloadButton />
             <div className="webcam-block">
@@ -32,8 +40,23 @@ function App() {
                     changeMode={setTrackingMode}
                 />
             </div>
-            <SampleClient stack={imageStack} mode={trackingMode} changeMessage={setMessage} />
+            <CardStack
+                response={response}
+                setResponse={setResponse}
+                firstCard={first_card}
+                setFirstCard={setFirstCard}
+                secondCard={second_card}
+                setSecondCard={setSecondCard}
+                colorBlindMode={clrblindMode}
+                darkTextMode={darkTextMode}
+            />
             <ErrorResponse msg={message} />
+            <SampleClient
+                stack={imageStack}
+                mode={trackingMode}
+                response={response}
+                setResponse={setResponse}
+            />
         </div>
     );
 }

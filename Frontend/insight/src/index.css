@@ -94,8 +94,85 @@ code {
     );
 }
 
+.card_yes-colorblind {
+    background: linear-gradient(99.28deg, #e2e06a 0%, #d9b44f 100%);
+}
+
 .card_no {
     background: linear-gradient(109.38deg, #ff5a5a 21.05%, #f254a0 81.42%);
+}
+
+.card_no-colorblind {
+    background: linear-gradient(99.28deg, #c99eff 0%, #8e6bc5 100%);
+}
+
+.card_waiting {
+    background: linear-gradient(292.69deg, #5c8aff 20.45%, #43d2ff 77.48%);
+}
+
+.card_waiting-colorblind {
+    background: linear-gradient(292.69deg, #15b2d5 20.45%, #5cffff 77.48%);
+}
+
+.card-dark {
+    color: #000000d9;
+}
+
+/* Waiting card jump animations */
+/* Adapted from http://www.java2s.com/example/html-css/css-animation/jumping-dots-animation.html */
+
+.waiting-dots-cont {
+    display: inline;
+}
+.waiting-dot {
+    width: 0.25em;
+    height: 0.25em;
+    background: #ffffffd9;
+    display: inline-block;
+    border-radius: 50%;
+    right: 0;
+    bottom: 0;
+    margin: 0 0.0875em;
+    margin-bottom: 0.25em;
+    position: relative;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Edge */
+    user-select: none;
+}
+
+.card-dark > .waiting-dots-cont > .waiting-dot {
+    background: #000000d9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .waiting-dot {
+        animation: jump 4s infinite;
+    }
+}
+
+.waiting-dots-cont .dot-1 {
+    -webkit-animation-delay: 400ms;
+    animation-delay: 200ms;
+}
+.waiting-dots-cont .dot-2 {
+    -webkit-animation-delay: 800ms;
+    animation-delay: 400ms;
+}
+.waiting-dots-cont .dot-3 {
+    -webkit-animation-delay: 120ms;
+    animation-delay: 600ms;
+}
+@keyframes jump {
+    0% {
+        bottom: 0;
+    }
+    10% {
+        bottom: 0.5rem;
+    }
+    20% {
+        bottom: 0;
+    }
 }
 
 .menu-btn,
@@ -144,7 +221,7 @@ code {
 
 .menu-btn-open {
     width: max-content;
-    max-width: 30ch;
+    max-width: 33ch;
     height: min-content;
     /* border-radius: 1em; */
     display: inline;

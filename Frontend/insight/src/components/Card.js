@@ -2,6 +2,13 @@ import React from "react";
 
 // Component function for the individual cards in the card stack component (at "./CardStack.js")
 function Card(props) {
+    let fullCardClass = "card " + props.cardClass + " " + props.order;
+
+    if (props.faded) fullCardClass += " card-faded";
+    if (props.colorBlindMode)
+        fullCardClass += " " + props.cardClass + "-colorblind";
+    if (props.darkTextMode) fullCardClass += " card-dark";
+
     let cardLabel;
     switch (props.cardClass) {
         case "card_yes":
@@ -14,10 +21,8 @@ function Card(props) {
 
         case "card_waiting":
             return (
-                <div
-                    className={"card " + props.cardClass + " " + props.order}
-                    data-testid={props.testid}>
-                    <span className="waiting-dots-cont">
+                <div className={fullCardClass} data-testid={props.testid}>
+                    <span class="waiting-dots-cont">
                         {" "}
                         <span className="waiting-dot dot-1"></span>{" "}
                         <span className="waiting-dot dot-2"></span>{" "}
@@ -32,8 +37,10 @@ function Card(props) {
     }
 
     return (
-        <div className={"card " + props.cardClass + " " + props.order}>
-            <h3 className="card_label">{cardLabel}</h3>
+        <div className={fullCardClass} data-testid={props.testid}>
+            <h3 className="card_label" data-testid="card_label">
+                {cardLabel}
+            </h3>
         </div>
     );
 }
