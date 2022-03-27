@@ -5,9 +5,11 @@ import base64
 import binascii
 import io
 import numpy
+import os
 from PIL import Image, UnidentifiedImageError
 import websockets
 import contextvars
+import tensorflow as tf
 import traceback
 
 import numpy as np
@@ -18,6 +20,9 @@ from StateGenerator import StateGenerator
 import json 
 from ActionBasedStateGenerator import ActionBasedStateGenerator
 
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 # Initiate State Generator with the appropriate models
 MAX_SIZE_IRIS_DATA_QUEUE = 55
@@ -122,7 +127,7 @@ def process_image(image_data):
             df = DFGenerator.IrisDFGenerator.generate_df(image_data[1])
             res = np.array(df)[0]
             keypoints = compareIrisLandmarks(res[15:30], res[81:108], res[132:138]) + compareIrisLandmarks(res[0:15], res[30:57], res[138:])
-            print(len(keypoints))
+            #print(len(keypoints))
 
             if (len(iris_data_queue.get()) < MAX_SIZE_IRIS_DATA_QUEUE):
 
@@ -151,7 +156,7 @@ def process_image(image_data):
         except Exception as e:
             print("dataframeError:")
             traceback.print_exc()
-            # print(e.with_traceback)
+            print(e.with_traceback)
             return df_generator_exception
 
         try:
@@ -170,7 +175,7 @@ def process_image(image_data):
         try:
             iris_answer_generator.add_frame_to_queue(state)
             answer = iris_answer_generator.determine_answer()
-            print(answer)
+            #print(answer)
         
         except AnswerGenerator.InvalidStateException:
             return invalid_state_exception 
@@ -230,11 +235,12 @@ async def recv_image(websocket):
                     except:
                         print("exception occured.")
                         pass
-
+                    
+                    
                     if (answer != current_answer.get()):
                         current_answer.set(answer)
 
-                        if (answer == AnswerGenerator.Answer.UNDEFINED):
+                        if (answer == AnswerGenerator.Answer.NO):
                             answer = "NO"
                         if (answer == AnswerGenerator.Answer.YES):
                             answer = "YES"
