@@ -22,7 +22,7 @@ from ActionBasedStateGenerator import ActionBasedStateGenerator
 # Initiate State Generator with the appropriate models
 MAX_SIZE_IRIS_DATA_QUEUE = 48
 facial_state_generator = StateGenerator("../Machine_Learning_Model/facial_model.pkl", "FACE")
-iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/Action_template/3_state_test.h5", MAX_SIZE_IRIS_DATA_QUEUE)
+iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/Action_template/roxanne_iris.h5", MAX_SIZE_IRIS_DATA_QUEUE)
 
 #Initiate actionList to send to 
 
@@ -46,6 +46,9 @@ answer_generator_exception = "ERROR: Answer Generator Failed"
 # Member Variables
 current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 iris_data_queue = contextvars.ContextVar('iris_data_queue', default=[])
+
+#variable for skipping frames to relieve stress on the system
+frame_skip = contextvars.ContextVar('frame_skip', default=0)
 
 def compareIrisLandmarks(irisLandmarks, eyeLandmarks, eyeAnchors):
     deltaVals = []
@@ -187,65 +190,79 @@ def convert_image(im):
 async def recv_image(websocket):
 
     async for message in websocket:
-        #take in message as a json and then get the data from it according to its tags
-        try:
-            as_json = json.loads(message)
-        except json.JSONDecodeError as ex:
-            print("There was an error with the JSON data from the frontend")
-            pass
-        
-        msg_mode = as_json["mode"]
-        if (msg_mode == "face"):
-            mode = FACE
-        elif (msg_mode == "eye"):
-            mode = IRIS
-        #safe default if there is a problem with the mode type
-        else:
-            print("Something is wrong with the recieved mode type, defaulting to face tracking.")
-            mode = FACE
+        #if we have no more frames to skip we can start processing the frames
+        if (frame_skip.get() == 0):
+            #take in message as a json and then get the data from it according to its tags
+            try:
+                as_json = json.loads(message)
+            except json.JSONDecodeError as ex:
+                print("There was an error with the JSON data from the frontend")
+                pass
+            
+            msg_mode = as_json["mode"]
+            if (msg_mode == "face"):
+                mode = FACE
+            elif (msg_mode == "eye"):
+                mode = IRIS
+            #safe default if there is a problem with the mode type
+            else:
+                print("Something is wrong with the recieved mode type, defaulting to face tracking.")
+                mode = FACE
 
-        img_data = as_json["image"]
+            img_data = as_json["image"]
 
-        temp = img_data.split(",")
-        for i in temp:
-            if(i != "data:image/jpeg;base64"):
-                try:
-                    ima = Image.open(io.BytesIO(base64.b64decode(i)))
-
-                    #convert the image to cv2 for use in the state generators
-                    converted = convert_image(ima)
+            temp = img_data.split(",")
+            for i in temp:
+                if(i != "data:image/jpeg;base64"):
                     try:
-                        answer = process_image((mode, converted))
-                    except:
-                        print("exception occured.")
-                        pass
+                        ima = Image.open(io.BytesIO(base64.b64decode(i)))
 
-                    if (answer != current_answer.get()):
-                        current_answer.set(answer)
+                        #convert the image to cv2 for use in the state generators
+                        converted = convert_image(ima)
+                        try:
+                            answer = process_image((mode, converted))
+                        except:
+                            print("exception occured.")
+                            pass
 
-                        if (answer == AnswerGenerator.Answer.UNDEFINED):
-                            answer = "NO"
-                        if (answer == AnswerGenerator.Answer.YES):
-                            answer = "YES"
+                        if (answer != current_answer.get()):
+                            current_answer.set(answer)
+                            
 
-                        if (answer != AnswerGenerator.Answer.UNDEFINED):
-                            print("Generated Answer: {}".format(answer))
-                            #Put the answer in a json to send
-                            returnInformation = {}
-                            returnInformation['Answer'] = answer
-                            json_returnInfo = json.dumps(returnInformation, indent = 4)
-                            await websocket.send(json_returnInfo)
+                            if (answer == AnswerGenerator.Answer.UNDEFINED):
+                                answer = "NO"
+                            if (answer == AnswerGenerator.Answer.YES):
+                                answer = "YES"
 
-                #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
-                except (UnidentifiedImageError, ValueError, TypeError) as ex:
-                    print("There was an error with that image and it could not be decoded and opened as an image")
-                    print(ex)
-                    #at this point we could call for the program to quit or return an error here, depends whats appropriate
-                
-                #except the error from decoding the base64 data
-                except (binascii.Error) as decod:
-                    print("There was an error decoding the image data in base64")
-                    print(decod)
+                            if (answer != AnswerGenerator.Answer.UNDEFINED):
+                                print("Generated Answer: {}".format(answer))
+
+                                #set up to start skipping frames
+                                frame_skip.set(10)
+
+                                #Put the answer in a json to send
+                                returnInformation = {}
+                                returnInformation['Answer'] = answer
+                                json_returnInfo = json.dumps(returnInformation, indent = 4)
+                                await websocket.send(json_returnInfo)
+
+                    #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
+                    except (UnidentifiedImageError, ValueError, TypeError) as ex:
+                        print("There was an error with that image and it could not be decoded and opened as an image")
+                        print(ex)
+                        #at this point we could call for the program to quit or return an error here, depends whats appropriate
+                    
+                    #except the error from decoding the base64 data
+                    except (binascii.Error) as decod:
+                        print("There was an error decoding the image data in base64")
+                        print(decod)
+        
+        elif (frame_skip.get() > 0):
+            frame_skip.set(frame_skip.get() - 1)
+        else:
+            print("frame_skip went below 0. something has gone wrong")
+            print("setting frame_skip to 0 to continue execution")
+            frame_skip.set(0)
 
 
 
