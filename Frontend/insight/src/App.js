@@ -8,7 +8,8 @@ import VideoDisplay from "./components/VideoDisplay";
 //import ModeButton from './components/ModeButton'
 import ModeSwitcher from "./components/ModeSwitcher";
 import CardStack from "./components/CardStack";
-import SampleClient from "./components/SampleClient";
+import Client from "./components/Client";
+import TestComponent from "./components/TestComponent";
 
 function App() {
     // The imageStack array will contain images captured from the user's webcam
@@ -16,6 +17,8 @@ function App() {
     // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
     const imageStack = [];
     const [trackingMode, setTrackingMode] = React.useState("face");
+    const [message, setMessage] = React.useState();
+    const [socketState, setSocketState] = React.useState(false);
 
     // States for current saved responses in the system
     let [first_card, setFirstCard] = React.useState("card_none");
@@ -54,11 +57,16 @@ function App() {
                 colorBlindMode={clrblindMode}
                 darkTextMode={darkTextMode}
             />
-            <SampleClient
+            <Client
+                setResponse={setResponse}
+                msg={message}
+                setSktState={setSocketState}
+            />
+            <TestComponent
                 stack={imageStack}
                 mode={trackingMode}
-                response={response}
-                setResponse={setResponse}
+                setMsg={setMessage}
+                sktState={socketState}
             />
         </div>
     );
