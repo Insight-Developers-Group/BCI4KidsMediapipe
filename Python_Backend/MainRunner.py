@@ -225,26 +225,28 @@ async def recv_image(websocket):
                             print("exception occured.")
                             pass
 
-                        if (answer != current_answer.get()):
-                            current_answer.set(answer)
-                            
+                        #if (answer != current_answer.get()):
+                        current_answer.set(answer)
+                        
 
-                            if (answer == AnswerGenerator.Answer.UNDEFINED):
-                                answer = "NO"
-                            if (answer == AnswerGenerator.Answer.YES):
-                                answer = "YES"
+                        if (answer == AnswerGenerator.Answer.UNDEFINED):
+                            answer = "NO"
+                        if (answer == AnswerGenerator.Answer.NO):
+                            answer = "NO"
+                        if (answer == AnswerGenerator.Answer.YES):
+                            answer = "YES"
 
-                            if (answer != AnswerGenerator.Answer.UNDEFINED):
-                                print("Generated Answer: {}".format(answer))
+                        if (answer != AnswerGenerator.Answer.UNDEFINED):
+                            print("Generated Answer: {}".format(answer))
 
-                                #set up to start skipping frames
-                                frame_skip.set(10)
+                            #set up to start skipping frames
+                            frame_skip.set(10)
 
-                                #Put the answer in a json to send
-                                returnInformation = {}
-                                returnInformation['Answer'] = answer
-                                json_returnInfo = json.dumps(returnInformation, indent = 4)
-                                await websocket.send(json_returnInfo)
+                            #Put the answer in a json to send
+                            returnInformation = {}
+                            returnInformation['Answer'] = answer
+                            json_returnInfo = json.dumps(returnInformation, indent = 4)
+                            await websocket.send(json_returnInfo)
 
                     #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
                     except (UnidentifiedImageError, ValueError, TypeError) as ex:
@@ -259,6 +261,7 @@ async def recv_image(websocket):
         
         elif (frame_skip.get() > 0):
             frame_skip.set(frame_skip.get() - 1)
+            print("skip")
         else:
             print("frame_skip went below 0. something has gone wrong")
             print("setting frame_skip to 0 to continue execution")
