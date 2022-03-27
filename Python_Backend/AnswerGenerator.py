@@ -45,9 +45,9 @@ class AnswerGeneratorInterface(metaclass=abc.ABCMeta):
 class IrisAnswerGenerator(AnswerGeneratorInterface):
 
     # Tuning Varaibles
-    QUEUE_SIZE = 30
-    NUM_OF_STATES_TO_CREATE_YES_SERIES = 25
-    NUM_OF_STATES_TO_CREATE_NO_SERIES = 25
+    QUEUE_SIZE = 1
+    NUM_OF_STATES_TO_CREATE_YES_SERIES = 1
+    NUM_OF_STATES_TO_CREATE_NO_SERIES = 1
 
     INIT_STATE = "INIT"
 
