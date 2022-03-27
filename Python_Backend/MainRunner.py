@@ -20,9 +20,9 @@ from ActionBasedStateGenerator import ActionBasedStateGenerator
 
 
 # Initiate State Generator with the appropriate models
-MAX_SIZE_IRIS_DATA_QUEUE = 48
+MAX_SIZE_IRIS_DATA_QUEUE = 55
 facial_state_generator = StateGenerator("../Machine_Learning_Model/facial_model.pkl", "FACE")
-iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/Action_template/3_state_test.h5", MAX_SIZE_IRIS_DATA_QUEUE)
+iris_state_generator = ActionBasedStateGenerator("../Machine_Learning_Model/Action_template/roxanne_iris.h5", MAX_SIZE_IRIS_DATA_QUEUE)
 
 #Initiate actionList to send to 
 
@@ -43,9 +43,12 @@ df_generator_exception = "ERROR: DF Generator Failed"
 state_generator_exception = "ERROR: State Generator Failed"
 answer_generator_exception = "ERROR: Answer Generator Failed"
 
+answer_response_rate = 3
+
 # Member Variables
 current_answer = contextvars.ContextVar('current_answer', default=AnswerGenerator.Answer.UNDEFINED)
 iris_data_queue = contextvars.ContextVar('iris_data_queue', default=[])
+answer_response_counter = contextvars.ContextVar('answer_response_rate', default=1)
 
 def compareIrisLandmarks(irisLandmarks, eyeLandmarks, eyeAnchors):
     deltaVals = []
@@ -125,10 +128,18 @@ def process_image(image_data):
 
                 iris_data_queue.get().append(keypoints)
                 return answer
-            
+
             else:
                 iris_data_queue.get().pop(0)
                 iris_data_queue.get().append(keypoints)
+
+            if (answer_response_counter.get() < answer_response_rate):
+
+                answer_response_counter.set(answer_response_counter.get() + 1)
+                return answer
+
+            else:
+                answer_response_counter.set(1)
 
 
         except DFGenerator.NoFaceDetectedException:
