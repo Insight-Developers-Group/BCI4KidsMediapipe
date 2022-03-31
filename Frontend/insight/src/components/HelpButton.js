@@ -1,19 +1,18 @@
-import React, { useEffect } from 'react'
-import helpLogo from '../Resources/helplogo.svg';
-import HelpMenu from './HelpMenu';
+import React, { useEffect } from "react";
+import helpLogo from "../Resources/helplogo.svg";
+import HelpMenu from "./HelpMenu";
 
 function HelpButton(props) {
-
-    const [isOpen, setisOpen] = React.useState(false)
+    const [isOpen, setisOpen] = React.useState(false);
 
     const toggle = () => {
-        setisOpen(prevIsOpen => !prevIsOpen)
-    }
+        setisOpen((prevIsOpen) => !prevIsOpen);
+    };
 
     /*Lines 13-15 for testing purpose only*/
     useEffect(() => {
-        isOpen ? console.log('Open') : console.log('Closed')
-    }, [isOpen])
+        isOpen ? console.log("Open") : console.log("Closed");
+    }, [isOpen]);
 
     return (
         <div>
@@ -28,5 +27,4 @@ function HelpButton(props) {
     );
 }
 
-export default HelpButton
-
+export default HelpButton;

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import CardStack from "./CardStack";
 
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
@@ -11,8 +12,17 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-        props.setResponse(obj.Answer.toLowerCase());
-        console.log(`[message] Data received from server: ${props.response}`);
+        if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
+            props.changeMessage('');
+        }
+
+        // If the response if not a yes or a no, it must be an error
+        if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
+            props.changeMessage(obj.Answer.toLowerCase());
+            console.log(
+                `[Error] Error received from server: ${props.message}`
+            );
+        }
     };
 
     socket.onclose = function (event) {

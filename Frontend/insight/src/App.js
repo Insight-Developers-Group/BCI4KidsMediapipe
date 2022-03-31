@@ -6,9 +6,11 @@ import HelpButton from "./components/HelpButton";
 import ReloadButton from "./components/ReloadButton";
 import VideoDisplay from "./components/VideoDisplay";
 //import ModeButton from './components/ModeButton'
-import ModeSwitcher from "./components/ModeSwitcher";
-import CardStack from "./components/CardStack";
-import SampleClient from "./components/SampleClient";
+import ModeSwitcher from './components/ModeSwitcher'
+import CardStack from './components/CardStack'
+import SampleClient from "./components/SampleClient"
+import ErrorResponse from "./components/ErrorResponse"
+import { useState, useEffect } from "react";
 
 function App() {
     // The imageStack array will contain images captured from the user's webcam
@@ -16,13 +18,15 @@ function App() {
     // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
     const imageStack = [];
     const [trackingMode, setTrackingMode] = React.useState("face");
-
+    
     // States for current saved responses in the system
     let [first_card, setFirstCard] = React.useState("card_none");
     let [second_card, setSecondCard] = React.useState("card_none");
 
     // Variable that holds new responses from the backend to be used in updating cards
     let [response, setResponse] = React.useState("");
+    
+    const [message, setMessage] = useState("");
 
     // Variables for switching user settings
     const [clrblindMode, setClrBlindMode] = React.useState(false); // Enables/disables colorblind mode
@@ -54,6 +58,7 @@ function App() {
                 colorBlindMode={clrblindMode}
                 darkTextMode={darkTextMode}
             />
+            <ErrorResponse msg={message} />
             <SampleClient
                 stack={imageStack}
                 mode={trackingMode}

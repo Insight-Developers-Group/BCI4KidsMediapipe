@@ -498,6 +498,21 @@ code {
     bottom: 0.1rem;
 }
 
+.error-response {
+    text-align: center;
+    background-color: #fffaba;
+    color: black;
+    width: inherit;
+    height: min-content;
+    width: max-content;
+    padding: 0 1em 0 1em;
+    font-size: 1.2em;
+    z-index: 1;
+    border-radius: 1rem;
+    margin: auto;
+    margin-top: 3rem;
+}
+
 @media only screen and (max-width: 720px) {
     .labelContent {
         display: none;
