@@ -1,30 +1,54 @@
 import Card from "./Card";
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 // Component function for the bottom-right card stack item
 function CardStack(props) {
     // State of firstCard and secondCard affects the type of each card (yes/no)
     // Valid states are: "card_yes", "card_no", and "card_none"
-    let [firstCard, setFirstCard] = useState("card_yes");
-    let [secondCard, setSecondCard] = useState("card_no");
-    let [prevResponse, setPrevResponse] = useState(props.response);
+    const [firstCardFaded, setFirstCardFaded] = React.useState(false);
 
     function addYesCard() {
-        setSecondCard(firstCard);
-        setFirstCard("card_yes");
+        if (props.firstCard !== "card_waiting") {
+            props.setSecondCard(props.firstCard);
+            props.setFirstCard("card_yes");
+        } else {
+            props.setFirstCard("card_yes");
+        }
     }
 
     function addNoCard() {
-        setSecondCard(firstCard);
-        setFirstCard("card_no");
+        if (props.firstCard !== "card_waiting") {
+            props.setSecondCard(props.firstCard);
+            props.setFirstCard("card_no");
+        } else {
+            props.setFirstCard("card_no");
+        }
     }
 
+    function addWaitingCard() {
+        if (
+            props.firstCard !== "card_waiting" &&
+            props.firstCard !== "card_none"
+        ) {
+            props.setSecondCard(props.firstCard);
+            props.setFirstCard("card_waiting");
+        }
+    }
+
+    const FADE_DELAY = 5000; // Time before first card fades out
+    const WAITING_DELAY = 5000; // Time before first card replaced with waiting card (this delay happens after FADE_DELAY)
+
     useEffect(() => {
+        setFirstCardFaded(false);
+
         if (props.response === "yes") {
             addYesCard();
-            setPrevResponse(props.response);
+            props.setResponse(""); // Need to clear this so subsequent identical responses are handled correctly
         } else if (props.response === "no") {
             addNoCard();
-            setPrevResponse(props.response);
+            props.setResponse("");
+        } else if (props.response === "wait") {
+            addWaitingCard();
+            props.setResponse("");
         }
 
         // Fade out cards after a specified number of seconds
