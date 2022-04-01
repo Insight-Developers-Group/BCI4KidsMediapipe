@@ -266,7 +266,7 @@ code {
     height: 0.4em;
     background: black;
     border-radius: 1em;
-    transition: all 0.5s ease-in-out;
+    opacity: 100%;
 }
 
 .menu-btn__burger::before,
@@ -277,7 +277,6 @@ code {
     height: 0.4em;
     background: black;
     border-radius: 1em;
-    transition: all 0.5s ease-in-out;
 }
 
 .menu-btn__burger::before {
@@ -290,15 +289,26 @@ code {
 
 /* ANIMATION */
 .menu-btn-open .menu-btn__burger {
-    transform: translateX(-3.1em);
+    transform: opacity(0%);
     background: transparent;
     box-shadow: none;
 }
 .menu-btn-open .menu-btn__burger::before {
-    transform: rotate(45deg) translate(2.2em, -2.2em);
+    transform: rotate(45deg);
 }
 .menu-btn-open .menu-btn__burger::after {
-    transform: rotate(-45deg) translate(2.2em, 2.2em);
+    transform: rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .menu-btn__burger::before,
+    .menu-btn__burger::after {
+        transition: all 0.5s ease-in-out;
+    }
+
+    .menu-btn__burger {
+        transition: all 0.5s ease-in-out;
+    }
 }
 
 .helpIconBgrnd {
@@ -409,7 +419,6 @@ code {
     height: 100vh;
     z-index: 5;
     background-color: hsla(0, 0%, 7%, 0.5);
-    animation: show-menu 0.3s;
 }
 
 .help-menu {
@@ -423,7 +432,16 @@ code {
     background-color: #ffffff;
     z-index: 6;
     /* transition: opacity 0.3s ease-in; */
-    animation: show-menu 0.3s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .help-menu-overlay {
+        animation: show-menu 0.3s;
+    }
+
+    .help-menu {
+        animation: show-menu 0.3s;
+    }
 }
 
 @keyframes show-menu {
