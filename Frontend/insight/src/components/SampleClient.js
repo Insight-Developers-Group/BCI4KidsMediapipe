@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import CardStack from "./CardStack";
 
 export default function SampleClient(props) {
     let socket = new WebSocket("ws://127.0.0.1:8765/");
@@ -12,16 +11,16 @@ export default function SampleClient(props) {
 
     socket.onmessage = function (event) {
         let obj = JSON.parse(event.data);
-        if (obj.Answer.toLowerCase() === "yes" || obj.Answer.toLowerCase() === "no") {
-            props.changeMessage('');
-        }
-
-        // If the response if not a yes or a no, it must be an error
-        if (!((obj.Answer.toLowerCase === "yes") || (obj.Answer.toLowerCase === "no"))) {
+        if (
+            obj.Answer.toLowerCase() === "yes" ||
+            obj.Answer.toLowerCase() === "no"
+        ) {
+            props.changeMessage("");
+            props.setResponse(obj.Answer.toLowerCase());
+        } else {
+            // If the response if not a card response, it must be an error
             props.changeMessage(obj.Answer.toLowerCase());
-            console.log(
-                `[Error] Error received from server: ${props.message}`
-            );
+            console.log(`[Error] Error received from server: ${props.message}`);
         }
     };
 
@@ -63,5 +62,5 @@ export default function SampleClient(props) {
         return () => clearInterval(interval);
     });
 
-    return <div></div>;
+    return <></>;
 }

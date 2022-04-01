@@ -1,16 +1,12 @@
 import React from "react";
 import MenuButton from "./components/MenuButton";
-//import Menu from './components/Menu'
 import HelpButton from "./components/HelpButton";
-//import HelpMenu from './components/HelpMenu'
-import ReloadButton from "./components/ReloadButton";
 import VideoDisplay from "./components/VideoDisplay";
-//import ModeButton from './components/ModeButton'
-import ModeSwitcher from './components/ModeSwitcher'
-import CardStack from './components/CardStack'
-import SampleClient from "./components/SampleClient"
-import ErrorResponse from "./components/ErrorResponse"
-import { useState, useEffect } from "react";
+import ModeSwitcher from "./components/ModeSwitcher";
+import CardStack from "./components/CardStack";
+import SampleClient from "./components/SampleClient";
+import ErrorResponse from "./components/ErrorResponse";
+import { useState } from "react";
 
 function App() {
     // The imageStack array will contain images captured from the user's webcam
@@ -18,14 +14,15 @@ function App() {
     // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
     const imageStack = [];
     const [trackingMode, setTrackingMode] = React.useState("face");
-    
+
     // States for current saved responses in the system
     let [first_card, setFirstCard] = React.useState("card_none");
     let [second_card, setSecondCard] = React.useState("card_none");
 
     // Variable that holds new responses from the backend to be used in updating cards
     let [response, setResponse] = React.useState("");
-    
+
+    // Variable that holds error response messages
     const [message, setMessage] = useState("");
 
     // Variables for switching user settings
@@ -40,7 +37,7 @@ function App() {
                 changeDarkTextMode={setDarkTextMode}
             />
             <HelpButton />
-            <ReloadButton />
+            {/* <ReloadButton /> */}
             <div className="webcam-block">
                 <VideoDisplay stack={imageStack} />
                 <ModeSwitcher
@@ -64,6 +61,7 @@ function App() {
                 mode={trackingMode}
                 response={response}
                 setResponse={setResponse}
+                changeMessage={setMessage}
             />
         </div>
     );

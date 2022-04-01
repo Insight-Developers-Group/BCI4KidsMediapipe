@@ -305,7 +305,7 @@ code {
     position: absolute;
     width: 3em;
     height: 3em;
-    left: calc(100vw - 9em);
+    left: calc(100vw - 5em);
     top: 1.5em;
     background: white;
     border-radius: 100%;
@@ -321,29 +321,6 @@ code {
     left: 0.35em;
     background: white;
     border-radius: 100%;
-}
-
-.reloadIconBgrnd {
-    position: absolute;
-    width: 3em;
-    height: 3em;
-    left: calc(100vw - 5em);
-    top: 1.5em;
-    box-shadow: 6px 6px 10px #00000040;
-    background: white;
-    border-radius: 100%;
-    z-index: 1;
-}
-
-.reload-icon {
-    position: absolute;
-    width: 2em;
-    height: 2em;
-    top: 0.5em;
-    left: 0.5em;
-    border-radius: 100%;
-    background: white;
-    transition: all 0.5s ease-in-out;
 }
 
 .footerElements {
@@ -498,19 +475,30 @@ code {
     bottom: 0.1rem;
 }
 
+.error-holder {
+    position: absolute;
+    display: flex;
+    width: 100vw;
+    top: 3rem;
+    left: 0;
+    justify-content: center;
+    text-align: center;
+}
+
 .error-response {
     text-align: center;
+    display: block;
     background-color: #fffaba;
-    color: black;
+    color: #000000d9;
     width: inherit;
     height: min-content;
     width: max-content;
-    padding: 0 1em 0 1em;
+    padding: 0.5em 2em 0.5em 2em;
     font-size: 1.2em;
+    font-weight: bold;
     z-index: 1;
-    border-radius: 1rem;
+    border-radius: 2rem;
     margin: auto;
-    margin-top: 3rem;
 }
 
 @media only screen and (max-width: 720px) {
