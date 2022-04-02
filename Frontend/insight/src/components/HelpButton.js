@@ -15,7 +15,7 @@ function HelpButton(props) {
     }, [isOpen]);
 
     return (
-        <div>
+        <>
             <div
                 className="helpIconBgrnd"
                 onClick={toggle}
@@ -23,7 +23,7 @@ function HelpButton(props) {
                 <img className="help-icon" src={helpLogo} alt="help-icon" />
             </div>
             {isOpen && <HelpMenu toggle={toggle} />}
-        </div>
+        </>
     );
 }
 

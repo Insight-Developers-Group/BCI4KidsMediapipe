@@ -5,6 +5,8 @@ function CardStack(props) {
     // State of firstCard and secondCard affects the type of each card (yes/no)
     // Valid states are: "card_yes", "card_no", and "card_none"
     const [firstCardFaded, setFirstCardFaded] = React.useState(false);
+    let cardStackClass = "card_stack";
+    if (props.flipCardsMode) cardStackClass += " cards-flipped";
 
     function addYesCard() {
         if (props.firstCard !== "card_waiting") {
@@ -71,7 +73,7 @@ function CardStack(props) {
     }, [props.response]);
 
     return (
-        <div className="card_stack" data-testid="card_stack">
+        <div className={cardStackClass} data-testid="card_stack">
             <Card
                 order="card_first"
                 cardClass={props.firstCard}

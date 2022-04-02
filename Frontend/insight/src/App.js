@@ -28,6 +28,7 @@ function App() {
     // Variables for switching user settings
     const [clrblindMode, setClrBlindMode] = React.useState(false); // Enables/disables colorblind mode
     const [darkTextMode, setDarkTextMode] = React.useState(false);
+    const [flipCardsMode, setFlipCardsMode] = React.useState(false);
 
     return (
         <div className="App">
@@ -35,6 +36,7 @@ function App() {
                 colorBlindMode={clrblindMode}
                 changeColorBlindMode={setClrBlindMode}
                 changeDarkTextMode={setDarkTextMode}
+                changeFlipCardsMode={setFlipCardsMode}
             />
             <HelpButton />
             {/* <ReloadButton /> */}
@@ -43,6 +45,7 @@ function App() {
                 <ModeSwitcher
                     mode={trackingMode}
                     changeMode={setTrackingMode}
+                    flipCardsMode={flipCardsMode}
                 />
             </div>
             <CardStack
@@ -54,6 +57,7 @@ function App() {
                 setSecondCard={setSecondCard}
                 colorBlindMode={clrblindMode}
                 darkTextMode={darkTextMode}
+                flipCardsMode={flipCardsMode}
             />
             <ErrorResponse msg={message} />
             <SampleClient

@@ -28,6 +28,10 @@ function MenuButton(props) {
         props.changeDarkTextMode((prevMode) => !prevMode);
     }
 
+    function switchFlipCards() {
+        props.changeFlipCardsMode((prevMode) => !prevMode);
+    }
+
     return (
         <div className="menu-wrapper">
             <div className={menu_btn_class} data-testid="menu-btn">
@@ -39,7 +43,9 @@ function MenuButton(props) {
                         <button>About</button>
                     </li>
                     <li>
-                        <button>Flip Response Card Locations</button>
+                        <button onClick={switchFlipCards}>
+                            Flip Response Card Locations
+                        </button>
                     </li>
                     <li>
                         <button onClick={switchClrBlndMode}>

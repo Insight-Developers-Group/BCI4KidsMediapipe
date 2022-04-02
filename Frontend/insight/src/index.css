@@ -47,6 +47,10 @@ code {
     height: 3.05em;
 }
 
+.cards-flipped {
+    left: 1rem;
+}
+
 .card {
     position: absolute;
     display: block;
@@ -72,6 +76,10 @@ code {
     height: 2.8em;
     line-height: 2.8em;
     z-index: 2;
+}
+
+.cards-flipped > .card_first {
+    left: 0.25em;
 }
 
 @keyframes first-card-animation {
@@ -100,6 +108,10 @@ code {
     line-height: 2.6em;
     z-index: 1;
     opacity: 80%;
+}
+
+.cards-flipped > .card_second {
+    left: 0rem;
 }
 
 .card_none {
@@ -343,6 +355,15 @@ code {
     gap: 0.5rem;
 }
 
+.footer-flipped {
+    right: 0rem;
+}
+
+.footer-flipped > .labelContent {
+    order: -1;
+    margin-inline-end: 0.6rem;
+}
+
 .girlBgrnd {
     position: relative;
     width: 42px;
@@ -406,8 +427,24 @@ code {
     margin-inline-start: 0.6rem;
 }
 
-.footerElements {
-    display: flex;
+.labelContent::before {
+    content: "|";
+    color: white;
+    position: relative;
+    right: 0.5rem;
+    bottom: 0.1rem;
+}
+
+.footer-flipped > .labelContent::before {
+    display: none;
+}
+
+.footer-flipped > .labelContent::after {
+    content: "|";
+    color: white;
+    position: relative;
+    left: 0.5rem;
+    bottom: 0.1rem;
 }
 
 /*-- Help Menu --*/
@@ -483,14 +520,6 @@ code {
     margin-top: 5rem;
     padding-inline: 2rem;
     /* background-color: #ff7171dd; */
-}
-
-.labelContent::before {
-    content: "|";
-    color: white;
-    position: relative;
-    right: 0.5rem;
-    bottom: 0.1rem;
 }
 
 .error-holder {
