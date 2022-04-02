@@ -13,7 +13,8 @@ export default function SampleClient(props) {
         let obj = JSON.parse(event.data);
         if (
             obj.Answer.toLowerCase() === "yes" ||
-            obj.Answer.toLowerCase() === "no"
+            obj.Answer.toLowerCase() === "no" ||
+            obj.Answer.toLowerCase() === "neutral"
         ) {
             props.changeMessage("");
             props.setResponse(obj.Answer.toLowerCase());

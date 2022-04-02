@@ -28,6 +28,7 @@ function CardStack(props) {
 
     function addWaitingCard() {
         if (
+            // Won't add waiting card over itself or when the stack is empty (on startup)
             props.firstCard !== "card_waiting" &&
             props.firstCard !== "card_none"
         ) {
@@ -48,7 +49,7 @@ function CardStack(props) {
         } else if (props.response === "no") {
             addNoCard();
             props.setResponse("");
-        } else if (props.response === "wait") {
+        } else if (props.response === "wait" || props.response === "neutral") {
             addWaitingCard();
             props.setResponse("");
         }
