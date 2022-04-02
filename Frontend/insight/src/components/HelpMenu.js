@@ -4,7 +4,7 @@ import crossIcon from "../Resources/crossicon.svg";
 
 function HelpMenu(props) {
     return (
-        <div>
+        <>
             <div className="help-menu-overlay" onClick={props.toggle}></div>
             <div className="help-menu">
                 <img
@@ -30,7 +30,7 @@ function HelpMenu(props) {
                     deserunt mollit anim id est laborum.
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
