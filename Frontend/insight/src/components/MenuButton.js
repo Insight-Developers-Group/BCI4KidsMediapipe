@@ -35,7 +35,8 @@ function MenuButton(props) {
     return (
         <div className="menu-wrapper">
             <div className={menu_btn_class} data-testid="menu-btn">
-                <div onClick={toggle} className="burger-wrapper">
+                <div className="burger-wrapper">
+                    <div onClick={toggle} className="menu-toggle"></div>
                     <div className="menu-btn__burger"></div>
                 </div>
                 <ul className="menu-list">

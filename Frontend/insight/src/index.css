@@ -222,8 +222,26 @@ code {
     transition: width ease-in 0.3s, height 0.3 ease-in;
 }
 
+.menu-toggle {
+    position: absolute;
+    left: 0;
+    background: transparent;
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 2.25em;
+    z-index: 2;
+}
+
+.menu-btn-open > .burger-wrapper > .menu-toggle {
+    width: 3em;
+    height: 3em;
+    left: 0.75em;
+    top: 0.75em;
+    border-radius: 1.5em;
+}
+
 .menu-list {
-    padding: 0 0.75rem 0.75rem 0.75rem;
+    padding: 0 1rem 1rem 1rem;
     color: black;
     margin: 1em 0.5em 0 0.5em;
     list-style-type: disc;
@@ -251,10 +269,8 @@ code {
     width: max-content;
     max-width: 33ch;
     height: min-content;
-    /* border-radius: 1em; */
     display: inline;
-    padding: 0.5rem;
-    /* z-index: -1; */
+    padding: 0.55rem;
 }
 
 .menu-wrapper {
