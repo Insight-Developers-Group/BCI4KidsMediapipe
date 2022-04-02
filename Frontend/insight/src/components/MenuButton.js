@@ -1,5 +1,6 @@
 import React from "react";
 import AboutMenu from "./AboutMenu";
+import InsightLogo from "../Resources/insight-logo.svg";
 
 /* Component for the top-left collapsible menu */
 function MenuButton(props) {
@@ -50,6 +51,13 @@ function MenuButton(props) {
                         <div onClick={toggle} className="menu-toggle"></div>
                         <div className="menu-btn__burger"></div>
                     </div>
+                    {!isOpen && (
+                        <img
+                            src={InsightLogo}
+                            className="menu-insight-icon"
+                            alt="insight logo"
+                        />
+                    )}
                     <ul className="menu-list">
                         <li>
                             <button onClick={toggleAboutMenu}>About</button>
