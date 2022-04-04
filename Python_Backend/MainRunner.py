@@ -3,21 +3,19 @@
 import asyncio
 import base64
 import binascii
+import contextvars
 import io
-import numpy
+import json
+import numpy as np
 import os
 from PIL import Image, UnidentifiedImageError
-import websockets
-import contextvars
 import tensorflow as tf
 import traceback
-
-import numpy as np
+import websockets
 
 import AnswerGenerator
 import DFGenerator
 from StateGenerator import StateGenerator
-import json 
 from ActionBasedStateGenerator import ActionBasedStateGenerator
 
 
@@ -192,7 +190,7 @@ def process_image(image_data):
 #function to convert an image that is already in a Pillow image format (jpg) to cv2
 #https://stackoverflow.com/questions/14134892/convert-image-from-pil-to-opencv-format
 def convert_image(im):
-    open_cv_image = numpy.array(im)
+    open_cv_image = np.array(im)
     open_cv_image = open_cv_image[:,:,::-1].copy()
     return open_cv_image
 
@@ -230,13 +228,13 @@ async def recv_image(websocket):
 
                     #convert the image to cv2 for use in the state generators
                     converted = convert_image(ima)
+                    
                     try:
                         answer = process_image((mode, converted))
                     except:
                         print("exception occured.")
                         pass
-                    
-                    
+
                     if (answer != current_answer.get()):
                         current_answer.set(answer)
 
@@ -252,6 +250,10 @@ async def recv_image(websocket):
                             returnInformation['Answer'] = answer
                             json_returnInfo = json.dumps(returnInformation, indent = 4)
                             await websocket.send(json_returnInfo)
+
+                    del answer
+                    del ima
+                    del converted
 
                 #except the exceptions that Pillow will typically throw if something is wrong with the image when opening it
                 except (UnidentifiedImageError, ValueError, TypeError) as ex:
