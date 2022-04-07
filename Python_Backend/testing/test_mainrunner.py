@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 import unittest
 from unittest.mock import Mock
 import sys
@@ -11,6 +12,7 @@ import MainRunner
 from MainRunner import convert_image
 from MainRunner import process_image
 from AnswerGenerator import Answer
+from DFGenerator import NoFaceDetectedException
 
 class TestMainRunner(unittest.TestCase):
 
@@ -40,16 +42,19 @@ class TestMainRunner(unittest.TestCase):
 
     def test_process_image_bad_face(self):
         mock = Mock()
-        mock.side_effect = Exception("FacialDFGenerator: No face detected")
+        mock.side_effect = NoFaceDetectedException()
         MainRunner.DFGenerator.FacialDFGenerator.generate_df = mock
+        MainRunner.DFGenerator.FacialDFGenerator.generate_df.return_value = "ERROR: No face detected"
         im = Image.open("test_resources/test_img2.jpg")
         open_cv_image = numpy.array(im)
         open_cv_image = open_cv_image[:,:,::-1].copy()
         testval = 0
         try:
             value = process_image(("FACE",open_cv_image))
+            if (value == "ERROR: No Face Detected"):
+                testval = 1
         except Exception as e:
-            if (str(e)=="FacialDFGenerator: No face detected"):
+            if (str(e)=="ERROR: No Face Detected"):
                 testval = 1
             else:
                 raise e
@@ -58,16 +63,19 @@ class TestMainRunner(unittest.TestCase):
 
     def test_process_image_bad_iris(self):
         mock = Mock()
-        mock.side_effect = Exception("IrisDFGenerator: No face detected")
-        MainRunner.DFGenerator.FacialDFGenerator.generate_df = mock
+        mock.side_effect = NoFaceDetectedException()
+        MainRunner.DFGenerator.IrisDFGenerator.generate_df = mock
+        MainRunner.DFGenerator.IrisDFGenerator.generate_df.return_value = "ERROR: No face detected"
         im = Image.open("test_resources/test_img2.jpg")
         open_cv_image = numpy.array(im)
         open_cv_image = open_cv_image[:,:,::-1].copy()
         testval = 0
         try:
             value = process_image(("IRIS",open_cv_image))
+            if (value == "ERROR: No Face Detected"):
+                testval = 1
         except Exception as e:
-            if (str(e)=="IrisDFGenerator: No face detected"):
+            if (str(e)=="ERROR: No Face Detected"):
                 testval = 1
             else:
                 raise e
@@ -96,7 +104,7 @@ class TestMainRunner(unittest.TestCase):
         MainRunner.iris_state_generator = mock
         MainRunner.iris_answer_generator = mock2
         MainRunner.iris_answer_generator.determine_answer().return_value = Answer.YES
-        MainRunner.DFGenerator = mock3
+        MainRunner.DFGenerator.IrisDFGenerator = mock3
         im = Image.open("test_resources/test_img1.jpg")
         open_cv_image = numpy.array(im)
         open_cv_image = open_cv_image[:,:,::-1].copy()
@@ -123,10 +131,12 @@ class TestMainRunner(unittest.TestCase):
         mock = Mock()
         mock2 = Mock()
         mock3 = Mock()
+        mock4 = Mock()
         MainRunner.iris_state_generator = mock
         MainRunner.iris_answer_generator = mock2
         MainRunner.iris_answer_generator.determine_answer().return_value = Answer.NO
-        MainRunner.DFGenerator = mock3
+        MainRunner.DFGenerator.generate_df = mock3
+        MainRunner.DFGenerator.generate_df().return_value = [[1],[2]]
         im = Image.open("test_resources/test_img1.jpg")
         open_cv_image = numpy.array(im)
         open_cv_image = open_cv_image[:,:,::-1].copy()
@@ -153,13 +163,12 @@ class TestMainRunner(unittest.TestCase):
         mock = Mock()
         mock2 = Mock()
         mock3 = Mock()
+        mock4 = Mock()
         MainRunner.iris_state_generator = mock
         MainRunner.iris_answer_generator = mock2
         MainRunner.iris_answer_generator.determine_answer().return_value = Answer.UNDEFINED
-        MainRunner.DFGenerator = mock3
-        im = Image.open("test_resources/test_img1.jpg")
-        open_cv_image = numpy.array(im)
-        open_cv_image = open_cv_image[:,:,::-1].copy()
-        test = process_image(("IRIS",open_cv_image))
+        MainRunner.DFGenerator.IrisDFGenerator = mock3
+        MainRunner.DFGenerator.IrisDFGenerator.return_value = [[1],[1]]
+        test = process_image(("IRIS","test"))
         
         self.assertEqual(test(),Answer.UNDEFINED)
