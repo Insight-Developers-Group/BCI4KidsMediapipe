@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-
+import React, { useEffect, useContext } from "react";
+import { SocketContext } from "../App";
 export default function SampleClient(props) {
-    let socket = new WebSocket("ws://127.0.0.1:8765/");
+
+    const socket = useContext(SocketContext)
     let socketOpen = false;
     socket.onopen = function (e) {
         console.log("[open] Connection established");

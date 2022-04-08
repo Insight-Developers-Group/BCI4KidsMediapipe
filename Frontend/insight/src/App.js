@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useEffect } from "react";
 import MenuButton from "./components/MenuButton";
 import HelpButton from "./components/HelpButton";
 import VideoDisplay from "./components/VideoDisplay";
@@ -8,7 +8,14 @@ import SampleClient from "./components/SampleClient";
 import ErrorResponse from "./components/ErrorResponse";
 import { useState } from "react";
 
+export const SocketContext = React.createContext()
 function App() {
+
+    const { socket, setSocket } = useState(null);
+
+    useEffect(() => {
+        setSocket(new WebSocket("ws://127.0.0.1:8765/"));
+    }, socket)
     // The imageStack array will contain images captured from the user's webcam
     // Images will be constantly added through the VideoDisplay component
     // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
@@ -60,13 +67,15 @@ function App() {
                 flipCardsMode={flipCardsMode}
             />
             <ErrorResponse msg={message} />
-            <SampleClient
-                stack={imageStack}
-                mode={trackingMode}
-                response={response}
-                setResponse={setResponse}
-                changeMessage={setMessage}
-            />
+            <SocketContext.Provider value={socket}>
+                <SampleClient
+                    stack={imageStack}
+                    mode={trackingMode}
+                    response={response}
+                    setResponse={setResponse}
+                    changeMessage={setMessage}
+                />
+            </SocketContext.Provider>
         </div>
     );
 }
