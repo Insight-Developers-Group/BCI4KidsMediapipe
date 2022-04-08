@@ -8,10 +8,12 @@ it('should render the reload icon', () => {
 });
 
 it('should open when clicked once, then close when clicked again', () => {
-    const consoleSpy = jest.spyOn(console, 'log');
     render(<MenuButton />);
-    fireEvent.click(screen.getByTestId("menu-btn"))
-    expect(consoleSpy).toHaveBeenLastCalledWith("Menu Open")
-    fireEvent.click(screen.getByTestId("menu-btn"))
-    expect(consoleSpy).toHaveBeenLastCalledWith("Menu Closed")
+    const menuToggler = screen.getByTestId('menu-btn-toggler');
+    const menuButton = screen.getByTestId('menu-btn');
+    expect(menuButton).toHaveClass('menu-btn');
+    fireEvent.click(menuToggler);
+    expect(menuButton).toHaveClass('menu-btn-open');
+    fireEvent.click(menuToggler);
+    expect(menuButton).toHaveClass('menu-btn');
 });

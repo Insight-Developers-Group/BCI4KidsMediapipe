@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import CardStack from "../CardStack";
 
 it("should render the card stack", () => {
@@ -26,8 +26,9 @@ describe("Different combinations of cards should each render properly", () => {
         const SecondCard = screen.getByTestId("second_card");
         expect(SecondCard).toBeInTheDocument();
 
-        expect(FirstCard.getByTestId("card_label")).toHaveTextContent("Yes");
-        expect(SecondCard).not.toBeVisible();
+        const CardLabels = screen.getAllByTestId("card_label");
+        expect(CardLabels[0]).toHaveTextContent("Yes");
+        expect(CardLabels[1]).toHaveTextContent("");
     });
 
     it("should correctly display no / none cards", () => {
@@ -37,8 +38,9 @@ describe("Different combinations of cards should each render properly", () => {
         const SecondCard = screen.getByTestId("second_card");
         expect(SecondCard).toBeInTheDocument();
 
-        expect(FirstCard.getByTestId("card_label")).toHaveTextContent("No");
-        expect(SecondCard).not.toBeVisible();
+        const CardLabels = screen.getAllByTestId("card_label");
+        expect(CardLabels[0]).toHaveTextContent("No");
+        expect(CardLabels[1]).toHaveTextContent("");
     });
 
     it("should correctly display Yes / Yes cards", () => {
@@ -48,8 +50,9 @@ describe("Different combinations of cards should each render properly", () => {
         const SecondCard = screen.getByTestId("second_card");
         expect(SecondCard).toBeInTheDocument();
 
-        expect(FirstCard.getByTestId("card_label")).toHaveTextContent("Yes");
-        expect(SecondCard.getByTestId("card_label")).toHaveTextContent("Yes");
+        const CardLabels = screen.getAllByTestId("card_label");
+        expect(CardLabels[0]).toHaveTextContent("Yes");
+        expect(CardLabels[1]).toHaveTextContent("Yes");
     });
 
     it("should correctly display Yes / No cards", () => {
@@ -59,19 +62,21 @@ describe("Different combinations of cards should each render properly", () => {
         const SecondCard = screen.getByTestId("second_card");
         expect(SecondCard).toBeInTheDocument();
 
-        expect(FirstCard.getByTestId("card_label")).toHaveTextContent("Yes");
-        expect(SecondCard.getByTestId("card_label")).toHaveTextContent("No");
+        const CardLabels = screen.getAllByTestId("card_label");
+        expect(CardLabels[0]).toHaveTextContent("Yes");
+        expect(CardLabels[1]).toHaveTextContent("No");
     });
 
     it("should correctly display No / Yes cards", () => {
-        render(<CardStack firstCard="card_No" secondCard="card_yes" />);
+        render(<CardStack firstCard="card_no" secondCard="card_yes" />);
         const FirstCard = screen.getByTestId("first_card");
         expect(FirstCard).toBeInTheDocument();
         const SecondCard = screen.getByTestId("second_card");
         expect(SecondCard).toBeInTheDocument();
 
-        expect(FirstCard.getByTestId("card_label")).toHaveTextContent("No");
-        expect(SecondCard.getByTestId("card_label")).toHaveTextContent("Yes");
+        const CardLabels = screen.getAllByTestId("card_label");
+        expect(CardLabels[0]).toHaveTextContent("No");
+        expect(CardLabels[1]).toHaveTextContent("Yes");
     });
 
     it("should correctly display No / No cards", () => {
@@ -81,7 +86,8 @@ describe("Different combinations of cards should each render properly", () => {
         const SecondCard = screen.getByTestId("second_card");
         expect(SecondCard).toBeInTheDocument();
 
-        expect(FirstCard.getByTestId("card_label")).toHaveTextContent("No");
-        expect(SecondCard.getByTestId("card_label")).toHaveTextContent("No");
+        const CardLabels = screen.getAllByTestId("card_label");
+        expect(CardLabels[0]).toHaveTextContent("No");
+        expect(CardLabels[1]).toHaveTextContent("No");
     });
 });

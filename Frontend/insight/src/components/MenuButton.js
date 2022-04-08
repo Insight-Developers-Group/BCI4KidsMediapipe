@@ -18,8 +18,6 @@ function MenuButton(props) {
     function animate() {
         /* function to animate the menu button depending on isOpen state */
         setMenuBtnClass(isOpen ? "menu-btn-open" : "menu-btn");
-        if (isOpen) console.log("Menu Open");
-        else console.log("Menu Closed");
     }
 
     function switchClrBlndMode() {
@@ -48,7 +46,7 @@ function MenuButton(props) {
             <div className="menu-wrapper">
                 <div className={menu_btn_class} data-testid="menu-btn">
                     <div className="burger-wrapper">
-                        <div onClick={toggle} className="menu-toggle"></div>
+                        <div onClick={toggle} className="menu-toggle" data-testid="menu-btn-toggler"></div>
                         <div className="menu-btn__burger"></div>
                     </div>
                     {!isOpen && (

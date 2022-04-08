@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import HelpButton from '../HelpButton.js';
+import HelpMenu from '../HelpMenu.js'
 
 describe("Testing the help button", () => {
     it('should render the help icon', () => {
@@ -14,12 +15,20 @@ describe("Testing the help button", () => {
         expect(HelpButtonBackground).toBeInTheDocument();
     });
 
+    it('should render the help menu', () => {
+        render(<HelpMenu />);
+        const helpMenu = screen.getByTestId("help-menu")
+        expect(helpMenu).toBeInTheDocument();
+    });
+
     it('should open when clicked once, then close when clicked again', () => {
-        const consoleSpy = jest.spyOn(console, 'log');
         render(<HelpButton />);
+        render(<HelpMenu />);
+        const helpMenu = screen.getByTestId("help-menu")
+        const HelpMenuOverlayClose = screen.getByTestId("help-menu-overlay-close")
         fireEvent.click(screen.getByTestId("helpIconBgrnd"))
-        expect(consoleSpy).toHaveBeenLastCalledWith("Open")
-        fireEvent.click(screen.getByTestId("helpIconBgrnd"))
-        expect(consoleSpy).toHaveBeenLastCalledWith("Closed")
+        expect(HelpMenu).toBeVisible();
+        fireEvent.click(HelpMenuOverlayClose)
+        expect(HelpMenu).not.toBeVisible();
     });
 })

@@ -9,11 +9,6 @@ function HelpButton(props) {
         setisOpen((prevIsOpen) => !prevIsOpen);
     };
 
-    /*Lines 13-15 for testing purpose only*/
-    useEffect(() => {
-        isOpen ? console.log("Open") : console.log("Closed");
-    }, [isOpen]);
-
     return (
         <>
             <div
