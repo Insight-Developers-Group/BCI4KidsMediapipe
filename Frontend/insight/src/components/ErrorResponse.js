@@ -1,40 +1,45 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+
+// Component for showing error responses from the server to the user
 export default function ErrorResponse(props) {
-    const errCmp = useRef();
+    const [errorLabel, setErrorLabel] = useState("");
 
     useEffect(() => {
-
-        if (props.msg === '') {
-            errCmp.current.style.display = 'none';
-        }
-        else {
-            errCmp.current.style.display = 'block';
-            if (props.msg === "error: invalid state exception") {
-                errCmp.current.innerHTML = "Oops! We couldn't validate that state";
-            }
-            else if (props.msg === "error: no face detected") {
-                errCmp.current.innerHTML = "Oops! We can't see you"
-            }
-            else if (props.msg === "error: multiple faces detected") {
-                errCmp.current.innerHTML = "Oops! too many people in the frame"
-            }
-            else if (props.msg === "error: invalid model type") {
-                errCmp.current.innerHTML = "Oops! we couldn't validate that model"
-            }
-            else if (props.msg === "error: df generator failed") {
-                errCmp.current.innerHTML = "Oops! DF generator failed"
-            }
-            else if (props.msg === "error: state generator failed") {
-                errCmp.current.innerHTML = "Oops! State generator failed"
-            }
-            else if (props.msg === "error: answer generator failed") {
-                errCmp.current.innerHTML = "Oops! We couldn't generate an answer"
-            }
+        switch (props.msg) {
+            case "error: invalid state exception":
+                setErrorLabel("Oops! We couldn't validate that state");
+                break;
+            case "error: no face detected":
+                setErrorLabel("Oops! We can't see you");
+                break;
+            case "error: multiple faces detected":
+                setErrorLabel("Oops! too many people in the frame");
+                break;
+            case "error: invalid model type":
+                setErrorLabel("Oops! we couldn't validate that model");
+                break;
+            case "error: df generator failed":
+                setErrorLabel("Oops! DF generator failed");
+                break;
+            case "error: state generator failed":
+                setErrorLabel("Oops! State generator failed");
+                break;
+            case "error: answer generator failed":
+                setErrorLabel("Oops! We couldn't generate an answer");
+                break;
+            default:
+                setErrorLabel("");
+                break;
         }
     }, [props.msg]);
 
     return (
-        <div className="error-response" ref={errCmp}>
-        </div>
-    )
+        <>
+            {errorLabel !== "" && (
+                <div className="error-holder">
+                    <p className="error-response">{errorLabel}</p>
+                </div>
+            )}
+        </>
+    );
 }

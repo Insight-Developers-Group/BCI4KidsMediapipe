@@ -7,6 +7,8 @@ import faceLight from "../Resources/girllogo-light.svg";
 
 function ModeSwitcher(props) {
     const [trackingLabel, setTrackingLabel] = React.useState("Face Tracking");
+    let fullFooterClass = "footerElements";
+    if (props.flipCardsMode) fullFooterClass += " footer-flipped";
 
     function changeLabelToFaceTracking() {
         /* flips the trackingLabel state from face tracking to eye tracking */
@@ -40,7 +42,7 @@ function ModeSwitcher(props) {
     }
 
     return (
-        <div className="footerElements">
+        <div className={fullFooterClass}>
             <div
                 className={"girlBgrnd " + props.mode + "-selected-face-bg"}
                 onClick={changeLabelToFaceTracking}

@@ -5,6 +5,8 @@ function CardStack(props) {
     // State of firstCard and secondCard affects the type of each card (yes/no)
     // Valid states are: "card_yes", "card_no", and "card_none"
     const [firstCardFaded, setFirstCardFaded] = React.useState(false);
+    let cardStackClass = "card_stack";
+    if (props.flipCardsMode) cardStackClass += " cards-flipped";
 
     function addYesCard() {
         if (props.firstCard !== "card_waiting") {
@@ -26,6 +28,7 @@ function CardStack(props) {
 
     function addWaitingCard() {
         if (
+            // Won't add waiting card over itself or when the stack is empty (on startup)
             props.firstCard !== "card_waiting" &&
             props.firstCard !== "card_none"
         ) {
@@ -46,7 +49,7 @@ function CardStack(props) {
         } else if (props.response === "no") {
             addNoCard();
             props.setResponse("");
-        } else if (props.response === "wait") {
+        } else if (props.response === "wait" || props.response === "neutral") {
             addWaitingCard();
             props.setResponse("");
         }
@@ -71,7 +74,7 @@ function CardStack(props) {
     }, [props.response]);
 
     return (
-        <div className="card_stack" data-testid="card_stack">
+        <div className={cardStackClass} data-testid="card_stack">
             <Card
                 order="card_first"
                 cardClass={props.firstCard}
