@@ -103,22 +103,6 @@ class TestMainRunner(unittest.TestCase):
         
         self.assertEqual(test(),Answer.YES)
 
-    def test_process_image_yes_iris(self):
-        mock = Mock()
-        mock2 = Mock()
-        mock3 = Mock()
-        MainRunner.iris_state_generator = mock
-        MainRunner.iris_answer_generator = mock2
-        MainRunner.iris_answer_generator.determine_answer().return_value = Answer.YES
-        MainRunner.DFGenerator.IrisDFGenerator.generate_df = mock3
-        MainRunner.DFGenerator.IrisDFGenerator.generate_df.return_value = listie
-        im = Image.open("test_resources/test_img1.jpg")
-        open_cv_image = numpy.array(im)
-        open_cv_image = open_cv_image[:,:,::-1].copy()
-        test = process_image(("IRIS",open_cv_image))
-        print(test)
-        self.assertEqual(test,Answer.YES)
-
     def test_process_image_no_face(self):
         mock = Mock()
         mock2 = Mock()
@@ -131,23 +115,6 @@ class TestMainRunner(unittest.TestCase):
         open_cv_image = numpy.array(im)
         open_cv_image = open_cv_image[:,:,::-1].copy()
         test = process_image(("FACE",open_cv_image))
-        
-        self.assertEqual(test(),Answer.NO)
-
-    def test_process_image_no_iris(self):
-        mock = Mock()
-        mock2 = Mock()
-        mock3 = Mock()
-        mock4 = Mock()
-        MainRunner.iris_state_generator = mock
-        MainRunner.iris_answer_generator = mock2
-        MainRunner.iris_answer_generator.determine_answer().return_value = Answer.NO
-        MainRunner.DFGenerator.generate_df = mock3
-        MainRunner.DFGenerator.generate_df().return_value = [[1],[2]]
-        im = Image.open("test_resources/test_img1.jpg")
-        open_cv_image = numpy.array(im)
-        open_cv_image = open_cv_image[:,:,::-1].copy()
-        test = process_image(("IRIS",open_cv_image))
         
         self.assertEqual(test(),Answer.NO)
 
@@ -166,16 +133,3 @@ class TestMainRunner(unittest.TestCase):
         
         self.assertEqual(test(),Answer.UNDEFINED)
 
-    def test_process_image_undefined_iris(self):
-        mock = Mock()
-        mock2 = Mock()
-        mock3 = Mock()
-        mock4 = Mock()
-        MainRunner.iris_state_generator = mock
-        MainRunner.iris_answer_generator = mock2
-        MainRunner.iris_answer_generator.determine_answer().return_value = Answer.UNDEFINED
-        MainRunner.DFGenerator.IrisDFGenerator = mock3
-        MainRunner.DFGenerator.IrisDFGenerator.return_value = [[1],[1]]
-        test = process_image(("IRIS","test"))
-        
-        self.assertEqual(test(),Answer.UNDEFINED)
