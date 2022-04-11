@@ -289,7 +289,6 @@ code {
 
 .menu-btn-open {
     width: max-content;
-    max-width: 33ch;
     height: min-content;
     display: inline;
     padding: 0.55rem;
