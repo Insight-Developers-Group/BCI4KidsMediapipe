@@ -5,13 +5,14 @@ import crossIcon from "../Resources/crossicon.svg";
 function HelpMenu(props) {
     return (
         <>
-            <div className="help-menu-overlay" onClick={props.toggle}></div>
-            <div className="help-menu">
+            <div className="help-menu-overlay" onClick={props.toggle} ></div>
+            <div className="help-menu" data-testid="help-menu">
                 <img
                     className="help-menu-close"
                     src={crossIcon}
                     onClick={props.toggle}
                     alt="close help menu"
+                    data-testid="help-menu-overlay-close"
                 />
                 <img
                     className="help-menu-icon"

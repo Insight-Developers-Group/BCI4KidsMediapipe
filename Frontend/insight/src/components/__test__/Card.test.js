@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Card from "../Card";
 
 describe('Cards should say "YES" if cardClass is "card_yes" and "NO" if card_class is "card_no"', () => {

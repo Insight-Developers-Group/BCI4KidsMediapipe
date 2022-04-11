@@ -39,7 +39,6 @@ function App() {
                 changeFlipCardsMode={setFlipCardsMode}
             />
             <HelpButton />
-            {/* <ReloadButton /> */}
             <div className="webcam-block">
                 <VideoDisplay stack={imageStack} />
                 <ModeSwitcher
