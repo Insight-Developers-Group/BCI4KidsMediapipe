@@ -7,6 +7,8 @@ sys.path.insert(0, '../')
 from PIL import Image
 import cv2 as cv
 import numpy
+from unittest.mock import patch
+import contextvars
 
 import MainRunner
 from MainRunner import convert_image
@@ -14,6 +16,10 @@ from MainRunner import process_image
 from AnswerGenerator import Answer
 from DFGenerator import NoFaceDetectedException
 
+innerlist = [0] *144
+listie = [innerlist]
+
+@patch(MainRunner.iris_data_queue, contextvars.ContextVar('iris_data_queue', default=[0]*55))
 class TestMainRunner(unittest.TestCase):
 
     def test_image_conversion_1(self):
@@ -104,13 +110,14 @@ class TestMainRunner(unittest.TestCase):
         MainRunner.iris_state_generator = mock
         MainRunner.iris_answer_generator = mock2
         MainRunner.iris_answer_generator.determine_answer().return_value = Answer.YES
-        MainRunner.DFGenerator.IrisDFGenerator = mock3
+        MainRunner.DFGenerator.IrisDFGenerator.generate_df = mock3
+        MainRunner.DFGenerator.IrisDFGenerator.generate_df.return_value = listie
         im = Image.open("test_resources/test_img1.jpg")
         open_cv_image = numpy.array(im)
         open_cv_image = open_cv_image[:,:,::-1].copy()
         test = process_image(("IRIS",open_cv_image))
-        
-        self.assertEqual(test(),Answer.YES)
+        print(test)
+        self.assertEqual(test,Answer.YES)
 
     def test_process_image_no_face(self):
         mock = Mock()
