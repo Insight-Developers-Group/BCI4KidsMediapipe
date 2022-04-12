@@ -300,7 +300,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-s3", metavar="state2", type=str, help="state2name"
+        "-s3", metavar="state3", type=str, help="state2name"
     )
     parser.add_argument(
         "-seqNo", metavar="sequenceNum", type=str, help="Number of sequences of action to capture"
