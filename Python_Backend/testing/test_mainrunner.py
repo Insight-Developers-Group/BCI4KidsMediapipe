@@ -19,7 +19,6 @@ from DFGenerator import NoFaceDetectedException
 innerlist = [0] *144
 listie = [innerlist]
 
-@patch(MainRunner.iris_data_queue, contextvars.ContextVar('iris_data_queue', default=[0]*55))
 class TestMainRunner(unittest.TestCase):
 
     def test_image_conversion_1(self):
