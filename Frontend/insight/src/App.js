@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MenuButton from "./components/MenuButton";
 import HelpButton from "./components/HelpButton";
 import VideoDisplay from "./components/VideoDisplay";
@@ -9,6 +9,13 @@ import ErrorResponse from "./components/ErrorResponse";
 import { useState } from "react";
 
 function App() {
+
+    const [ socket, setSocket ] = useState(null);
+
+    useEffect(() => {
+        setSocket(new WebSocket("ws://127.0.0.1:8765/"));
+    }, [])
+
     // The imageStack array will contain images captured from the user's webcam
     // Images will be constantly added through the VideoDisplay component
     // Images will be sent through a websocket using the SampleClient component and the imageStack array will be cleared
@@ -60,6 +67,7 @@ function App() {
             />
             <ErrorResponse msg={message} />
             <SampleClient
+                socket={socket}
                 stack={imageStack}
                 mode={trackingMode}
                 response={response}
