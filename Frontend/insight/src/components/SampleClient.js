@@ -1,5 +1,4 @@
-import React, { useEffect, useContext } from "react";
-import { SocketContext } from "../App";
+import React, { useEffect } from "react";
 export default function SampleClient(props) {
 
     let socketOpen = false;
