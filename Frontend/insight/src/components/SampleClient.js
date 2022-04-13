@@ -2,46 +2,48 @@ import React, { useEffect, useContext } from "react";
 import { SocketContext } from "../App";
 export default function SampleClient(props) {
 
-    const socket = useContext(SocketContext)
     let socketOpen = false;
-    socket.onopen = function (e) {
-        console.log("[open] Connection established");
-        console.log("Sending to server");
-        socketOpen = true;
-    };
+    if (props.socket) {
+        props.socket.onopen = function (e) {
+            console.log("[open] Connection established");
+            console.log("Sending to server");
+            socketOpen = true;
+        };
+    
 
-    socket.onmessage = function (event) {
-        let obj = JSON.parse(event.data);
-        if (
-            obj.Answer.toLowerCase() === "yes" ||
-            obj.Answer.toLowerCase() === "no" ||
-            obj.Answer.toLowerCase() === "neutral"
-        ) {
-            props.changeMessage("");
-            props.setResponse(obj.Answer.toLowerCase());
-        } else {
-            // If the response if not a card response, it must be an error
-            props.changeMessage(obj.Answer.toLowerCase());
-            console.log(`[Error] Error received from server: ${props.message}`);
-        }
-    };
+        props.socket.onmessage = function (event) {
+            let obj = JSON.parse(event.data);
+            if (
+                obj.Answer.toLowerCase() === "yes" ||
+                obj.Answer.toLowerCase() === "no" ||
+                obj.Answer.toLowerCase() === "neutral"
+            ) {
+                props.changeMessage("");
+                props.setResponse(obj.Answer.toLowerCase());
+            } else {
+                // If the response if not a card response, it must be an error
+                props.changeMessage(obj.Answer.toLowerCase());
+                console.log(`[Error] Error received from server: ${props.message}`);
+            }
+        };
 
-    socket.onclose = function (event) {
-        if (event.wasClean) {
-            console.log(
-                `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
-            );
-        } else {
-            // e.g. server process killed or network down
-            // event.code is usually 1006 in this case
-            console.log("[close] Connection died");
-        }
-        socketOpen = false;
-    };
+        props.socket.onclose = function (event) {
+            if (event.wasClean) {
+                console.log(
+                    `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
+                );
+            } else {
+                // e.g. server process killed or network down
+                // event.code is usually 1006 in this case
+                console.log("[close] Connection died");
+            }
+            socketOpen = false;
+        };
 
-    socket.onerror = function (error) {
-        console.log(`[error] ${error.message}`);
-    };
+        props.socket.onerror = function (error) {
+            console.log(`[error] ${error.message}`);
+        };
+    }
 
     // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component/65049865
     const SECOND_MS = 120; // Rate at which frames are sent to the server, made this lower than the VideoDisplay frame rate to prevent bottlenecks
@@ -56,7 +58,7 @@ export default function SampleClient(props) {
                     image: item,
                 });
                 // console.log("Sending message to server: " + message);
-                socket.send(message);
+                props.socket.send(message);
                 props.stack.length = 0;
             }
         }, SECOND_MS);
