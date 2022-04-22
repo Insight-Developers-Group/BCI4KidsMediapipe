@@ -1,35 +1,29 @@
-# Insight
-Insight uses lightweight iris and facial tracking to translate movements into yes/no communications
+# Instructions for how to install and run InSight for the first time on a Windows machine.
 
-## First Time Setup
+1. Clone the Github repository to your local machine. 
 
-1. Follow instructions on the MediaPipe website to get set up for the use of MediaPipe** https://google.github.io/mediapipe/getting_started/install.html#installing-on-windows
+2. Download [Python version 3.7.7](https://www.python.org/downloads/release/python-377/). When prompted during installation select "Add Python 3.7 to PATH".
 
-** Note that step 7 and 9 are optional as our project already has the needed files from the MediaPipe github repository
+3. Ensure that pip was installed by typing `$ pip --version` into your command prompt. Pip should have been installed with the Python 3.7.7 installation. 
 
-2. Copy the repository WORKSPACE file located in the workplace_template folder to the main working directory as follows: 
-![Alt text](msc/read_me_workspace.jpg?raw=true "Title")
+4. Upgrade pip wheels by typing `$ pip install --upgrade pip setuptools wheels` into your command prompt (This is necessary for installing MediaPipe using pip). 
 
-3. Edit the following path in the WORKSPACE file to point to the opencv build folder
+5. Install backend dependencies by typing the following commands into your command prompt:
+* `$ pip install numpy==1.19.5`
+* `$ pip install websockets==10.1`
+* `$ pip install pandas==1.3.5`
+* `$ pip install pillow==9.0.0`
+* `$ pip install tensorflow==2.4.1`
+* `$ pip install mediapipe==0.8.9.1`
+* `$ pip install opencv-python==4.5.5.64`
+* `$ pip install scikit-learn==0.20.3`
 
-```bash
-new_local_repository(
-    name = "windows_opencv",
-    build_file = "@//third_party:opencv_windows.BUILD",
-    path = "C:\\YOUR\\PATH\\HERE\\opencv\\build",
-)
-```
+6. For the frontend, InSight makes use of the node package manager to install and maintain all necessary dependencies. Ensure that node.js has been downloaded on your local device by running the command `npm -v`. If it has not been installed, you can get node.js [here](https://nodejs.org/en/download/).
 
-## Building and Running the Project with Bazel
+7. To install all required dependencies, navigate to the folder `BCI4KidsMediapipe/Frontend/insight` and execute the command `npm install`.
 
-```bash 
-C:\Users\Username\BCI4KidsMediapipe_repo> bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 mediapipe/insight/insight_mediapipe/face_mesh:face_mesh_cpu
+8. Run frontend by opening a command prompt to the folder `BCI4KidsMediapipe/Frontend/insight` and executing the command `npm start`. The website will now be running locally and can be found at `localhost:3000` in your web browser of choice.
 
-C:\Users\Username\BCI4KidsMediapipe_repo> set GLOG_logtostderr=1
+9. Run backend by opening a command prompt in the `BCI4Kidz\Python_Backend` folder and typing `python MainRunner.py` into the command prompt. Note that you will see a TensorFlow dlerror, this error can be ignored as we have not set up TensorFlow to run using the GPU.
 
-C:\Users\Username\BCI4KidsMediapipe_repo> bazel-bin\mediapipe\insight\insight_mediapipe\face_mesh\face_mesh_cpu --calculator_graph_config_file=mediapipe\graphs\face_mesh\face_mesh_desktop_live.pbtxt
-```
-
-## Repo Pushing Rules 
-All PR's require 1 reviewer before being merged into main
 
